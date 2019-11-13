@@ -7,3 +7,7 @@
 *.DS_Store
 .vscode/ipch
 .vscode
+*.3dsx
+*.smdh
+*.exe
+*.bin
