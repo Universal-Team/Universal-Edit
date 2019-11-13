@@ -63,9 +63,9 @@ void initGraphics(void) {
 	tonccpy(BG_PALETTE, &palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, &palette, sizeof(palette));
 
-	tonccpy(BG_PALETTE_SUB+0x10, &fileBrowseBgPal, fileBrowseBgPalLen/2);
+	tonccpy(BG_PALETTE_SUB+0x10, &fileBrowseBgPal, fileBrowseBgPalLen);
 	tonccpy(BG_PALETTE_SUB+0x13, &themePalettes[PersonalData->theme], sizeof(themePalettes[PersonalData->theme]));
-	tonccpy(BG_PALETTE_SUB+0x20, &keyboardKanaPal, keyboardKanaPalLen/2);
+	tonccpy(BG_PALETTE_SUB+0x20, &keyboardKanaPal, keyboardKanaPalLen);
 
 	// Set main background as target for sprite transparency
 	REG_BLDCNT = 1<<11;

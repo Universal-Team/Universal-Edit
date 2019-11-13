@@ -8,6 +8,7 @@
 #include "graphics.hpp"
 #include "lang.hpp"
 #include "lang.hpp"
+#include "textEdit.hpp"
 
 int main(int argc, char **argv) {
 	initGraphics();
@@ -37,17 +38,7 @@ int main(int argc, char **argv) {
 	printTextCentered(Lang::get("loading"), 0, 32, false);
 
 	while(1) {
-		FILE* file = fopen(browseForFile({}).c_str(), "r+");
-		if(file) {
-			fclose(file);
-		}
-		// currentSaveBox = save->currentBox();
-		// currentBankBox = 0;
-		// // Decrypt the box data
-		// save->cryptBoxData(true);
-
-		// drawBoxScreen();
-		// manageBoxes();
+		editText(browseForFile({}));
 	}
 
 	return 0;
