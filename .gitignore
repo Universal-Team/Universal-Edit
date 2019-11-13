@@ -1,0 +1,9 @@
+**/build
+*.nds
+*.cia
+*.elf
+*.gfx
+
+*.DS_Store
+.vscode/ipch
+.vscode
