@@ -26,6 +26,10 @@ void loadToVector(std::string path, std::vector<std::string> &vec) {
 void drawText(std::vector<std::string> &text, int screenPos) {
 	// Clear text
 	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
+	for(int i=0;i<8;i++) {
+		drawRectangle(0, i*32, 256, 16, DARKER_GRAY, true, false);
+		drawRectangle(0, (i*32)+16, 256, 16, DARK_GRAY, true, false);
+	}
 
 	for(unsigned int i=0;i<std::min(text.size(), LINES_PER_SCREEN);i++) {
 		printText(text[screenPos+i], 0, 16*i, true, Config::getInt("charWidth"));
