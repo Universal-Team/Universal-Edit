@@ -7,7 +7,6 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "lang.hpp"
-#include "lang.hpp"
 #include "textEdit.hpp"
 
 int main(int argc, char **argv) {

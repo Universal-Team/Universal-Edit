@@ -48,6 +48,7 @@ void initGraphics(void) {
 
 	bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
 	bgSetPriority(bg2Main, 2);
+	bgWrapOn(bg2Main);
 
 	bg3Sub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 	bgSetPriority(bg3Sub, 3);
