@@ -27,7 +27,7 @@ void drawText(std::vector<std::string> &text, int screenPos) {
 	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
 
 	for(unsigned int i=0;i<std::min(text.size(), LINES_PER_SCREEN);i++) {
-		printText(text[screenPos+i].substr(0, 20), 0, 16*i, true);
+		printText(text[screenPos+i], 0, 16*i, true);
 	}
 }
 
