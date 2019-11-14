@@ -10,6 +10,7 @@
 #include "graphics.hpp"
 #include "input.hpp"
 #include "lang.hpp"
+#include "settings.hpp"
 #include "stringUtils.hpp"
 
 #define ENTRIES_PER_SCREEN 11
@@ -276,6 +277,9 @@ std::string topMenuSelect(void) {
 				}
 				showTopMenu(topMenuContents);
 			}
+		} else if(pressed & KEY_SELECT) {
+			settingsMenu();
+			showTopMenu(topMenuContents);
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(int i=0;i<std::min(ENTRIES_PER_SCREEN, (int)topMenuContents.size());i++) {
@@ -391,6 +395,9 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				fwrite((path+dirContents[fileOffset].name+"\n").c_str(), 1, (path+dirContents[fileOffset].name+"\n").size(), favs);
 				fclose(favs);
 			}
+		} else if(pressed & KEY_SELECT) {
+			settingsMenu();
+			showDirectoryContents(dirContents, screenOffset);
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(int i=0;i<std::min(ENTRIES_PER_SCREEN, (int)dirContents.size());i++) {

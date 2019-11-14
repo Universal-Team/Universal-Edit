@@ -289,7 +289,7 @@ unsigned int getFontSpriteIndex(const u16 letter);
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printText(const std::string &text, int xPos, int yPos, bool top);
+void printText(const std::string &text, int xPos, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints text to the a screen
@@ -298,7 +298,7 @@ void printText(const std::string &text, int xPos, int yPos, bool top);
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printText(const std::u16string &text, int xPos, int yPos, bool top);
+void printText(const std::u16string &text, int xPos, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints text centered on a screen
@@ -307,7 +307,7 @@ void printText(const std::u16string &text, int xPos, int yPos, bool top);
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCentered(const std::string &text, int xOffset, int yPos, bool top);
+void printTextCentered(const std::string &text, int xOffset, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints text centered on a screen
@@ -316,7 +316,7 @@ void printTextCentered(const std::string &text, int xOffset, int yPos, bool top)
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool top);
+void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints colored text centered on a screen
@@ -326,7 +326,7 @@ void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool t
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top);
+void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top, int charWidth = 0);
 /**
  * Prints colored text centered on a screen
  * int palette is the color to tint the text
@@ -335,7 +335,7 @@ void printTextCenteredTinted(const std::string &text, int palette, int xOffset, 
  * int y is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top);
+void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints colored text to the a screen
@@ -345,7 +345,7 @@ void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int 
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top);
+void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints colored text to the a screen
@@ -354,8 +354,9 @@ void printTextTinted(const std::string &text, int palette, int xPos, int yPos, b
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * int charWidth is the fixed width to print all chars at (default 0, variable width)
  * */
-void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top);
+void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth = 0);
 
 /**
  * Prints text to the a screen with a max width

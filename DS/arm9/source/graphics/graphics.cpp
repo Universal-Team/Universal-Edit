@@ -1,5 +1,6 @@
 #include "graphics.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "graphicsUtils.hpp"
 #include "stringUtils.hpp"
 #include "tonccpy.h"
@@ -392,27 +393,30 @@ void setSpriteVisibility(int id, bool top, int show) { oamSetHidden((top ? &oamM
 Sprite getSpriteInfo(int id, bool top) { return sprites(top)[id]; }
 unsigned getSpriteAmount(bool top) { return maxSprite(top); }
 
-void printText(const std::string &text, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xPos, yPos, top); }
-void printText(const std::u16string &text, int xPos, int yPos, bool top) { printTextTinted(text, WHITE_TEXT, xPos, yPos, top); }
-void printTextCentered(const std::string &text, int xOffset, int yPos, bool top) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xOffset, yPos, top); }
-void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool top) { printTextCenteredTinted(text, WHITE_TEXT, xOffset, yPos, top); }
-void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), palette, xOffset, yPos, top); }
-void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top) {
+void printText(const std::string &text, int xPos, int yPos, bool top, int charWidth) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xPos, yPos, top, charWidth); }
+void printText(const std::u16string &text, int xPos, int yPos, bool top, int charWidth) { printTextTinted(text, WHITE_TEXT, xPos, yPos, top, charWidth); }
+void printTextCentered(const std::string &text, int xOffset, int yPos, bool top, int charWidth) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xOffset, yPos, top, charWidth); }
+void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool top, int charWidth) { printTextCenteredTinted(text, WHITE_TEXT, xOffset, yPos, top, charWidth); }
+void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top, int charWidth) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), palette, xOffset, yPos, top, charWidth); }
+void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top, int charWidth) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*16), top);
+		printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*16), top, charWidth);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*16), top);
+	printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*16), top, charWidth);
 }
-void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), palette, xPos, yPos, top); }
+void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, int charWidth) { printTextTinted(StringUtils::UTF8toUTF16(text), palette, xPos, yPos, top, charWidth); }
 
-void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top) {
+void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth) {
 	int x=xPos;
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == '\n') {
 			x = xPos;
 			yPos += tileHeight;
+			continue;
+		} else if(text[c] == '\t') {
+			x += (charWidth != 0 ? charWidth : 6)*(Config::getInt("tabSize")-(c%4));
 			continue;
 		}
 
@@ -425,13 +429,29 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 			image.bitmap[(i*4)+3] = (fontTiles[i+(t*tileSize)]    & 3);
 		}
 
-		x += fontWidths[t*3];
-		if(x > 256) {
+		if(x + (charWidth > 0 ? charWidth : fontWidths[(t*3)+2]) > 256) {
+			return;
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImage(x, yPos, image, top, true);
-		x += fontWidths[(t*3)+1];
+
+		if(charWidth != 0) {
+			x += (charWidth-fontWidths[(t*3)+2])/2;
+		} else {
+			x += fontWidths[t*3];
+		}
+
+		if(charWidth != 0 && fontWidths[(t*3)+2] > charWidth) {
+			drawImageScaled(x, yPos, (float)charWidth/fontWidths[(t*3)+2], 1, image, top, true);
+		} else {
+			drawImage(x, yPos, image, top, true);
+		}
+
+		if(charWidth != 0) {
+			x += charWidth - ((charWidth-fontWidths[(t*3)+2])/2);
+		} else {
+			x += fontWidths[(t*3)+1];
+		}
 	}
 }
 

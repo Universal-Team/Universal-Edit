@@ -1,5 +1,6 @@
 #include "textEdit.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "input.hpp"
 #include "graphics.hpp"
 
@@ -27,14 +28,14 @@ void drawText(std::vector<std::string> &text, int screenPos) {
 	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
 
 	for(unsigned int i=0;i<std::min(text.size(), LINES_PER_SCREEN);i++) {
-		printText(text[screenPos+i], 0, 16*i, true);
+		printText(text[screenPos+i], 0, 16*i, true, Config::getInt("charWidth"));
 	}
 }
 
 // false ↑, true ↓
 void scrollText(std::vector<std::string> text, int position, bool direction) {
 	if(!direction || position+LINES_PER_SCREEN-1 < text.size())
-		printText(text[direction ? position+LINES_PER_SCREEN-1 : position], 0, (u8)(direction ? scroll+192 : scroll-16), true);
+		printText(text[direction ? position+LINES_PER_SCREEN-1 : position], 0, (u8)(direction ? scroll+192 : scroll-16), true, Config::getInt("charWidth"));
 	bgScroll(bg2Main, 0, direction ? 16 : -16);
 	bgUpdate();
 	drawRectangle(0, (u8)(direction ? scroll : scroll+192-16), 256, 16, CLEAR, true, true);
