@@ -23,6 +23,17 @@ void loadToVector(std::string path, std::vector<std::string> &vec) {
 	}
 }
 
+void saveFromVector(std::string path, std::vector<std::string> &vec) {
+	FILE* out = fopen(path.c_str(), "w");
+	if(out) {
+		for(unsigned int i=0;i<vec.size();i++) {
+			fwrite(vec[i].data(), 1, vec[i].size(), out);
+			fwrite("\n", 1, 1, out);
+		}
+		fclose(out);
+	}
+}
+
 void drawText(std::vector<std::string> &text, int screenPos) {
 	// Clear text
 	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
@@ -83,6 +94,10 @@ void editText(const std::string &path) {
 			bgSetScroll(bg2Main, 0, 0);
 			bgUpdate();
 			drawRectangle(0, 0, 256, 256, CLEAR, true, true);
+
+			if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
+				saveFromVector(path, text);
+			}
 			break;
 		}
 	}
