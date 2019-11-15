@@ -62,9 +62,10 @@ void drawText(std::vector<std::string> &text, int screenPos) {
 void scrollText(std::vector<std::string> text, int position, bool direction) {
 	if(!direction || position+LINES_PER_SCREEN-1 < text.size())
 		printText(text[direction ? position+LINES_PER_SCREEN-1 : position], 0, (u8)(direction ? scroll+192 : scroll-16), true, Config::getInt("charWidth"));
+	drawRectangle(0, (u8)(direction ? scroll : scroll+192-16), 256, 16, CLEAR, true, true);
+	swiWaitForVBlank();
 	bgScroll(bg2Main, 0, direction ? 16 : -16);
 	bgUpdate();
-	drawRectangle(0, (u8)(direction ? scroll : scroll+192-16), 256, 16, CLEAR, true, true);
 	scroll += direction ? 16 : -16;
 }
 

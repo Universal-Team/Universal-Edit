@@ -1,4 +1,6 @@
 #include "graphics.hpp"
+#include <regex>
+
 #include "colors.hpp"
 #include "config.hpp"
 #include "graphicsUtils.hpp"
@@ -444,6 +446,18 @@ void printTextTinted(const std::string &text, int palette, int xPos, int yPos, b
 void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth) {
 	int x=xPos;
 	int tabPos = 0;
+	// Scan for syntax highlighting
+	std::vector<std::pair<unsigned int, unsigned int>> highlights;
+	std::regex regex("(0x[0-9a-fA-F]*)|([0-9])|(if|else|for|while|switch|return|continue)|(\".*?\")|(#.*|//.*)");
+	std::smatch match;
+	std::string temp = StringUtils::UTF16toUTF8(text);
+	int pos = 0;
+	while(std::regex_search(temp, match, regex)) {
+		highlights.push_back({pos+match.position(0), pos+match.position(0)+match.str().length()});
+		pos += match.position(0) + match.length();
+		temp = match.suffix().str();
+	}
+
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == '\n') {
 			x = xPos;
@@ -456,8 +470,14 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 		}
 		tabPos++;
 
+		bool highlight = false;
+		for(unsigned int i=0;i<highlights.size();i++) {
+			highlight = (c >= highlights[i].first && c < highlights[i].second);
+			if(highlight)	break;
+		}
+
 		int t = getCharIndex(text[c]);
-		Image image = {tileWidth, tileHeight, {}, {}, (u16)(palette*3)};
+		Image image = {tileWidth, tileHeight, {}, {}, (u16)((highlight*3)*3)};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap[(i*4)]   = (fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap[(i*4)+1] = (fontTiles[i+(t*tileSize)]>>4 & 3);
