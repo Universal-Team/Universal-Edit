@@ -31,6 +31,7 @@ struct Sprite {
 
 extern std::vector<u16> font;
 extern int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
+extern int cursorID;
 
 // Initializes the screens for drawing
 void initGraphics(void);
@@ -166,6 +167,18 @@ int initSprite(bool top, SpriteSize spriteSize, int id = -1, int rotationIndex =
  * u16 color is the BGR15 color to fill with
  */
 void fillSpriteColor(int id, bool top, u16 color);
+
+/*
+ * Fills a sprite with a rectangle
+ * int id is the id of the sprite
+ * bool top is whether the sprite is on the top or bottom screen
+ * int xPos is the X position in the sprite to draw at
+ * int yPos is the Y position in the sprite to draw at
+ * int w is the width of the rectangle
+ * int h is the height of the rectangle
+ * u16 color is the BGR15 color to fill with
+ */
+void fillSpriteRectangle(int id, bool top, int xPos, int yPos, int w, int h, u16 color);
 
 /*
  * Fills a sprite from an Image

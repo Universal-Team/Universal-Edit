@@ -12,7 +12,6 @@
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
-	sysSetCardOwner(BUS_OWNER_ARM9); // Give ARM9 access to Slot-1 (for dumping/injecting saves)
 	defaultExceptionHandler();
 	scanKeys(); // So it doesn't open the SD if A is held
 

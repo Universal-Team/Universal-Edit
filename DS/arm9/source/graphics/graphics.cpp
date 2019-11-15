@@ -21,6 +21,7 @@ std::vector<u8> fontWidths;
 std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
 int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
+int cursorID;
 
 #define sprites(top) (top ? spritesMain : spritesSub)
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
@@ -60,18 +61,29 @@ void initGraphics(void) {
 	u16 palette[] = {0, 0xFBDE, 0xBDEF, // WHITE_TEXT
 					 0, 0x8C63, 0xCA52, // GRAY_TEXT
 					 0, (u16)(0x801F & 0xFBDE), (u16)(0x801F & 0xBDEF), // RED_TEXT
-					 0, (u16)(0xFC00 & 0xFBDE), (u16)(0xFC00 & 0xBDEF),
+					 0, (u16)(0xFC00 & 0xFBDE), (u16)(0xFC00 & 0xBDEF), // BLUE_TEXT
 					 0xE739, 0x98C6, 0x94A5, 0x8842}; // LIGHT_GRAY, DARK_GRAY, DARKER_GRAY, DARKERER_GRAY
 	tonccpy(BG_PALETTE, &palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, &palette, sizeof(palette));
+	tonccpy(SPRITE_PALETTE, &palette, sizeof(palette));
+	tonccpy(SPRITE_PALETTE_SUB, &palette, sizeof(palette));
 
 	tonccpy(BG_PALETTE_SUB+0x10, &fileBrowseBgPal, fileBrowseBgPalLen);
 	tonccpy(BG_PALETTE_SUB+0x13, &themePalettes[PersonalData->theme], sizeof(themePalettes[PersonalData->theme]));
 	tonccpy(BG_PALETTE_SUB+0x20, &keyboardKanaPal, keyboardKanaPalLen);
 
+
 	// Set main background as target for sprite transparency
 	REG_BLDCNT = 1<<11;
 	REG_BLDCNT_SUB = 1<<11;
+
+	// Init sprites
+	cursorID = initSprite(true, SpriteSize_16x16, 0);
+	prepareSprite(cursorID, true, 0, 0, 0);
+	fillSpriteRectangle(cursorID, true, 0, 2, 1, 12, 0xFBDE);
+	setSpriteVisibility(cursorID, true, false);
+	updateOam();
+
 }
 
 void loadFont(void) {
@@ -295,6 +307,27 @@ void fillSpriteColor(int id, bool top, u16 color) {
 	}
 
 	toncset16(sprites(top)[id].gfx, color, size);
+}
+
+void fillSpriteRectangle(int id, bool top, int xPos, int yPos, int w, int h, u16 color) {
+	int width = 0;
+	switch(sprites(top)[id].size) {
+		default:
+			width = 0; // I'm lazy
+			break;
+		case SpriteSize_16x16:
+			width = 16;
+			break;
+		case SpriteSize_32x32:
+			width = 32;
+			break;
+	}
+
+	for(int y=0;y<h;y++) {
+		for(int x=0;x<w;x++) {
+			sprites(top)[id].gfx[((yPos+y)*width)+xPos+x] = color;
+		}
+	}
 }
 
 // void fillSpriteImage(int id, bool top, int spriteW, int x, int y, Images image, bool skipAlpha) {

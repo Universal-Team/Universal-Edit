@@ -7,6 +7,21 @@
 #define LINES_PER_SCREEN 12u
 
 u8 scroll = 0;
+int blink = 30;
+
+void cursorBlink(void) {
+	if(blink == 0) {
+		setSpriteVisibility(cursorID, true, false);
+		updateOam();
+	}
+	if(blink > -30) {
+		blink--;
+	} else {
+		blink = 30;
+		setSpriteVisibility(cursorID, true, true);
+		updateOam();
+	}
+}
 
 void loadToVector(std::string path, std::vector<std::string> &vec) {
 	char* line = NULL;
@@ -35,15 +50,9 @@ void saveFromVector(std::string path, std::vector<std::string> &vec) {
 }
 
 void drawText(std::vector<std::string> &text, int screenPos) {
-	// Clear text
-	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
-	for(int i=0;i<8;i++) {
-		drawRectangle(0, i*32, 256, 16, DARKER_GRAY, true, false);
-		drawRectangle(0, (i*32)+16, 256, 16, DARK_GRAY, true, false);
-	}
-
 	for(unsigned int i=0;i<std::min(text.size(), LINES_PER_SCREEN);i++) {
-		printText(text[screenPos+i], 0, 16*i, true, Config::getInt("charWidth"));
+		drawRectangle(0, (u8)(scroll+(16*i)), 256, 16, CLEAR, true, true);
+		printText(text[screenPos+i], 0, (u8)(scroll+(16*i)), true, Config::getInt("charWidth"));
 	}
 }
 
@@ -60,9 +69,21 @@ void scrollText(std::vector<std::string> text, int position, bool direction) {
 void editText(const std::string &path) {
 	std::vector<std::string> text;
 	loadToVector(path, text);
+	setSpriteVisibility(cursorID, true, true);
+	updateOam();
+	irqSet(IRQ_VBLANK, cursorBlink);
+
+	// Clear screen
+	for(int i=0;i<8;i++) {
+		drawRectangle(0, i*32, 256, 16, DARKER_GRAY, true, false);
+		drawRectangle(0, (i*32)+16, 256, 16, DARK_GRAY, true, false);
+	}
+	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
+
 	drawText(text, 0);
 
-	u16 held, pressed, selection = 0;
+
+	u16 held, pressed, selection = 0, screenPos = 0;
 	while(1) {
 		do {
 			swiWaitForVBlank();
@@ -74,31 +95,42 @@ void editText(const std::string &path) {
 		if(held & KEY_UP) {
 			if(selection > 0) {
 				selection--;
-				scrollText(text, selection, false);
 			}
 		} else if(held & KEY_DOWN) {
 			if(selection < text.size()-1) {
 				selection++;
-				scrollText(text, selection, true);
 			}
 		} else if(pressed & KEY_A) {
 			std::string str = Input::getLine();
 			if(str != "") {
 				text[selection] = str;
 			}
-			// TODO: This is dumb
-			scrollText(text, selection, true);
-			scrollText(text, selection, false);
+			drawText(text, screenPos);
 		} else if(pressed & KEY_B) {
 			scroll = 0;
 			bgSetScroll(bg2Main, 0, 0);
 			bgUpdate();
 			drawRectangle(0, 0, 256, 256, CLEAR, true, true);
+			setSpriteVisibility(cursorID, true, false);
+			updateOam();
+			irqSet(IRQ_VBLANK, nullptr);
 
 			if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 				saveFromVector(path, text);
 			}
 			break;
 		}
+
+		// Scroll screen if needed
+		if(selection < screenPos) {
+			screenPos = selection;
+			scrollText(text, screenPos, false);
+		} else if(selection > screenPos + LINES_PER_SCREEN - 1) {
+			screenPos = selection - LINES_PER_SCREEN + 1;
+			scrollText(text, screenPos, true);
+		}
+
+		setSpritePosition(cursorID, true, 0, (selection-screenPos)*16);
+		updateOam();
 	}
 }
