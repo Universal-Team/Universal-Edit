@@ -13,13 +13,15 @@ void cursorBlink(void) {
 	if(blink == 0) {
 		setSpriteVisibility(cursorID, true, false);
 		updateOam();
+	} else if(blink == 30) {
+		setSpriteVisibility(cursorID, true, true);
+		updateOam();
 	}
+
 	if(blink > -30) {
 		blink--;
 	} else {
 		blink = 30;
-		setSpriteVisibility(cursorID, true, true);
-		updateOam();
 	}
 }
 
@@ -83,7 +85,7 @@ void editText(const std::string &path) {
 	drawText(text, 0);
 
 
-	u16 held, pressed, selection = 0, screenPos = 0;
+	u16 held, pressed, selection = 0, screenPos = 0, charSelection = 0;
 	while(1) {
 		do {
 			swiWaitForVBlank();
@@ -92,6 +94,10 @@ void editText(const std::string &path) {
 			pressed = keysDown();
 		} while(!held);
 
+		if(held & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) {
+			blink = 30;
+		}
+
 		if(held & KEY_UP) {
 			if(selection > 0) {
 				selection--;
@@ -99,6 +105,20 @@ void editText(const std::string &path) {
 		} else if(held & KEY_DOWN) {
 			if(selection < text.size()-1) {
 				selection++;
+			}
+		} else if(held & KEY_LEFT) {
+			if(charSelection > 0) {
+				charSelection--;
+			} else {
+				selection--;
+				charSelection = text[selection].length();
+			}
+		} else if(held & KEY_RIGHT) {
+			if(charSelection < text[selection].length()) {
+				charSelection++;
+			} else {
+				selection++;
+				charSelection = 0;
 			}
 		} else if(pressed & KEY_A) {
 			std::string str = Input::getLine();
@@ -130,7 +150,7 @@ void editText(const std::string &path) {
 			scrollText(text, screenPos, true);
 		}
 
-		setSpritePosition(cursorID, true, 0, (selection-screenPos)*16);
+		setSpritePosition(cursorID, true, getTextWidth(text[selection].substr(0, charSelection), Config::getInt("charWidth")), (selection-screenPos)*16);
 		updateOam();
 	}
 }

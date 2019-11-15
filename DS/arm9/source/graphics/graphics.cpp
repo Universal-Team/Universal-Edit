@@ -80,7 +80,7 @@ void initGraphics(void) {
 	// Init sprites
 	cursorID = initSprite(true, SpriteSize_16x16, 0);
 	prepareSprite(cursorID, true, 0, 0, 0);
-	fillSpriteRectangle(cursorID, true, 0, 2, 1, 12, 0xFBDE);
+	fillSpriteRectangle(cursorID, true, 0, 0, 1, 16, 0xFBDE);
 	setSpriteVisibility(cursorID, true, false);
 	updateOam();
 
@@ -443,15 +443,18 @@ void printTextTinted(const std::string &text, int palette, int xPos, int yPos, b
 
 void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth) {
 	int x=xPos;
+	int tabPos = 0;
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == '\n') {
 			x = xPos;
 			yPos += tileHeight;
 			continue;
 		} else if(text[c] == '\t') {
-			x += (charWidth != 0 ? charWidth : 6)*(Config::getInt("tabSize")-(c%4));
+			x += (charWidth != 0 ? charWidth : 6)*(Config::getInt("tabSize")-(tabPos%4));
+			tabPos += Config::getInt("tabSize")-(tabPos%4);
 			continue;
 		}
+		tabPos++;
 
 		int t = getCharIndex(text[c]);
 		Image image = {tileWidth, tileHeight, {}, {}, (u16)(palette*3)};
@@ -556,11 +559,18 @@ int getTextWidthMaxW(const std::string &text, int w) { return std::min(w, getTex
 int getTextWidthMaxW(const std::u16string &text, int w) { return std::min(w, getTextWidth(text)); }
 int getTextWidthScaled(const std::string &text, float scale) { return getTextWidth(StringUtils::UTF8toUTF16(text))*scale; }
 int getTextWidthScaled(const std::u16string &text, float scale) { return getTextWidth(text)*scale; }
-int getTextWidth(const std::string &text) { return getTextWidth(StringUtils::UTF8toUTF16(text)); }
-int getTextWidth(const std::u16string &text) {
+int getTextWidth(const std::string &text, int charWidth) { return getTextWidth(StringUtils::UTF8toUTF16(text), charWidth); }
+int getTextWidth(const std::u16string &text, int charWidth) {
 	int textWidth = 0;
+	int pos = 0;
 	for(unsigned c=0;c<text.size();c++) {
-		textWidth += fontWidths[(getCharIndex(text[c])*3)+2];
+		if(text[c] == '\t') {
+			textWidth += (charWidth != 0 ? charWidth : 6)*(Config::getInt("tabSize")-(pos%4));
+			pos += (Config::getInt("tabSize")-(pos%4));
+		} else {
+			textWidth += charWidth != 0 ? charWidth : fontWidths[(getCharIndex(text[c])*3)+2];
+			pos++;
+		}
 	}
 	return textWidth;
 }

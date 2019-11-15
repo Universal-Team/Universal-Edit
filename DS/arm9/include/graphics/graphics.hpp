@@ -588,13 +588,13 @@ int getTextWidthScaled(const std::u16string &text, float scale);
  * const std::string &text is the text to get the width of
  * returns the width of the text
  */
-int getTextWidth(const std::string &text);
+int getTextWidth(const std::string &text, int charWidth = 0);
 
 /**
  * Gets the width of a std::u16string of text
  * const std::u16string &text is the text to get the width of
  * returns the width of the text
  */
-int getTextWidth(const std::u16string &text);
+int getTextWidth(const std::u16string &text, int charWidth = 0);
 
 #endif //GRAPHICS_HPP
