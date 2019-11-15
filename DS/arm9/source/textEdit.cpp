@@ -144,14 +144,14 @@ void editText(const std::string &path) {
 		} else if(held & KEY_LEFT) {
 			if(charSelection > 0) {
 				charSelection--;
-			} else {
+			} else if(selection > 0) {
 				selection--;
 				charSelection = text[selection].length();
 			}
 		} else if(held & KEY_RIGHT) {
 			if(charSelection < text[selection].length()) {
 				charSelection++;
-			} else {
+			} else if(selection < text.size()-1) {
 				selection++;
 				charSelection = 0;
 			}
