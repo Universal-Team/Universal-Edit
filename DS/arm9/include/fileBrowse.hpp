@@ -16,4 +16,6 @@ void watchedListSave(const std::vector<std::string> &watchedList);
 
 std::string browseForFile(const std::vector<std::string>& extensionList);
 
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
+
 #endif //FILE_BROWSE_H

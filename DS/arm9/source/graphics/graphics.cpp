@@ -441,21 +441,22 @@ void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int 
 	}
 	printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*16), top, charWidth);
 }
-void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, int charWidth) { printTextTinted(StringUtils::UTF8toUTF16(text), palette, xPos, yPos, top, charWidth); }
+void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, int charWidth, const std::string &regex) { printTextTinted(StringUtils::UTF8toUTF16(text), palette, xPos, yPos, top, charWidth, regex); }
 
-void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth) {
+void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth, const std::string &regex) {
 	int x=xPos;
 	int tabPos = 0;
-	// Scan for syntax highlighting
 	std::vector<std::pair<unsigned int, unsigned int>> highlights;
-	std::regex regex("(0x[0-9a-fA-F]*)|([0-9])|(if|else|for|while|switch|return|continue)|(\".*?\")|(#.*|//.*)");
-	std::smatch match;
-	std::string temp = StringUtils::UTF16toUTF8(text);
-	int pos = 0;
-	while(std::regex_search(temp, match, regex)) {
-		highlights.push_back({pos+match.position(0), pos+match.position(0)+match.str().length()});
-		pos += match.position(0) + match.length();
-		temp = match.suffix().str();
+	if(regex != "") {
+		// Scan for syntax highlighting
+		std::smatch match;
+		std::string temp = StringUtils::UTF16toUTF8(text);
+		int pos = 0;
+		while(std::regex_search(temp, match, std::regex(regex))) {
+			highlights.push_back({pos+match.position(0), pos+match.position(0)+match.str().length()});
+			pos += match.position(0) + match.length();
+			temp = match.suffix().str();
+		}
 	}
 
 	for(unsigned c=0;c<text.size();c++) {

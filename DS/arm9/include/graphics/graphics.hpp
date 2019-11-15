@@ -358,7 +358,7 @@ void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int 
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, int charWidth = 0);
+void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, int charWidth = 0, const std::string &regex = "");
 
 /**
  * Prints colored text to the a screen
@@ -369,7 +369,7 @@ void printTextTinted(const std::string &text, int palette, int xPos, int yPos, b
  * bool top is whether to draw on the top or bottom screen
  * int charWidth is the fixed width to print all chars at (default 0, variable width)
  * */
-void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth = 0);
+void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, int charWidth = 0, const std::string &regex = "");
 
 /**
  * Prints text to the a screen with a max width

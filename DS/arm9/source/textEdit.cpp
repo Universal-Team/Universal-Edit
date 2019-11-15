@@ -1,7 +1,12 @@
 #include "textEdit.hpp"
+#include <dirent.h>
+#include <regex>
+
 #include "colors.hpp"
 #include "config.hpp"
 #include "input.hpp"
+#include "json.hpp"
+#include "fileBrowse.hpp"
 #include "graphics.hpp"
 
 #define LINES_PER_SCREEN 12u
@@ -51,17 +56,45 @@ void saveFromVector(std::string path, std::vector<std::string> &vec) {
 	}
 }
 
-void drawText(std::vector<std::string> &text, int screenPos) {
+std::string loadSyntax(const std::string &path) {
+	std::string extension = path.substr(path.find_first_of(".")+1);
+	char startPath[PATH_MAX];
+	getcwd(startPath, PATH_MAX);
+	chdir("/_nds/universal-edit/syntax");
+	std::vector<DirEntry> dirContents;
+	getDirectoryContents(dirContents, {"json"});
+
+	for(unsigned int i=0;i<dirContents.size();i++) {
+		FILE *file = fopen(dirContents[i].name.c_str(), "rb");
+		if(file) {
+			nlohmann::json json = nlohmann::json::parse(file, nullptr, false);
+			fclose(file);
+			if(json.contains("extensions") && json["extensions"].is_array()) {
+				static std::vector<std::string> extVec = json["extensions"];
+				if(std::find(extVec.begin(), extVec.end(), extension) != extVec.end()) {
+					if(json.contains("regex") && json["regex"].is_string()) {
+						chdir(startPath);
+						return json["regex"];
+					}
+				}
+			}
+		}
+	}
+	chdir(startPath);
+	return "";
+}
+
+void drawText(const std::vector<std::string> &text, const std::string &regex, int screenPos) {
 	for(unsigned int i=0;i<std::min(text.size(), LINES_PER_SCREEN);i++) {
 		drawRectangle(0, (u8)(scroll+(16*i)), 256, 16, CLEAR, true, true);
-		printText(text[screenPos+i], 0, (u8)(scroll+(16*i)), true, Config::getInt("charWidth"));
+		printTextTinted(text[screenPos+i], WHITE_TEXT, 0, (u8)(scroll+(16*i)), true, Config::getInt("charWidth"), regex);
 	}
 }
 
 // false ↑, true ↓
-void scrollText(std::vector<std::string> text, int position, bool direction) {
+void scrollText(std::vector<std::string> text, const std::string &regex, int position, bool direction) {
 	if(!direction || position+LINES_PER_SCREEN-1 < text.size())
-		printText(text[direction ? position+LINES_PER_SCREEN-1 : position], 0, (u8)(direction ? scroll+192 : scroll-16), true, Config::getInt("charWidth"));
+		printTextTinted(text[direction ? position+LINES_PER_SCREEN-1 : position], WHITE_TEXT, 0, (u8)(direction ? scroll+192 : scroll-16), true, Config::getInt("charWidth"), regex);
 	drawRectangle(0, (u8)(direction ? scroll : scroll+192-16), 256, 16, CLEAR, true, true);
 	swiWaitForVBlank();
 	bgScroll(bg2Main, 0, direction ? 16 : -16);
@@ -75,6 +108,7 @@ void editText(const std::string &path) {
 	setSpriteVisibility(cursorID, true, true);
 	updateOam();
 	irqSet(IRQ_VBLANK, cursorBlink);
+	std::string syntax = loadSyntax(path);
 
 	// Clear screen
 	for(int i=0;i<8;i++) {
@@ -83,7 +117,7 @@ void editText(const std::string &path) {
 	}
 	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
 
-	drawText(text, 0);
+	drawText(text, syntax, 0);
 
 
 	u16 held, pressed, selection = 0, screenPos = 0, charSelection = 0;
@@ -126,7 +160,7 @@ void editText(const std::string &path) {
 			if(str != "") {
 				text[selection] = str;
 			}
-			drawText(text, screenPos);
+			drawText(text, syntax, screenPos);
 		} else if(pressed & KEY_B) {
 			scroll = 0;
 			bgSetScroll(bg2Main, 0, 0);
@@ -145,10 +179,10 @@ void editText(const std::string &path) {
 		// Scroll screen if needed
 		if(selection < screenPos) {
 			screenPos = selection;
-			scrollText(text, screenPos, false);
+			scrollText(text, syntax, screenPos, false);
 		} else if(selection > screenPos + LINES_PER_SCREEN - 1) {
 			screenPos = selection - LINES_PER_SCREEN + 1;
-			scrollText(text, screenPos, true);
+			scrollText(text, syntax, screenPos, true);
 		}
 
 		setSpritePosition(cursorID, true, getTextWidth(text[selection].substr(0, charSelection), Config::getInt("charWidth")), (selection-screenPos)*16);
