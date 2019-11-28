@@ -24,34 +24,36 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef COLORS_HPP
-#define COLORS_HPP
+#ifndef LANGSCREEN_HPP
+#define LANGSCREEN_HPP
 
-#include <citro2d.h>
-#include <citro3d.h>
-#include <sstream>
-#include <string>
+#include "screens/screen.hpp"
+#include "screens/screenCommon.hpp"
 
-/**
- * @brief Creates a 8 byte RGBA color
- * @param r red component of the color
- * @param g green component of the color
- * @param b blue component of the color
- * @param a alpha component of the color
- */
-#define RGBA8(r, g, b, a) ((((r)&0xFF)<<0) | (((g)&0xFF)<<8) | (((b)&0xFF)<<16) | (((a)&0xFF)<<24))
+#include "utils/structs.hpp"
 
-#define BarColor 		C2D_Color32(57, 84, 114, 255)
-#define TopBGColor 		C2D_Color32(96, 168, 192, 255)
-#define BottomBGColor 	C2D_Color32(38, 44, 77, 255)
-#define BLACK 			C2D_Color32(0, 0, 0, 255)
-#define WHITE 			C2D_Color32(255, 255, 255, 255)
+#include <vector>
 
-typedef u32 Color;
+class LangScreen : public Screen
+{
+public:
+	void Draw(void) const override;
+	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+private:
+	int Selection = 0;
 
-namespace ColorHelper {
-	int getColorValue(int color, int bgr);
-	std::string getColorName(int color, int bgr);
-}
+	std::vector<Structs::ButtonPos> langBlocks = {
+		{37, 32, 20, 20, -1},
+		{37, 72, 20, 20, -1},
+		{37, 112, 20, 20, -1},
+		{37, 152, 20, 20, -1},
+		{37, 188, 20, 20, -1},
+		{177, 32, 20, 20, -1},
+		{177, 72, 20, 20, -1},
+		{177, 112, 20, 20, -1},
+		{177, 152, 20, 20, -1},
+		{177, 188, 20, 20, -1},
+	};
+};
 
 #endif

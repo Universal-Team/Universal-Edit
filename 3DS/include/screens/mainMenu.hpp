@@ -1,6 +1,6 @@
 /*
-*   This file is part of Universal-Updater/Universal-Edit
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   This file is part of Universal-Edit
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 *         or requiring that modified versions of such material be marked in
 *         reasonable ways as different from the original version.
 */
+
 #ifndef MAINMENU_HPP
 #define MAINMENU_HPP
 
@@ -40,10 +41,11 @@ public:
 private:
 	int Selection = 0;
 	std::vector<Structs::ButtonPos> mainButtons = {		
-		{10, 75, 140, 35, -1}, // FileList.
-		{170, 75, 140, 35, -1}, // Last Edited.
-		{10, 140, 140, 35, -1}, // Language.
-		{170, 140, 140, 35, -1}, // Colors.
+		{10, 40, 140, 35, -1}, // FileBrowse.
+		{170, 40, 140, 35, -1}, // Last edited.
+		{10, 100, 140, 35, -1}, // Language.
+		{170, 100, 140, 35, -1}, // Colors.
+		{10, 160, 140, 35, -1}, // Credits.
 	};
 };
 

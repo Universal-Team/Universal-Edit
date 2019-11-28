@@ -68,7 +68,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 	DIR *pdir = opendir(".");
 
 	if(pdir == NULL) {
-		DisplayMsg("Unable to open the directory.");
+		Gui::DisplayMsg("Unable to open the directory.");
 		for(int i=0;i<120;i++)	gspWaitForVBlank();
 	} else {
 		while(true) {

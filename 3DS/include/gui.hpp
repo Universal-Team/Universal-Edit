@@ -1,6 +1,6 @@
 /*
-*   This file is part of Universal-Updater/Universal-Edit
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   This file is part of Universal-Edit
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #define GUI_HPP
 
 #include "colors.hpp"
+#include "sprites.h"
 
 #include "screens/screen.hpp"
 
@@ -39,6 +40,14 @@
 #include <string.h>
 #include <unordered_map>
 #include <wchar.h>
+
+#define FONT_SIZE_18 0.72f
+#define FONT_SIZE_17 0.7f
+#define FONT_SIZE_15 0.6f
+#define FONT_SIZE_14 0.56f
+#define FONT_SIZE_12 0.50f
+#define FONT_SIZE_11 0.46f
+#define FONT_SIZE_9 0.37f
 
 namespace Gui
 {
@@ -56,6 +65,9 @@ namespace Gui
 	// Clear Text.
 	void clearTextBufs(void);
 	
+	// Draw a Sprite from the sheet.
+	void sprite(int key, int x, int y, float ScaleX = 1, float ScaleY = 1);
+
 	// Misc.
 	bool Draw_Rect(float x, float y, float w, float h, u32 color);
 
@@ -70,10 +82,15 @@ namespace Gui
 	void DrawTop(void);
 	void DrawBottom(void);
 
+	// Messages.
 	void DisplayWarnMsg(std::string Text);
 	bool promptMsg(std::string promptMsg);
-}
+	void DisplayMsg(std::string text);
 
-void DisplayMsg(std::string text);
+	// Editor Draw.
+	void Draw_Text_Editor(float x, float y, float size, u32 color, const char *text);
+	void Draw_GetTextSizeEditor(float size, float *width, float *height, const char *text);
+	float Draw_GetTextWidthEditor(float size, const char *text);
+}
 
 #endif

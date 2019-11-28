@@ -1,6 +1,6 @@
 /*
-*   This file is part of Universal-Updater/Universal-Edit
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   This file is part of Universal-Edit
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -30,9 +30,8 @@
 #include <string>
 
 namespace Config {
-	// [UI]
-	extern int lang; // The current Language.
-	extern int Color1, Color2, Color3, TxtColor; // Colors!
+	extern int Color1, Color2, Color3, TxtColor, lang;
+	extern std::string lastEditedFile;
 
 	void load();
 	void save();
@@ -46,6 +45,8 @@ namespace Config {
 
 	std::string getString(const std::string &key);
 	void setString(const std::string &key, const std::string &v);
+
+	int getLang(const std::string &key);
 }
 
 #endif

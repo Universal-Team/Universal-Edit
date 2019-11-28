@@ -1,6 +1,6 @@
 /*
-*   This file is part of Universal-Updater/Universal-Edit
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   This file is part of Universal-Edit
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 */
 
 #include "gui.hpp"
+
+#include "lang/lang.hpp"
 
 #include "screens/mainMenu.hpp"
 #include "screens/screenCommon.hpp"
@@ -55,7 +57,6 @@ int main()
 	Gui::init();
 	sdmcInit();
 	cfguInit();
-	acInit();
 	// Create Folder if missing.
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Edit", 0777);
@@ -65,6 +66,8 @@ int main()
 		Config::initializeNewConfig();
 	}
 	Config::load();
+	Lang::load(Config::lang);
+
 	Gui::setScreen(std::make_unique<MainMenu>());
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users
 
@@ -84,10 +87,10 @@ int main()
 		gspWaitForVBlank();
 	}
 
+	Config::save();
 	Gui::exit();
 	gfxExit();
 	cfguExit();
-	acExit();
 	romfsExit();
 	sdmcExit();
 	return 0;

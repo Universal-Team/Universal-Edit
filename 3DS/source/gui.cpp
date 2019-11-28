@@ -1,6 +1,6 @@
 /*
-*   This file is part of Universal-Updater/Universal-Edit
-*   Copyright (C) 2019 VoltZ, Epicpkmn11, Flame, RocketRobz, TotallyNotGuy
+*   This file is part of Universal-Edit
+*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@ C3D_RenderTarget* bottom;
 C2D_TextBuf sizeBuf;
 std::stack<std::unique_ptr<Screen>> screens;
 bool currentScreen = false;
+C2D_Font editorFont;
+C2D_SpriteSheet sprites;
 
 extern u32 barColor;
 extern u32 bgTopColor;
@@ -63,6 +65,8 @@ Result Gui::init(void)
 	C2D_Prepare();
 	top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+	editorFont = C2D_FontLoad("romfs:/gfx/TextEditorFont.bcfnt");
+	sprites = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
 	sizeBuf = C2D_TextBufNew(4096);
 	return 0;
 }
@@ -71,11 +75,18 @@ Result Gui::init(void)
 void Gui::exit(void)
 {
 	C2D_TextBufDelete(sizeBuf);
+	C2D_FontFree(editorFont);
+	C2D_SpriteSheetFree(sprites);
 	C2D_Fini();
 	C3D_Fini();
 }
 
-void DisplayMsg(std::string text) {
+void Gui::sprite(int key, int x, int y, float ScaleX, float ScaleY)
+{
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, key), x, y, 0.5f, NULL, ScaleX, ScaleY);
+}
+
+void Gui::DisplayMsg(std::string text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(top, BLACK);
@@ -172,16 +183,20 @@ void Gui::ScreenDraw(C3D_RenderTarget * screen)
 
 void Gui::DrawTop(void) {
 	Gui::ScreenDraw(top);
-	Gui::Draw_Rect(0, 0, 400, 30, Config::Color1);
-	Gui::Draw_Rect(0, 30, 400, 180, Config::Color2);
-	Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
+	Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
+	Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
+	Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
+	Gui::sprite(sprites_top_screen_top_idx, 0, 0);
+	Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
 }
 
 void Gui::DrawBottom(void) {
 	Gui::ScreenDraw(bottom);
-	Gui::Draw_Rect(0, 0, 400, 30, Config::Color1);
-	Gui::Draw_Rect(0, 30, 400, 180, Config::Color3);
-	Gui::Draw_Rect(0, 210, 400, 30, Config::Color1);
+	Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
+	Gui::Draw_Rect(0, 25, 320, 190, Config::Color3);
+	Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
+	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
+	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
 }
 
 // Display a Message, which needs to be confirmed with A/B.
@@ -206,4 +221,25 @@ bool Gui::promptMsg(std::string promptMsg)
 			return false;
 		}
 	}
+}
+
+
+// Text Editor stuff.
+void Gui::Draw_Text_Editor(float x, float y, float size, u32 color, const char *text) {
+	C2D_Text c2d_text;
+	C2D_TextFontParse(&c2d_text, editorFont, sizeBuf, text);
+	C2D_TextOptimize(&c2d_text);
+	C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, size, size, color);
+}
+
+void Gui::Draw_GetTextSizeEditor(float size, float *width, float *height, const char *text) {
+	C2D_Text c2d_text;
+	C2D_TextFontParse(&c2d_text, editorFont, sizeBuf, text);
+	C2D_TextGetDimensions(&c2d_text, size, size, width, height);
+}
+
+float Gui::Draw_GetTextWidthEditor(float size, const char *text) {
+	float width = 0;
+	Draw_GetTextSizeEditor(size, &width, NULL, text);
+	return width;
 }
