@@ -84,7 +84,11 @@ void TextBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				selectedFile = 0;
 				dirChanged = true;
 			} else {
-				currentEditingFile = dirContents[selectedFile].name;
+				char path[PATH_MAX];
+				getcwd(path, PATH_MAX);
+				std::string currentPath = path;
+				currentPath += dirContents[selectedFile].name;
+				currentEditingFile = currentPath;
 				Config::lastEditedFile = currentEditingFile;
 				Gui::setScreen(std::make_unique<TextEditor>());
 			}
@@ -93,7 +97,7 @@ void TextBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
 		std::string currentPath = path;
-		currentPath += Input::getLine("Enter the new file's name.");
+		currentPath += Input::getLine(Lang::get("ENTER_NEW_FILENAME"));
 		std::ofstream file { currentPath.c_str() };
 		dirChanged = true;
 	} else if (hDown & KEY_B) {

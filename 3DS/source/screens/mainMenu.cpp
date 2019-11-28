@@ -40,7 +40,6 @@
 extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-extern std::string TextFile;
 extern std::string currentEditingFile;
 
 void MainMenu::Draw(void) const {
@@ -89,7 +88,6 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				Gui::setScreen(std::make_unique<TextBrowse>());
 				break;
 			case 1:
-				TextFile = Config::lastEditedFile;
 				currentEditingFile = Config::lastEditedFile;
 				if(access(currentEditingFile.c_str(), F_OK) != -1 ) {
 					Gui::setScreen(std::make_unique<TextEditor>());
@@ -111,7 +109,6 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (touching(touch, mainButtons[0])) {
 			Gui::setScreen(std::make_unique<TextBrowse>());
 		} else if (touching(touch, mainButtons[1])) {
-			TextFile = Config::lastEditedFile;
 			currentEditingFile = Config::lastEditedFile;
 			if(access(currentEditingFile.c_str(), F_OK) != -1 ) {
 				Gui::setScreen(std::make_unique<TextEditor>());

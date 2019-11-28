@@ -29,6 +29,7 @@
 
 	"LINES":							"Lines: ",
 	"CURRENT_LINE":						"Current Line: ",
+	"ENTER_NEW_FILENAME":				"Enter the new file name.",
 	"SAVE_CHANGES":						"Would you like to save your changes?",
 	"DISCARD_CHANGES":					"Discard all changes since last save?"
 }
