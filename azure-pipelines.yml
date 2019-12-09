@@ -55,10 +55,10 @@ steps:
 - script: |
     tools-linux/make_cia --srl="ds/universal-edit.nds"
 
-    cp ds/universal-edit.nds $(Build.ArtifactStagingDirectory)
-    cp ds/universal-edit.cia $(Build.ArtifactStagingDirectory)/universal-edit.nds.cia
-    cp 3ds/universal-edit.3dsx $(Build.ArtifactStagingDirectory)
-    cp 3ds/universal-edit.cia $(Build.ArtifactStagingDirectory)/universal-edit.cia
+    cp DS/universal-edit.nds $(Build.ArtifactStagingDirectory)
+    cp DS/universal-edit.cia $(Build.ArtifactStagingDirectory)/universal-edit.nds.cia
+    cp 3DS/universal-edit.3dsx $(Build.ArtifactStagingDirectory)
+    cp 3DS/universal-edit.cia $(Build.ArtifactStagingDirectory)/universal-edit.cia
 
     echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
     echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
