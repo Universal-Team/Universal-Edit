@@ -72,7 +72,8 @@ steps:
     mkdir -p extras/builds/universal-edit
     cd extras/builds/universal-edit
 
-    cp $(Build.ArtifactStagingDirectory)/**/* .
+    ls $(Build.ArtifactStagingDirectory)
+    cp $(Build.ArtifactStagingDirectory)/* .
 
     qrencode -o universal-edit.nds.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.nds.cia
     qrencode -o universal-edit.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.cia
