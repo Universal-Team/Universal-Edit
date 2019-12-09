@@ -53,12 +53,12 @@ steps:
   displayName: 'Build Universal-Edit'
 
 - script: |
-    tools-linux/make_cia --srl="ds/universal-edit.nds"
+    tools-linux/make_cia --srl="ds/Universal-Edit.nds"
 
-    cp DS/universal-edit.nds $(Build.ArtifactStagingDirectory)
-    cp DS/universal-edit.cia $(Build.ArtifactStagingDirectory)/universal-edit.nds.cia
-    cp 3DS/universal-edit.3dsx $(Build.ArtifactStagingDirectory)
-    cp 3DS/universal-edit.cia $(Build.ArtifactStagingDirectory)/universal-edit.cia
+    cp DS/Universal-Edit.nds $(Build.ArtifactStagingDirectory)
+    cp DS/Universal-Edit.cia $(Build.ArtifactStagingDirectory)/Universal-Edit.nds.cia
+    cp 3DS/Universal-Edit.3dsx $(Build.ArtifactStagingDirectory)
+    cp 3DS/Universal-Edit.cia $(Build.ArtifactStagingDirectory)
 
     echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
     echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
@@ -74,11 +74,11 @@ steps:
 
     cp $(Build.ArtifactStagingDirectory) .
 
-    qrencode -o universal-edit.nds.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/universal-edit.nds.cia
-    qrencode -o universal-edit.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/universal-edit.cia
+    qrencode -o universal-edit.nds.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.nds.cia
+    qrencode -o universal-edit.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.cia
 
     git stage .
-    git commit -m "universal-edit | $(COMMIT_TAG)"
+    git commit -m "Universal-Edit | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE
     echo '##vso[task.setvariable variable=EXTRAS_COMMIT]'$(git log -1 --format="%H")
@@ -101,11 +101,11 @@ steps:
     addChangeLog: false
 
 - task: GitHubRelease@0
-  displayName: "Release to Universal-Team/universal-edit"
+  displayName: "Release to Universal-Team/Universal-Edit"
   condition: startsWith(variables['Build.SourceBranchName'], 'v')
   inputs:
     gitHubConnection: TWLBot
-    repositoryName: Universal-Team/universal-edit
+    repositoryName: Universal-Team/Universal-Edit
     action: edit
     target: '$(Build.SourceVersion)'
     tag: $(Build.SourceBranchName)
