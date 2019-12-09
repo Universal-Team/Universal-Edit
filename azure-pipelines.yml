@@ -53,7 +53,7 @@ steps:
   displayName: 'Build Universal-Edit'
 
 - script: |
-    tools-linux/make_cia --srl="ds/Universal-Edit.nds"
+    tools-linux/make_cia --srl="DS/Universal-Edit.nds"
 
     cp DS/Universal-Edit.nds $(Build.ArtifactStagingDirectory)
     cp DS/Universal-Edit.cia $(Build.ArtifactStagingDirectory)/Universal-Edit.nds.cia
