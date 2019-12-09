@@ -35,6 +35,7 @@ steps:
     sudo dkp-pacman -Sy
     sudo dkp-pacman -S nds-dev 3ds-dev --noconfirm
 
+    cd 3ds
     curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
     sudo 7z e bannertool.zip linux-x86_64/bannertool
     sudo chmod +x bannertool
