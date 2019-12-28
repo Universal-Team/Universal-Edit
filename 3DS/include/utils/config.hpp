@@ -30,7 +30,7 @@
 #include <string>
 
 namespace Config {
-	extern int Color1, Color2, Color3, TxtColor, lang;
+	extern int Color1, Color2, Color3, TxtColor, lang, selectedColor, unselectedColor;
 	extern std::string lastEditedFile;
 
 	void load();

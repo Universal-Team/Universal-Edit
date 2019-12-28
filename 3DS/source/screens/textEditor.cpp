@@ -28,6 +28,7 @@
 #include "screens/screenCommon.hpp"
 #include "screens/textEditor.hpp"
 
+#include "utils/config.hpp"
 #include "utils/keyboard.hpp"
 
 #include <fstream>
@@ -36,6 +37,7 @@
 
 extern std::string TextFile;
 extern std::string currentEditingFile;
+extern std::string editingFileName;
 
 TextEditor::TextEditor() {
 	textEditorText.clear();
@@ -60,7 +62,7 @@ void TextEditor::Draw(void) const
 	C2D_TargetClear(bottom, BLACK);
 	textRead = false;
 	Gui::DrawTop();
-	Gui::DrawString(200-((Gui::GetStringWidth(FONT_SIZE_18, currentEditingFile.c_str())/2)), 0, FONT_SIZE_18, WHITE, currentEditingFile.c_str());
+	Gui::DrawString(200-((Gui::GetStringWidth(FONT_SIZE_18, editingFileName)/2)), 0, FONT_SIZE_18, Config::TxtColor, editingFileName);
 
 	int textX = Gui::Draw_GetTextWidthEditor(FONT_SIZE_12, std::to_string(textEditorText.size()).c_str()) + 4;
 	for(uint i=0, ii=0;i+textEditorScrnPos<textEditorText.size() && ii<15;i++) {
@@ -72,19 +74,19 @@ void TextEditor::Draw(void) const
 		} while(sizeDone < textEditorText[i+textEditorScrnPos].size());
 
 		if(i+textEditorScrnPos == textEditorCurPos) {
-			Gui::Draw_Text_Editor(0, 28+(ii*12), FONT_SIZE_14, WHITE, std::to_string(i+textEditorScrnPos+1).c_str());
+			Gui::Draw_Text_Editor(0, 28+(ii*12), FONT_SIZE_14, Config::selectedColor, std::to_string(i+textEditorScrnPos+1).c_str());
 
-			if(showCursor > 0)	C2D_DrawRectSolid(textX+(6.15*(stringPos-(int)((stringPos/60)*60))), 28+((ii+(stringPos/60))*12), 0.5f, 1, 8, WHITE);
+			if(showCursor > 0)	C2D_DrawRectSolid(textX+(6.15*(stringPos-(int)((stringPos/60)*60))), 28+((ii+(stringPos/60))*12), 0.5f, 1, 8, Config::selectedColor);
 
 			for(uint l=0;l<lines.size();l++) {
-				Gui::Draw_Text_Editor(textX, 28+(ii*12), FONT_SIZE_14, WHITE, lines[l].c_str());
+				Gui::Draw_Text_Editor(textX, 28+(ii*12), FONT_SIZE_14, Config::selectedColor, lines[l].c_str());
 				ii++;
 			}
 		} else {
-			Gui::Draw_Text_Editor(0, 28+(ii*12), FONT_SIZE_14, BLACK, std::to_string(i+textEditorScrnPos+1).c_str());
+			Gui::Draw_Text_Editor(0, 28+(ii*12), FONT_SIZE_14, Config::unselectedColor, std::to_string(i+textEditorScrnPos+1).c_str());
 
 			for(uint l=0;l<lines.size();l++) {
-				Gui::Draw_Text_Editor(textX, 28+(ii*12), FONT_SIZE_14, BLACK, lines[l].c_str());
+				Gui::Draw_Text_Editor(textX, 28+(ii*12), FONT_SIZE_14, Config::unselectedColor, lines[l].c_str());
 				ii++;
 			}
 		}
@@ -93,10 +95,10 @@ void TextEditor::Draw(void) const
 	}
 
 	std::string totalLines = Lang::get("LINES") + std::to_string(textEditorText.size());
-	Gui::DrawString(4, 220, FONT_SIZE_18, WHITE, totalLines.c_str());
+	Gui::DrawString(4, 220, FONT_SIZE_18, Config::TxtColor, totalLines.c_str());
 
 	std::string currentLine = Lang::get("CURRENT_LINE") + std::to_string(textEditorCurPos+1);
-	Gui::DrawString(400-Gui::GetStringWidth(FONT_SIZE_18, currentLine.c_str())-4, 220, FONT_SIZE_18, WHITE, currentLine.c_str());
+	Gui::DrawString(400-Gui::GetStringWidth(FONT_SIZE_18, currentLine.c_str())-4, 220, FONT_SIZE_18, Config::TxtColor, currentLine.c_str());
 
 	Gui::DrawBottom();
 	drawKeyboard();
@@ -152,7 +154,7 @@ void TextEditor::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	// Scroll screen if needed
-	if (textEditorCurPos < textEditorScrnPos) 	{
+	if (textEditorCurPos < textEditorScrnPos)	{
 		textEditorScrnPos = textEditorCurPos;
 	}
 	if (textEditorCurPos > textEditorScrnPos + rowsDisplayed) {

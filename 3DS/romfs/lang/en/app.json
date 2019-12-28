@@ -10,6 +10,8 @@
 	"TOP_BG_COLOR":						"Top Background Color",
 	"BOTTOM_BG_COLOR":					"Bottom Background Color",
 	"TEXT_COLOR":						"Text Color",
+	"SELECTED_COLOR":					"Selected Color",
+	"UNSELECTED_COLOR":					"Unselected Color",
 
 	"ENTER_RED_RGB":					"Enter the Red RGB.",
 	"ENTER_GREEN_RGB":					"Enter the Green RGB.",
@@ -31,5 +33,7 @@
 	"CURRENT_LINE":						"Current Line: ",
 	"ENTER_NEW_FILENAME":				"Enter the new file name.",
 	"SAVE_CHANGES":						"Would you like to save your changes?",
-	"DISCARD_CHANGES":					"Discard all changes since last save?"
+	"DISCARD_CHANGES":					"Discard all changes since last save?",
+
+	"SELECT_FILE_EDIT":					"Select the file you like to edit."
 }

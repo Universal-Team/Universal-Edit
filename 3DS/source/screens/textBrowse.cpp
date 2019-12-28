@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "lang/lang.hpp"
 
 #include "screens/screenCommon.hpp"
 #include "screens/textBrowse.hpp"
@@ -41,13 +42,15 @@
 
 std::string TextFile = "";
 std::string currentEditingFile = "";
+std::string editingFileName = "";
 
 void TextBrowse::Draw(void) const
 {
 	Gui::DrawTop();
 	char path[PATH_MAX];
 	getcwd(path, PATH_MAX);
-	Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 218, 0.60f, WHITE, path);
+	Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
+	Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, Lang::get("SELECT_FILE_EDIT"), 400);
 	std::string dirs;
 	for (uint i=(selectedFile<5) ? 0 : selectedFile-5;i<dirContents.size()&&i<((selectedFile<5) ? 6 : selectedFile+1);i++) {
 		if (i == selectedFile) {
@@ -60,7 +63,7 @@ void TextBrowse::Draw(void) const
 		dirs += "\n\n";
 	}
 
-	Gui::DrawString(26, 32, 0.53f, BLACK, dirs.c_str());
+	Gui::DrawString(26, 32, 0.53f, Config::TxtColor, dirs.c_str());
 	Gui::DrawBottom();
 }
 
@@ -89,6 +92,7 @@ void TextBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				std::string currentPath = path;
 				currentPath += dirContents[selectedFile].name;
 				currentEditingFile = currentPath;
+				editingFileName = dirContents[selectedFile].name;
 				Config::lastEditedFile = currentEditingFile;
 				Gui::setScreen(std::make_unique<TextEditor>());
 			}

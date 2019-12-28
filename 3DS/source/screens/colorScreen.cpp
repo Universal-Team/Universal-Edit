@@ -42,7 +42,7 @@ void ColorScreen::Draw(void) const {
 
 	Gui::DrawBottom();
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		if (colorMode == i) {
 			Gui::Draw_Rect(25 + i * 25, 5, 16, 16, C2D_Color32(140, 140, 140, 255));
 		}
@@ -52,6 +52,8 @@ void ColorScreen::Draw(void) const {
 	Gui::DrawString(29 + 1 * 25, 5, 0.5f, WHITE, "2", 400);
 	Gui::DrawString(29 + 2 * 25, 5, 0.5f, WHITE, "3", 400);
 	Gui::DrawString(29 + 3 * 25, 5, 0.5f, WHITE, "4", 400);
+	Gui::DrawString(29 + 4 * 25, 5, 0.5f, WHITE, "5", 400);
+	Gui::DrawString(29 + 5 * 25, 5, 0.5f, WHITE, "6", 400);
 
 	Gui::Draw_Rect(buttons[0].x, buttons[0].y, 95, 41, C2D_Color32(255, 0, 0, 255));
 	Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
@@ -77,6 +79,16 @@ void ColorScreen::Draw(void) const {
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 0).c_str(), 400);
+	} else if (colorMode == 4) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::selectedColor, Lang::get("SELECTED_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 0).c_str(), 400);
+	} else if (colorMode == 5) {
+		Gui::DrawStringCentered(0, 60, 0.7f, Config::unselectedColor, Lang::get("UNSELECTED_COLOR"), 320);
+		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 2).c_str(), 400);
+		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 1).c_str(), 400);
+		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 0).c_str(), 400);
 	}
 }
 
@@ -95,7 +107,7 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_R || hDown & KEY_RIGHT) {
-		if(colorMode < 3)	colorMode++;
+		if(colorMode < 5)	colorMode++;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -111,6 +123,10 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					Config::Color3 = RGBA8(red, ColorHelper::getColorValue(Config::Color3, 1), ColorHelper::getColorValue(Config::Color3, 0), 255);
 				} else if (colorMode == 3) {
 					Config::TxtColor = RGBA8(red, ColorHelper::getColorValue(Config::TxtColor, 1), ColorHelper::getColorValue(Config::TxtColor, 0), 255);
+				} else if (colorMode == 4) {
+					Config::selectedColor = RGBA8(red, ColorHelper::getColorValue(Config::selectedColor, 1), ColorHelper::getColorValue(Config::selectedColor, 0), 255);
+				} else if (colorMode == 5) {
+					Config::unselectedColor = RGBA8(red, ColorHelper::getColorValue(Config::unselectedColor, 1), ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
 				}
 			}
 
@@ -127,6 +143,10 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					Config::Color3 = RGBA8(ColorHelper::getColorValue(Config::Color3, 2), green, ColorHelper::getColorValue(Config::Color3, 0), 255);
 				} else if (colorMode == 3) {
 					Config::TxtColor = RGBA8(ColorHelper::getColorValue(Config::TxtColor, 2), green, ColorHelper::getColorValue(Config::TxtColor, 0), 255);
+				} else if (colorMode == 4) {
+					Config::selectedColor = RGBA8(ColorHelper::getColorValue(Config::selectedColor, 2), green, ColorHelper::getColorValue(Config::selectedColor, 0), 255);
+				} else if (colorMode == 5) {
+					Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), green, ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
 				}
 			}
 		} else if (touching(touch, buttons[2])) {
@@ -141,6 +161,10 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					Config::Color3 = RGBA8(ColorHelper::getColorValue(Config::Color3, 2), ColorHelper::getColorValue(Config::Color3, 1), blue, 255);
 				} else if (colorMode == 3) {
 					Config::TxtColor = RGBA8(ColorHelper::getColorValue(Config::TxtColor, 2), ColorHelper::getColorValue(Config::TxtColor, 1), blue, 255);
+				} else if (colorMode == 4) {
+					Config::selectedColor = RGBA8(ColorHelper::getColorValue(Config::selectedColor, 2), ColorHelper::getColorValue(Config::selectedColor, 1), blue, 255);
+				} else if (colorMode == 5) {
+					Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), ColorHelper::getColorValue(Config::unselectedColor, 1), blue, 255);
 				}
 			}
 		}

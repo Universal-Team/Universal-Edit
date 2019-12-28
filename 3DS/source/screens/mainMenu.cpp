@@ -41,6 +41,7 @@ extern bool exiting;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 extern std::string currentEditingFile;
+extern std::string editingFileName;
 
 void MainMenu::Draw(void) const {
 	Gui::DrawTop();

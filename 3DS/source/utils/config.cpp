@@ -37,6 +37,9 @@ int Config::Color1;
 int Config::Color2;
 int Config::Color3;
 int Config::TxtColor;
+// Mainly Text Editor colors.
+int Config::selectedColor, Config::unselectedColor;
+
 std::string Config::lastEditedFile;
 nlohmann::json configJson;
 
@@ -80,6 +83,18 @@ void Config::load() {
 			Config::lang = getInt("LANGUAGE");
 		}
 
+		if(!configJson.contains("SELECTEDCOLOR")) {
+			Config::selectedColor = WHITE;
+		} else {
+			Config::selectedColor = getInt("SELECTEDCOLOR");
+		}
+
+		if(!configJson.contains("UNSELECTEDCOLOR")) {
+			Config::unselectedColor = BLACK;
+		} else {
+			Config::unselectedColor = getInt("UNSELECTEDCOLOR");
+		}
+
 		fclose(file);
 	} else {
 		Config::Color1 = BarColor;
@@ -88,6 +103,8 @@ void Config::load() {
 		Config::TxtColor = WHITE;
 		Config::lastEditedFile = "";
 		Config::lang = 2;
+		Config::selectedColor = WHITE;
+		Config::unselectedColor = BLACK;
 	}
 }
 
@@ -98,6 +115,8 @@ void Config::save() {
 	Config::setInt("TEXTCOLOR", Config::TxtColor);
 	Config::setString("LASTEDITED", Config::lastEditedFile);
 	Config::setInt("LANGUAGE", Config::lang);
+	Config::setInt("SELECTEDCOLOR", Config::selectedColor);
+	Config::setInt("UNSELECTEDCOLOR", Config::unselectedColor);
 	FILE* file = fopen("sdmc:/3ds/Universal-Edit/Settings.json", "w");
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
@@ -112,6 +131,8 @@ void Config::initializeNewConfig() {
 	Config::setInt("TEXTCOLOR", WHITE);
 	Config::setString("LASTEDITED", "");
 	Config::setInt("LANGUAGE", 2);
+	Config::setInt("SELECTEDCOLOR", WHITE);
+	Config::setInt("UNSELECTEDCOLOR", BLACK);
 	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }
