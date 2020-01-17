@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -92,11 +92,13 @@ void Gui::DisplayMsg(std::string text) {
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawString(10, 40, 0.45f, Config::TxtColor, text, 380);
+	Gui::Draw_Rect(0, 80, 400, 80, Config::Color1);
+	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.72f, text))/2, 0.72f, Config::TxtColor, text, 390, 70);
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 }
 
+// Displays a Warn Message.
 void Gui::DisplayWarnMsg(std::string Text)
 {
 	Gui::clearTextBufs();
@@ -104,7 +106,8 @@ void Gui::DisplayWarnMsg(std::string Text)
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawStringCentered(0, 2, 0.6f, Config::TxtColor, Text, 400);
+	Gui::Draw_Rect(0, 80, 400, 80, Config::Color1);
+	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.72f, Text))/2, 0.72f, Config::TxtColor, Text, 395, 70);
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 	for (int i = 0; i < 60*3; i++) {
@@ -112,20 +115,36 @@ void Gui::DisplayWarnMsg(std::string Text)
 	}
 }
 
-void Gui::DrawStringCentered(float x, float y, float size, u32 color, std::string Text, int maxWidth) {
-	Gui::DrawString((currentScreen ? 200 : 160)+x-(std::min(maxWidth, (int)Gui::GetStringWidth(size, Text))/2), y, size, color, Text, maxWidth);
+// Draw a string centered.
+void Gui::DrawStringCentered(float x, float y, float size, u32 color, std::string Text, int maxWidth, int maxHeight) {
+    float heightScale;
+    if(maxHeight == 0) {
+        heightScale = size;
+    } else {
+        heightScale = std::min(size, size*(maxHeight/Gui::GetStringHeight(size, Text)));
+    }
+
+	Gui::DrawString((currentScreen ? 200 : 160)+x-((maxWidth == 0 ? (int)Gui::GetStringWidth(size, Text) : std::min(maxWidth, (int)Gui::GetStringWidth(size, Text)))/2), y, size, color, Text, maxWidth, heightScale);
 }
 
 // Draw String or Text.
-void Gui::DrawString(float x, float y, float size, u32 color, std::string Text, int maxWidth) {
-	C2D_Text c2d_text;
-	C2D_TextParse(&c2d_text, sizeBuf, Text.c_str());
-	C2D_TextOptimize(&c2d_text);
-	if(maxWidth == 0) {
-		C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, size, size, color);
-	} else {
-		C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, std::min(size, size*(maxWidth/Gui::GetStringWidth(size, Text))), size, color);
-	}
+void Gui::DrawString(float x, float y, float size, u32 color, std::string Text, int maxWidth, int maxHeight) {
+    C2D_Text c2d_text;
+    C2D_TextParse(&c2d_text, sizeBuf, Text.c_str());
+    C2D_TextOptimize(&c2d_text);
+
+    float heightScale;
+    if(maxHeight == 0) {
+        heightScale = size;
+    } else {
+        heightScale = std::min(size, size*(maxHeight/Gui::GetStringHeight(size, Text)));
+    }
+
+    if(maxWidth == 0) {
+        C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, size, heightScale, color);
+    } else {
+        C2D_DrawText(&c2d_text, C2D_WithColor, x, y, 0.5f, std::min(size, size*(maxWidth/Gui::GetStringWidth(size, Text))), heightScale, color);
+    }
 }
 
 
@@ -186,8 +205,6 @@ void Gui::DrawTop(void) {
 	Gui::Draw_Rect(0, 0, 400, 25, Config::Color1);
 	Gui::Draw_Rect(0, 25, 400, 190, Config::Color2);
 	Gui::Draw_Rect(0, 215, 400, 25, Config::Color1);
-	Gui::sprite(sprites_top_screen_top_idx, 0, 0);
-	Gui::sprite(sprites_top_screen_bot_idx, 0, 215);
 }
 
 void Gui::DrawBottom(void) {
@@ -195,8 +212,6 @@ void Gui::DrawBottom(void) {
 	Gui::Draw_Rect(0, 0, 320, 25, Config::Color1);
 	Gui::Draw_Rect(0, 25, 320, 190, Config::Color3);
 	Gui::Draw_Rect(0, 215, 320, 25, Config::Color1);
-	Gui::sprite(sprites_bottom_screen_top_idx, 0, 0);
-	Gui::sprite(sprites_bottom_screen_bot_idx, 0, 215);
 }
 
 // Display a Message, which needs to be confirmed with A/B.
@@ -207,8 +222,9 @@ bool Gui::promptMsg(std::string promptMsg)
 	C2D_TargetClear(top, BLACK);
 	C2D_TargetClear(bottom, BLACK);
 	Gui::DrawTop();
-	Gui::DrawString((400-Gui::GetStringWidth(0.6f, promptMsg.c_str()))/2, 100, 0.6f, Config::TxtColor, promptMsg.c_str(), 400);
-	Gui::DrawString((400-Gui::GetStringWidth(0.72f, "Press A to confirm, B to cancel."))/2, 214, 0.72f, Config::TxtColor, "Press A to confirm, B to cancel.", 400);
+	Gui::Draw_Rect(0, 80, 400, 80, Config::Color1);
+	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.72f, promptMsg))/2, 0.6f, Config::TxtColor, promptMsg, 390, 70);
+	Gui::DrawStringCentered(0, 216, 0.72f, Config::TxtColor, "Press A to confirm, B to cancel.", 390);
 	Gui::DrawBottom();
 	C3D_FrameEnd(0);
 	while(1)

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ void Credits::Draw(void) const {
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, title.c_str()))/2, 0, 0.8f, Config::TxtColor, title.c_str(), 400);
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("DEVELOPED_BY")))/2, 40, 0.8f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 400);
 		Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("MAIN_DEV")))/2, 70, 0.8f, Config::TxtColor, Lang::get("MAIN_DEV"), 400);
-		Gui::sprite(sprites_voltZ_idx, 150, 115);
+		Gui::sprite(sprites_stackZ_idx, 150, 115);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
 		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 218, 0.72f, Config::TxtColor, currentVersion, 400);
