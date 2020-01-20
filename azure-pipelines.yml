@@ -76,6 +76,9 @@ steps:
 
     qrencode -o universal-edit.nds.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.nds.cia
     qrencode -o universal-edit.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.cia
+    
+    qrencode -o universal-edit-release.nds.png https://github.com/Universal-Team/Universal-Edit/releases/download/$(git describe --abbrev=0 --tags)/universal-edit.nds.cia
+    qrencode -o universal-edit-release.png https://github.com/Universal-Team/Universal-Edit/releases/download/$(git describe --abbrev=0 --tags)/universal-edit.cia
 
     git stage .
     git commit -m "Universal-Edit | $(COMMIT_TAG)"
