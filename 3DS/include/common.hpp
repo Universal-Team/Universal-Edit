@@ -24,22 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef STRUCTS_HPP
-#define STRUCTS_HPP
+#ifndef COMMON_HPP
+#define COMMON_HPP
 
-#include <string>
-
-class Structs
-{
-public:
-	struct ButtonPos {
-		int x;
-		int y;
-		int w;
-		int h;
-		int link;
-	};
-private:
-};
+// This is the new "screenCommon.hpp", lol.
+#include "config.hpp"
+#include "gfx.hpp"
+#include "gui.hpp"
+#include "lang.hpp"
+#include "msg.hpp"
+#include "screenCommon.hpp"
 
 #endif

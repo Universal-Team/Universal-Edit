@@ -1,5 +1,5 @@
-#ifndef FILE_BROWSE_H
-#define FILE_BROWSE_H
+#ifndef FILE_BROWSE_HPP
+#define FILE_BROWSE_HPP
 
 #include <dirent.h>
 #include <string>

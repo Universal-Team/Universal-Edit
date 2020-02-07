@@ -27,10 +27,8 @@
 #ifndef CREDITS_HPP
 #define CREDITS_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
-
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
@@ -46,7 +44,7 @@ private:
 	bool discordText = false;
 
 	std::vector<Structs::ButtonPos> barPos = {
-		{0, 215, 320, 25, -1},
+		{0, 215, 320, 25},
 	};
 };
 

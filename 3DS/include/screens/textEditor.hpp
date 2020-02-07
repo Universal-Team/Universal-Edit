@@ -27,7 +27,8 @@
 #ifndef TEXTEDITOR_HPP
 #define TEXTEDITOR_HPP
 
-#include "screens/screen.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <string>
 #include <vector>

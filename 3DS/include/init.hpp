@@ -1,5 +1,5 @@
 /*
-*   This file is part of Universal-Edit
+*   This file is part of Universal-Updater
 *   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,26 +24,16 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "colors.hpp"
+#ifndef INIT_HPP
+#define INIT_HPP
 
-int ColorHelper::getColorValue(int color, int bgr)
-{
-	char colorName[10];
-	int i;
-	std::stringstream ss;
+#include <3ds.h>
 
-	itoa(color, colorName, 16);
-	std::string colorNamePart(colorName, 2*bgr+2, 2);
-	ss << std::hex << colorNamePart.c_str();
-	ss >> i;
-
-	return i;
+namespace Init {
+	// Init, Mainloop & Exit.
+	Result Initialize();
+	Result MainLoop();
+	Result Exit();
 }
 
-std::string ColorHelper::getColorName(int color, int bgr)
-{
-	char colorName[10];
-	int i = getColorValue(color, bgr);
-	itoa(i, colorName, 10);
-	return colorName;
-}
+#endif

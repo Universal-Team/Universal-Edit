@@ -1,39 +1,30 @@
-#include "gui.hpp"
-
-#include "utils/config.hpp"
-#include "utils/keyboard.hpp"
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "keyboard.hpp"
+#include "structs.hpp"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <string>
 
-extern C3D_RenderTarget* top;
-extern C3D_RenderTarget* bottom;
+extern C3D_RenderTarget* Top;
+extern C3D_RenderTarget* Bottom;
 
 bool caps = false, enter = false;
 int shift = 0;
 
-struct Key {
-	std::string character;
-	int x;
-	int y;
-	int w;
-};
-
-Key keysQWERTY[] = {
+Structs::Key keysQWERTY[] = {
 	{"1", 0, 0}, {"2", 25, 0}, {"3", 50, 0}, {"4", 75, 0}, {"5", 100, 0}, {"6", 125, 0}, {"7", 150, 0}, {"8", 175, 0}, {"9", 200, 0}, {"0", 225, 0}, {"-", 250, 0}, {"=", 275, 0},
 	{"q", 12, 22}, {"w", 37, 22}, {"e", 62, 22}, {"r", 87, 22}, {"t", 112, 22}, {"y", 137, 22}, {"u", 162, 22}, {"i", 187, 22}, {"o", 212, 22}, {"p", 237, 22}, {"[", 262, 22}, {"]", 287, 22},
 	{"a", 25, 45}, {"s", 50, 45}, {"d", 75, 45}, {"f", 100, 45}, {"g", 125, 45}, {"h", 150, 45}, {"j", 175, 45}, {"k", 200, 45}, {"l", 225, 45}, {";", 250, 45}, {"'", 275, 45},
 	{"z", 35, 67}, {"x", 60, 67}, {"c", 85, 67}, {"v", 110, 67}, {"b", 135, 67}, {"n", 160, 67}, {"m", 185, 67}, {",", 210, 67}, {".", 235, 67}, {"/", 260, 67}, {"\\", 210, 90},
 };
-Key keysQWERTYShift[] = {
+Structs::Key keysQWERTYShift[] = {
 	{"!", 0, 0}, {"@", 25, 0}, {"#", 50, 0}, {"$", 75, 0}, {"%", 100, 0}, {"^", 125, 0}, {"&", 150, 0}, {"*", 175, 0}, {"(", 200, 0}, {")", 225, 0}, {"_", 250, 0}, {"+", 275, 0},
 	{"Q", 12, 22}, {"W", 37, 22}, {"E", 62, 22}, {"R", 87, 22}, {"T", 112, 22}, {"Y", 137, 22}, {"U", 162, 22}, {"I", 187, 22}, {"O", 212, 22}, {"P", 237, 22}, {"{", 262, 22}, {"}", 287, 22},
 	{"A", 25, 45}, {"S", 50, 45}, {"D", 75, 45}, {"F", 100, 45}, {"G", 125, 45}, {"H", 150, 45}, {"J", 175, 45}, {"K", 200, 45}, {"L", 225, 45}, {":", 250, 45}, {"\"", 275, 45},
 	{"Z", 35, 67}, {"X", 60, 67}, {"C", 85, 67}, {"V", 110, 67}, {"B", 135, 67}, {"N", 160, 67}, {"M", 185, 67}, {"<,", 210, 67}, {">", 235, 67}, {"?", 260, 67}, {"\\", 210, 90},
 };
-Key modifierKeys[] = {
+Structs::Key modifierKeys[] = {
 	{"bksp", 300, 0, 20},	// Backspace
 	{"caps",   0, 45, 20},	// Caps Lock
 	{"entr", 300, 45, 20},	// Enter
@@ -43,7 +34,7 @@ Key modifierKeys[] = {
 	{" ",     85, 90, 120},	// Space
 };
 
-Key NumpadStruct[] = {
+Structs::Key NumpadStruct[] = {
 	{"1", 10, 25},
 	{"2", 90, 25},
 	{"3", 170, 25},
@@ -95,7 +86,7 @@ void Input::DrawNumpad()
 	}
 }
 
-void drawKeyboard() {
+void Input::drawKeyboard() {
 	for(uint i=0;i<(sizeof(keysQWERTY)/sizeof(keysQWERTY[0]));i++) {
 		C2D_DrawRectSolid(keysQWERTY[i].x, keysQWERTY[i].y+103, 0.5f, 20, 20, Config::Color1 & C2D_Color32(255, 255, 255, 200));
 		if(shift) {
@@ -124,10 +115,10 @@ std::string Input::getLine(uint maxLength, std::string Text) {
 			C3D_FrameEnd(0);
 			Gui::clearTextBufs();
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			Gui::DrawTop();
+			GFX::DrawTop();
 			Gui::DrawString((400-Gui::GetStringWidth(0.55f, Text))/2, 2, 0.55f, WHITE, Text);
-			C2D_SceneBegin(bottom);
-			Gui::DrawBottom();
+			Gui::ScreenDraw(Bottom);
+			GFX::DrawBottom();
 			drawKeyboard();
 			C2D_DrawRectSolid(0, 81, 0.5f, 320, 20, Config::Color1 & C2D_Color32(200, 200, 200, 200));
 			Gui::DrawString(5, 82, 0.6, WHITE, (string+(cursorBlink-- > 0 ? "_" : "")).c_str());
@@ -278,14 +269,13 @@ std::string Input::Numpad(uint maxLength, std::string Text)
 			C3D_FrameEnd(0);
 			Gui::clearTextBufs();
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			C2D_TargetClear(top, BLACK);
-			C2D_TargetClear(bottom, BLACK);
-			Gui::DrawTop();
+			C2D_TargetClear(Top, BLACK);
+			C2D_TargetClear(Bottom, BLACK);
+			GFX::DrawTop();
 			Gui::DrawString((400-Gui::GetStringWidth(0.75f, Text))/2, 0, 0.75f, WHITE, Text );
 			Gui::DrawString(160, 214, 0.8, WHITE, (string+(cursorBlink-- > 0 ? "_" : "")).c_str());
 			if(cursorBlink < -20)	cursorBlink = 20;
-			C2D_SceneBegin(bottom);
-			Gui::DrawBottom();
+			GFX::DrawBottom();
 			DrawNumpad();
 			scanKeys();
 			hDown = keysDown();

@@ -1,0 +1,3 @@
+[submodule "3DS/Universal-Core"]
+	path = 3DS/Universal-Core
+	url = https://github.com/SuperSaiyajinStackZ/Universal-Core.git
