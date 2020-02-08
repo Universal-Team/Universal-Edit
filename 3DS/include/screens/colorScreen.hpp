@@ -27,10 +27,8 @@
 #ifndef COLORSCREEN_HPP
 #define COLORSCREEN_HPP
 
-#include "screens/screen.hpp"
-#include "screens/screenCommon.hpp"
-
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
@@ -46,9 +44,9 @@ private:
 	int Selection = 0;
 
 	std::vector<Structs::ButtonPos> buttons = {
-		{10, 85, 95, 41, -1},
-		{115, 85, 95, 41, -1},
-		{220, 85, 95, 41, -1},
+		{10, 85, 95, 41},
+		{115, 85, 95, 41},
+		{220, 85, 95, 41},
 	};
 };
 

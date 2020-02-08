@@ -24,10 +24,9 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "gui.hpp"
-
-#include "utils/config.hpp"
-#include "utils/json.hpp"
+#include "config.hpp"
+#include "gfx.hpp"
+#include "json.hpp"
 
 #include <string>
 #include <unistd.h>

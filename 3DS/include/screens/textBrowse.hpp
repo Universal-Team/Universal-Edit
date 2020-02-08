@@ -27,11 +27,10 @@
 #ifndef TEXTBROWSE_HPP
 #define TEXTBROWSE_HPP
 
-#include "screens/screen.hpp"
+#include "common.hpp"
+#include "fileBrowse.hpp"
+#include "structs.hpp"
 
-#include "utils/fileBrowse.h"
-
-#include <string>
 #include <vector>
 
 class TextBrowse : public Screen

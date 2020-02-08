@@ -24,34 +24,34 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef LANGSCREEN_HPP
-#define LANGSCREEN_HPP
+#ifndef GFX_HPP
+#define GFX_HPP
 
-#include "common.hpp"
-#include "structs.hpp"
+#include "colorHelper.hpp"
+#include "sprites.h"
 
-#include <vector>
+#define FONT_SIZE_18 0.72f
+#define FONT_SIZE_17 0.7f
+#define FONT_SIZE_15 0.6f
+#define FONT_SIZE_14 0.56f
+#define FONT_SIZE_12 0.50f
+#define FONT_SIZE_11 0.46f
+#define FONT_SIZE_9 0.37f
 
-class LangScreen : public Screen
+namespace GFX
 {
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-private:
-	int Selection = 0;
+	// Basic GUI.
+	void DrawTop(void);
+	void DrawBottom(void);
 
-	std::vector<Structs::ButtonPos> langBlocks = {
-		{37, 32, 20, 20},
-		{37, 72, 20, 20},
-		{37, 112, 20, 20},
-		{37, 152, 20, 20},
-		{37, 188, 20, 20},
-		{177, 32, 20, 20},
-		{177, 72, 20, 20},
-		{177, 112, 20, 20},
-		{177, 152, 20, 20},
-		{177, 188, 20, 20},
-	};
-};
+	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
+
+	// External Font & Draw Functions.
+	Result loadEditorFont();
+	Result unloadEditorFont();
+	void DrawText(float x, float y, float size, u32 color, const char *text);
+	void GetTextSize(float size, float *width, float *height, const char *text);
+	float GetTextWidth(float size, const char *text);
+}
 
 #endif

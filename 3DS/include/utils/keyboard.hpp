@@ -5,7 +5,8 @@
 
 namespace Input {
 	void DrawNumpad();
-
+	void drawKeyboard();
+	
 	std::string Numpad(std::string Text);
 	std::string Numpad(uint maxLength, std::string Text);
 
@@ -17,5 +18,4 @@ namespace Input {
 	char checkKeyboard(int hDown, int hHeld);
 }
 
-	void drawKeyboard();
 #endif

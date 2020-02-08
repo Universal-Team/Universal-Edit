@@ -24,34 +24,16 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef LANGSCREEN_HPP
-#define LANGSCREEN_HPP
+#ifndef MSG_HPP
+#define MSG_HPP
 
-#include "common.hpp"
-#include "structs.hpp"
+#include <string>
 
-#include <vector>
-
-class LangScreen : public Screen
+namespace Msg
 {
-public:
-	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-private:
-	int Selection = 0;
-
-	std::vector<Structs::ButtonPos> langBlocks = {
-		{37, 32, 20, 20},
-		{37, 72, 20, 20},
-		{37, 112, 20, 20},
-		{37, 152, 20, 20},
-		{37, 188, 20, 20},
-		{177, 32, 20, 20},
-		{177, 72, 20, 20},
-		{177, 112, 20, 20},
-		{177, 152, 20, 20},
-		{177, 188, 20, 20},
-	};
-};
+	void DisplayMsg(std::string text);
+	void DisplayWarnMsg(std::string Text);
+	bool promptMsg(std::string promptMsg);
+}
 
 #endif

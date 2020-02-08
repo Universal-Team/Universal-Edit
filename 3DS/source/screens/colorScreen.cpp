@@ -24,23 +24,20 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "colorScreen.hpp"
 #include "keyboard.hpp"
-
-#include "screens/colorScreen.hpp"
-
-#include "utils/config.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void ColorScreen::Draw(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Edit", 400);
 
 	if (colorMode == 3) {
 		Gui::DrawStringCentered(0, 45, 0.7f, Config::TxtColor, Lang::get("TEXT_COLOR"), 320);
 	}
 
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 
 	for (int i = 0; i < 6; i++) {
 		if (colorMode == i) {

@@ -24,16 +24,12 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "gui.hpp"
-
-#include "screens/colorScreen.hpp"
-#include "screens/credits.hpp"
-#include "screens/langScreen.hpp"
-#include "screens/mainMenu.hpp"
-#include "screens/textBrowse.hpp"
-#include "screens/textEditor.hpp"
-
-#include "utils/config.hpp"
+#include "colorScreen.hpp"
+#include "credits.hpp"
+#include "langScreen.hpp"
+#include "mainMenu.hpp"
+#include "textBrowse.hpp"
+#include "textEditor.hpp"
 
 #include <unistd.h>
 
@@ -44,10 +40,10 @@ extern std::string currentEditingFile;
 extern std::string editingFileName;
 
 void MainMenu::Draw(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Edit", 400);
 	Gui::DrawString(397-Gui::GetStringWidth(0.5f, V_STRING), 237-Gui::GetStringHeight(0.5f, V_STRING), 0.5f, Config::TxtColor, V_STRING);
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 
 	for (int i = 0; i < 5; i++) {
 		if (Selection == i) {

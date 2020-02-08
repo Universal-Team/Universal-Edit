@@ -24,7 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang/lang.hpp"
+#include "lang.hpp"
 
 #include <stdio.h>
 

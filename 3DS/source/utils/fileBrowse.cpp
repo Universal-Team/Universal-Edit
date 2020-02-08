@@ -1,6 +1,5 @@
-#include "gui.hpp"
-
-#include "utils/fileBrowse.h"
+#include "common.hpp"
+#include "fileBrowse.hpp"
 
 #include <3ds.h>
 #include <cstring>
@@ -16,7 +15,6 @@
 
 int file_count = 0;
 
-extern bool continueNdsScan;
 extern uint selectedFile;
 extern int keyRepeatDelay;
 extern bool dirChanged;
@@ -68,7 +66,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 	DIR *pdir = opendir(".");
 
 	if(pdir == NULL) {
-		Gui::DisplayMsg("Unable to open the directory.");
+		Msg::DisplayMsg("Unable to open the directory.");
 		for(int i=0;i<120;i++)	gspWaitForVBlank();
 	} else {
 		while(true) {

@@ -24,14 +24,26 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef SCREENCOMMON_HPP
-#define SCREENCOMMON_HPP
+#include "colorHelper.hpp"
 
-#include "gui.hpp"
+int ColorHelper::getColorValue(int color, int bgr)
+{
+	char colorName[10];
+	int i;
+	std::stringstream ss;
 
-#include "lang/lang.hpp"
+	itoa(color, colorName, 16);
+	std::string colorNamePart(colorName, 2*bgr+2, 2);
+	ss << std::hex << colorNamePart.c_str();
+	ss >> i;
 
-extern C3D_RenderTarget* top;
-extern C3D_RenderTarget* bottom;
+	return i;
+}
 
-#endif
+std::string ColorHelper::getColorName(int color, int bgr)
+{
+	char colorName[10];
+	int i = getColorValue(color, bgr);
+	itoa(i, colorName, 10);
+	return colorName;
+}

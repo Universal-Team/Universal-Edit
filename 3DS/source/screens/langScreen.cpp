@@ -24,19 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "keyboard.hpp"
-
-#include "screens/langScreen.hpp"
-
-#include "utils/config.hpp"
+#include "langScreen.hpp"
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 
 void LangScreen::Draw(void) const {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("SELECT_LANG")))/2, 2, 0.8f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 
 	for (int language = 0; language < 10; language++) {
 		if (Config::lang == language) {

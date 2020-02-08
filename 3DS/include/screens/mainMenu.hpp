@@ -27,9 +27,8 @@
 #ifndef MAINMENU_HPP
 #define MAINMENU_HPP
 
-#include "screens/screen.hpp"
-
-#include "utils/structs.hpp"
+#include "common.hpp"
+#include "structs.hpp"
 
 #include <vector>
 
@@ -41,11 +40,11 @@ public:
 private:
 	int Selection = 0;
 	std::vector<Structs::ButtonPos> mainButtons = {		
-		{10, 40, 140, 35, -1}, // FileBrowse.
-		{170, 40, 140, 35, -1}, // Last edited.
-		{10, 100, 140, 35, -1}, // Language.
-		{170, 100, 140, 35, -1}, // Colors.
-		{10, 160, 140, 35, -1}, // Credits.
+		{10, 40, 140, 35}, // FileBrowse.
+		{170, 40, 140, 35}, // Last edited.
+		{10, 100, 140, 35}, // Language.
+		{170, 100, 140, 35}, // Colors.
+		{10, 160, 140, 35}, // Credits.
 	};
 };
 

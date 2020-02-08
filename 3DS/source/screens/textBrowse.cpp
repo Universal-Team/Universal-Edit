@@ -24,15 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang/lang.hpp"
 
-#include "screens/screenCommon.hpp"
-#include "screens/textBrowse.hpp"
-#include "screens/textEditor.hpp"
 
-#include "utils/config.hpp"
-#include "utils/fileBrowse.h"
-#include "utils/keyboard.hpp"
+#include "keyboard.hpp"
+#include "textBrowse.hpp"
+#include "textEditor.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -46,7 +42,7 @@ std::string editingFileName = "";
 
 void TextBrowse::Draw(void) const
 {
-	Gui::DrawTop();
+	GFX::DrawTop();
 	char path[PATH_MAX];
 	getcwd(path, PATH_MAX);
 	Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
@@ -64,7 +60,7 @@ void TextBrowse::Draw(void) const
 	}
 
 	Gui::DrawString(26, 32, 0.53f, Config::TxtColor, dirs.c_str());
-	Gui::DrawBottom();
+	GFX::DrawBottom();
 }
 
 void TextBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
