@@ -21,6 +21,5 @@
 #define WHITE_TEXT 0
 #define GRAY_TEXT 1
 #define RED_TEXT 2
-#define BLUE_TEXT 3
 
 #endif

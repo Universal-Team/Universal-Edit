@@ -60,10 +60,9 @@ void initGraphics(void) {
 	bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
 	bgSetPriority(bg2Sub, 2);
 
-	u16 palette[] = {0, 0xFBDE, 0xBDEF, // WHITE_TEXT
-					 0, 0x8C63, 0xCA52, // GRAY_TEXT
-					 0, (u16)(0x801F & 0xFBDE), (u16)(0x801F & 0xBDEF), // RED_TEXT
-					 0, (u16)(0xFC00 & 0xFBDE), (u16)(0xFC00 & 0xBDEF), // BLUE_TEXT
+	u16 palette[] = {0, 0xFBDE, 0xD6B5, 0xA108, // WHITE_TEXT
+					 0, 0x8C63, 0xCA52, 0xEB5A, // GRAY_TEXT
+					 0, (0x801F & 0xFBDE), (0x801F & 0xBDEF), (0x801F & 0xEB5A), // RED_TEXT
 					 0xE739, 0x98C6, 0x94A5, 0x8842}; // LIGHT_GRAY, DARK_GRAY, DARKER_GRAY, DARKERER_GRAY
 	tonccpy(BG_PALETTE, &palette, sizeof(palette));
 	tonccpy(BG_PALETTE_SUB, &palette, sizeof(palette));
@@ -478,7 +477,7 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 		}
 
 		int t = getCharIndex(text[c]);
-		Image image = {tileWidth, tileHeight, {}, {}, (u16)((highlight*3)*3)};
+		Image image = {tileWidth, tileHeight, {}, {}, (u16)((highlight * RED_TEXT) * 4)};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap[(i*4)]   = (fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap[(i*4)+1] = (fontTiles[i+(t*tileSize)]>>4 & 3);
@@ -558,7 +557,7 @@ void printTextTintedScaled(const std::u16string &text, float scaleX, float scale
 		}
 
 		int t = getCharIndex(text[c]);
-		Image image = {tileWidth, tileHeight, {}, {}, (u16)(palette*3)};
+		Image image = {tileWidth, tileHeight, {}, {}, (u16)(palette * 4)};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap[(i*4)]   = (fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap[(i*4)+1] = (fontTiles[i+(t*tileSize)]>>4 & 3);
