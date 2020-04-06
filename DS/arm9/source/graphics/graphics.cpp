@@ -61,7 +61,7 @@ void initGraphics(void) {
 	bgSetPriority(bg2Sub, 2);
 
 	u16 palette[] = {0, 0xFBDE, 0xD6B5, 0xA108, // WHITE_TEXT
-					 0, 0x8C63, 0xCA52, 0xEB5A, // GRAY_TEXT
+					 0, 0x9084, 0xB18C, 0xDEF7, // GRAY_TEXT
 					 0, (0x801F & 0xFBDE), (0x801F & 0xBDEF), (0x801F & 0xEB5A), // RED_TEXT
 					 0xE739, 0x98C6, 0x94A5, 0x8842}; // LIGHT_GRAY, DARK_GRAY, DARKER_GRAY, DARKERER_GRAY
 	tonccpy(BG_PALETTE, &palette, sizeof(palette));
@@ -477,7 +477,8 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 		}
 
 		int t = getCharIndex(text[c]);
-		Image image = {tileWidth, tileHeight, {}, {}, (u16)((highlight * RED_TEXT) * 4)};
+		if(highlight)	palette = highlight * RED_TEXT;
+		Image image = {tileWidth, tileHeight, {}, {}, (u16)(palette * 4)};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap[(i*4)]   = (fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap[(i*4)+1] = (fontTiles[i+(t*tileSize)]>>4 & 3);
