@@ -27,6 +27,7 @@
 #include "colorScreen.hpp"
 #include "keyboard.hpp"
 
+extern bool changesMade;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void ColorScreen::Draw(void) const {
@@ -125,6 +126,7 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				} else if (colorMode == 5) {
 					Config::unselectedColor = RGBA8(red, ColorHelper::getColorValue(Config::unselectedColor, 1), ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
 				}
+				changesMade = true;
 			}
 
 
@@ -145,6 +147,7 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				} else if (colorMode == 5) {
 					Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), green, ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
 				}
+				changesMade = true;
 			}
 		} else if (touching(touch, buttons[2])) {
 			int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
@@ -163,6 +166,7 @@ void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				} else if (colorMode == 5) {
 					Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), ColorHelper::getColorValue(Config::unselectedColor, 1), blue, 255);
 				}
+				changesMade = true;
 			}
 		}
 	}

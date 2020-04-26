@@ -45,8 +45,8 @@ void TextBrowse::Draw(void) const
 	GFX::DrawTop();
 	char path[PATH_MAX];
 	getcwd(path, PATH_MAX);
-	Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 0, 0.60f, Config::TxtColor, path);
-	Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, Lang::get("SELECT_FILE_EDIT"), 400);
+	Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 218, 0.60f, Config::TxtColor, path);
+	Gui::DrawStringCentered(0, 0, 0.60f, Config::TxtColor, Lang::get("SELECT_FILE_EDIT"), 400);
 	std::string dirs;
 	for (uint i=(selectedFile<5) ? 0 : selectedFile-5;i<dirContents.size()&&i<((selectedFile<5) ? 6 : selectedFile+1);i++) {
 		if (i == selectedFile) {

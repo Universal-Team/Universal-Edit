@@ -86,6 +86,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				break;
 			case 1:
 				currentEditingFile = Config::lastEditedFile;
+				editingFileName = Config::lastEditedFile;
 				if(access(currentEditingFile.c_str(), F_OK) != -1 ) {
 					Gui::setScreen(std::make_unique<TextEditor>());
 				}
@@ -107,6 +108,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Gui::setScreen(std::make_unique<TextBrowse>());
 		} else if (touching(touch, mainButtons[1])) {
 			currentEditingFile = Config::lastEditedFile;
+			editingFileName = Config::lastEditedFile;
 			if(access(currentEditingFile.c_str(), F_OK) != -1 ) {
 				Gui::setScreen(std::make_unique<TextEditor>());
 			}

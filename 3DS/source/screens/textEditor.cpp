@@ -34,6 +34,7 @@
 extern std::string TextFile;
 extern std::string currentEditingFile;
 extern std::string editingFileName;
+extern bool changesMade;
 
 TextEditor::TextEditor() {
 	textEditorText.clear();
@@ -47,6 +48,7 @@ TextEditor::TextEditor() {
 	if(textEditorText.size() == 0)	textEditorText.push_back("");
 	in.close();
 	textRead = true;
+	changesMade = true; // Needed to save the last edited file.
 }
 
 
@@ -58,7 +60,7 @@ void TextEditor::Draw(void) const
 	C2D_TargetClear(Bottom, BLACK);
 	textRead = false;
 	GFX::DrawTop();
-	Gui::DrawString(200-((Gui::GetStringWidth(FONT_SIZE_18, editingFileName)/2)), 0, FONT_SIZE_18, Config::TxtColor, editingFileName);
+	Gui::DrawStringCentered(0, 0, FONT_SIZE_17, Config::TxtColor, editingFileName, 395);
 
 	int textX = GFX::GetTextWidth(FONT_SIZE_12, std::to_string(textEditorText.size()).c_str()) + 4;
 	for(uint i=0, ii=0;i+textEditorScrnPos<textEditorText.size() && ii<15;i++) {
