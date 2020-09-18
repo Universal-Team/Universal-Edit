@@ -114,10 +114,10 @@ jobs:
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/Universal-Team/extras.git
           mkdir -p extras/builds/Universal-Edit/
           cd extras/builds/Universal-Edit/
-          qrencode -o universal-edit.nds.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.nds.cia
-          qrencode -o universal-edit.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.cia
-          qrencode -o universal-edit-release.nds.png https://github.com/Universal-Team/Universal-Edit/releases/download/$(git describe --abbrev=0 --tags)/universal-edit.nds.cia
-          qrencode -o universal-edit-release.png https://github.com/Universal-Team/Universal-Edit/releases/download/$(git describe --abbrev=0 --tags)/universal-edit.cia
+          qrencode -o Universal-Edit.nds.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.nds.cia
+          qrencode -o Universal-Edit.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/universal-edit/Universal-Edit.cia
+          qrencode -o Universal-Edit-release.nds.png https://github.com/Universal-Team/Universal-Edit/releases/download/$(git describe --abbrev=0 --tags)/universal-edit.nds.cia
+          qrencode -o Universal-Edit-release.png https://github.com/Universal-Team/Universal-Edit/releases/download/$(git describe --abbrev=0 --tags)/universal-edit.cia
           cp ${{ github.workspace }}/build/* .
           git stage .
           git commit -m "Universal-Edit | $COMMIT_HASH"
