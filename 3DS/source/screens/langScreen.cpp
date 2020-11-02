@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -28,37 +28,37 @@
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-
 void LangScreen::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawString((400-Gui::GetStringWidth(0.8f, Lang::get("SELECT_LANG")))/2, 2, 0.8f, Config::TxtColor, Lang::get("SELECT_LANG"), 400);
+	Gui::DrawStringCentered(0, 2, 0.8f, Config::TxtColor, Lang::get("SELECT_LANG"), 390);
 	GFX::DrawBottom();
 
 	for (int language = 0; language < 10; language++) {
 		if (Config::lang == language) {
 			Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, WHITE);
+
 		} else {
 			Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, BLACK);
 		}
 	}
 
-	Gui::DrawString(langBlocks[0].x+25, langBlocks[0].y, 0.7f, Config::TxtColor, "Bruh", 320);
-	Gui::DrawString(langBlocks[1].x+25, langBlocks[1].y, 0.7f, Config::TxtColor, "Deutsch", 320);
-	Gui::DrawString(langBlocks[2].x+25, langBlocks[2].y, 0.7f, Config::TxtColor, "English", 320);
-	Gui::DrawString(langBlocks[3].x+25, langBlocks[3].y, 0.7f, Config::TxtColor, "Español", 320);
-	Gui::DrawString(langBlocks[4].x+25, langBlocks[4].y, 0.7f, Config::TxtColor, "Français", 320);
+	Gui::DrawString(langBlocks[0].x + 25, langBlocks[0].y, 0.7f, Config::TxtColor, "Bruh", 320);
+	Gui::DrawString(langBlocks[1].x + 25, langBlocks[1].y, 0.7f, Config::TxtColor, "Deutsch", 320);
+	Gui::DrawString(langBlocks[2].x + 25, langBlocks[2].y, 0.7f, Config::TxtColor, "English", 320);
+	Gui::DrawString(langBlocks[3].x + 25, langBlocks[3].y, 0.7f, Config::TxtColor, "Español", 320);
+	Gui::DrawString(langBlocks[4].x + 25, langBlocks[4].y, 0.7f, Config::TxtColor, "Français", 320);
 
-	Gui::DrawString(langBlocks[5].x+25, langBlocks[5].y, 0.7f, Config::TxtColor, "Italiano", 320);
-	Gui::DrawString(langBlocks[6].x+25, langBlocks[6].y, 0.7f, Config::TxtColor, "Lietuvių", 320);
-	Gui::DrawString(langBlocks[7].x+25, langBlocks[7].y, 0.7f, Config::TxtColor, "Português", 320);
-	Gui::DrawString(langBlocks[8].x+25, langBlocks[8].y, 0.7f, Config::TxtColor, "Русский", 320);
-	Gui::DrawString(langBlocks[9].x+25, langBlocks[9].y, 0.7f, Config::TxtColor, "日本語", 320);
+	Gui::DrawString(langBlocks[5].x + 25, langBlocks[5].y, 0.7f, Config::TxtColor, "Italiano", 320);
+	Gui::DrawString(langBlocks[6].x + 25, langBlocks[6].y, 0.7f, Config::TxtColor, "Lietuvių", 320);
+	Gui::DrawString(langBlocks[7].x + 25, langBlocks[7].y, 0.7f, Config::TxtColor, "Português", 320);
+	Gui::DrawString(langBlocks[8].x + 25, langBlocks[8].y, 0.7f, Config::TxtColor, "Русский", 320);
+	Gui::DrawString(langBlocks[9].x + 25, langBlocks[9].y, 0.7f, Config::TxtColor, "日本語", 320);
 }
 
 void LangScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		for (int language = 0; language < 10; language++) {
-			if (touching(touch, langBlocks[language])) {
+			if (touching(touch, this->langBlocks[language])) {
 				Config::lang = language;
 				Lang::load(Config::lang);
 			}

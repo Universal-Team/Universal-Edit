@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ int Config::Color1;
 int Config::Color2;
 int Config::Color3;
 int Config::TxtColor;
-// Mainly Text Editor colors.
+/* Mainly Text Editor colors. */
 int Config::selectedColor, Config::unselectedColor;
 
 std::string Config::lastEditedFile;
@@ -44,57 +44,36 @@ nlohmann::json configJson;
 
 void Config::load() {
 	FILE* file = fopen("sdmc:/3ds/Universal-Edit/Settings.json", "r");
-	if(file) {
+
+	if (file) {
 		configJson = nlohmann::json::parse(file, nullptr, false);
-		if(!configJson.contains("BARCOLOR")) {
-			Config::Color1 = BarColor;
-		} else {
-			Config::Color1 = getInt("BARCOLOR");
-		}
 
-		if(!configJson.contains("TOPBGCOLOR")) {
-			Config::Color2 = TopBGColor;
-		} else {
-			Config::Color2 = getInt("TOPBGCOLOR");
-		}
+		if (!configJson.contains("BARCOLOR")) Config::Color1 = BarColor;
+		else Config::Color1 = getInt("BARCOLOR");
 
-		if(!configJson.contains("BOTTOMBGCOLOR")) {
-			Config::Color3 = BottomBGColor;
-		} else {
-			Config::Color3 = getInt("BOTTOMBGCOLOR");
-		}
+		if (!configJson.contains("TOPBGCOLOR")) Config::Color2 = TopBGColor;
+		else Config::Color2 = getInt("TOPBGCOLOR");
 
-		if(!configJson.contains("TEXTCOLOR")) {
-			Config::TxtColor = WHITE;
-		} else {
-			Config::TxtColor = getInt("TEXTCOLOR");
-		}
+		if (!configJson.contains("BOTTOMBGCOLOR")) Config::Color3 = BottomBGColor;
+		else Config::Color3 = getInt("BOTTOMBGCOLOR");
 
-		if(!configJson.contains("LASTEDITED")) {
-			Config::lastEditedFile = "";
-		} else {
-			Config::lastEditedFile = getString("LASTEDITED");
-		}
+		if (!configJson.contains("TEXTCOLOR")) Config::TxtColor = WHITE;
+		else Config::TxtColor = getInt("TEXTCOLOR");
 
-		if(!configJson.contains("LANGUAGE")) {
-			Config::lang = 2;
-		} else {
-			Config::lang = getInt("LANGUAGE");
-		}
+		if (!configJson.contains("LASTEDITED")) Config::lastEditedFile = "";
+		else Config::lastEditedFile = getString("LASTEDITED");
 
-		if(!configJson.contains("SELECTEDCOLOR")) {
-			Config::selectedColor = WHITE;
-		} else {
-			Config::selectedColor = getInt("SELECTEDCOLOR");
-		}
+		if (!configJson.contains("LANGUAGE")) Config::lang = 2;
+		else Config::lang = getInt("LANGUAGE");
 
-		if(!configJson.contains("UNSELECTEDCOLOR")) {
-			Config::unselectedColor = BLACK;
-		} else {
-			Config::unselectedColor = getInt("UNSELECTEDCOLOR");
-		}
+		if (!configJson.contains("SELECTEDCOLOR")) Config::selectedColor = WHITE;
+		else Config::selectedColor = getInt("SELECTEDCOLOR");
+
+		if (!configJson.contains("UNSELECTEDCOLOR")) Config::unselectedColor = BLACK;
+		else Config::unselectedColor = getInt("UNSELECTEDCOLOR");
 
 		fclose(file);
+
 	} else {
 		Config::Color1 = BarColor;
 		Config::Color2 = TopBGColor;
@@ -116,14 +95,22 @@ void Config::save() {
 	Config::setInt("LANGUAGE", Config::lang);
 	Config::setInt("SELECTEDCOLOR", Config::selectedColor);
 	Config::setInt("UNSELECTEDCOLOR", Config::unselectedColor);
+
 	FILE* file = fopen("sdmc:/3ds/Universal-Edit/Settings.json", "w");
-	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
+	const std::string dump = configJson.dump(1, '\t');
+	if (file) fwrite(dump.c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }
 
 void Config::initializeNewConfig() {
+	/* Create. */
+	FILE *temp = fopen("sdmc:/3ds/Universal-Edit/Settings.json", "w");
+	char tmp[2] = { '{', '}' };
+	fwrite(tmp, sizeof(tmp), 1, temp);
+	fclose(temp);
+
 	FILE* file = fopen("sdmc:/3ds/Universal-Edit/Settings.json", "r");
-	if(file) configJson = nlohmann::json::parse(file, nullptr, false);
+	if (file) configJson = nlohmann::json::parse(file, nullptr, false);
 	Config::setInt("BARCOLOR", BarColor);
 	Config::setInt("TOPBGCOLOR", TopBGColor);
 	Config::setInt("BOTTOMBGCOLOR", BottomBGColor);
@@ -132,47 +119,38 @@ void Config::initializeNewConfig() {
 	Config::setInt("LANGUAGE", 2);
 	Config::setInt("SELECTEDCOLOR", WHITE);
 	Config::setInt("UNSELECTEDCOLOR", BLACK);
-	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
+
+	if (file) fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 	fclose(file);
 }
 
 
 bool Config::getBool(const std::string &key) {
-	if(!configJson.contains(key)) {
-		return false;
-	}
+	if (!configJson.contains(key)) return false;
+
 	return configJson.at(key).get_ref<const bool&>();
 }
 
-void Config::setBool(const std::string &key, bool v) {
-	configJson[key] = v;
-}
+void Config::setBool(const std::string &key, bool v) { configJson[key] = v; }
 
 int Config::getInt(const std::string &key) {
-	if(!configJson.contains(key)) {
-		return 0;
-	}
+	if (!configJson.contains(key)) return 0;
+
 	return configJson.at(key).get_ref<const int64_t&>();
 }
 
-void Config::setInt(const std::string &key, int v) {
-	configJson[key] = v;
-}
+void Config::setInt(const std::string &key, int v) { configJson[key] = v; }
 
 std::string Config::getString(const std::string &key) {
-	if(!configJson.contains(key)) {
-		return "";
-	}
+	if (!configJson.contains(key)) return "";
+
 	return configJson.at(key).get_ref<const std::string&>();
 }
 
-void Config::setString(const std::string &key, const std::string &v) {
-	configJson[key] = v;
-}
+void Config::setString(const std::string &key, const std::string &v) { configJson[key] = v; }
 
 int Config::getLang(const std::string &key) {
-	if(!configJson.contains(key)) {
-		return 1;
-	}
+	if (!configJson.contains(key)) return 1;
+
 	return configJson.at(key).get_ref<const int64_t&>();
 }

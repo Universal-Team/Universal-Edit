@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,27 +24,23 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef TEXTBROWSE_HPP
-#define TEXTBROWSE_HPP
+#ifndef _UNIVERSAL_EDIT_TEXT_BROWSE_HPP
+#define _UNIVERSAL_EDIT_TEXT_BROWSE_HPP
 
 #include "common.hpp"
 #include "fileBrowse.hpp"
 #include "structs.hpp"
-
 #include <vector>
 
-class TextBrowse : public Screen
-{
+class TextBrowse : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-
+	TextBrowse();
 private:
 	std::vector<DirEntry> dirContents;
-	uint selectedFile = 0;
-	int keyRepeatDelay = 0;
-	int fastMode = false;
-	bool dirChanged = true;
+	int selectedFile = 0;
+	bool dirChanged = false;
 };
 
 #endif

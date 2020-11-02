@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -29,19 +29,17 @@
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void Credits::Draw(void) const {
-	if (DisplayMode == 1) {
+	if (this->DisplayMode == 1) {
 		GFX::DrawTop();
-		std::string title = "Universal-Edit - ";
-		title += Lang::get("CREDITS");
 
-		Gui::DrawString((400-Gui::GetStringWidth(0.8f, title.c_str()))/2, 0, 0.8f, Config::TxtColor, title.c_str(), 400);
+		Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, "Universal-Edit" + Lang::get("CREDITS"), 390);
 		Gui::DrawStringCentered(0, 30, 0.7f, Config::TxtColor, Lang::get("DEVELOPED_BY"), 390);
 		Gui::DrawStringCentered(0, 70, 0.7f, Config::TxtColor, Lang::get("MAIN_DEV"), 390);
 		GFX::DrawSprite(sprites_stackZ_idx, 5, 85);
 		GFX::DrawSprite(sprites_universal_core_idx, 200, 110);
 		std::string currentVersion = Lang::get("CURRENT_VERSION");
 		currentVersion += V_STRING;
-		Gui::DrawString(395-Gui::GetStringWidth(0.72f, currentVersion), 218, 0.72f, Config::TxtColor, currentVersion, 400);
+		Gui::DrawString(395 - Gui::GetStringWidth(0.72f, currentVersion), 218, 0.72f, Config::TxtColor, currentVersion, 400);
 		GFX::DrawBottom();
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("MANY_THANKS")))/2, 1, 0.7f, Config::TxtColor, Lang::get("MANY_THANKS"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, Lang::get("TRANSLATORS")))/2, 40, 0.7f, Config::TxtColor, Lang::get("TRANSLATORS"), 320);
@@ -49,7 +47,8 @@ void Credits::Draw(void) const {
 		Gui::DrawString((320-Gui::GetStringWidth(0.7f, "Pk11"))/2, 100, 0.7f, Config::TxtColor, "Pk11", 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.5f, Lang::get("HELP_OUT")))/2, 130, 0.5f, Config::TxtColor, Lang::get("HELP_OUT"), 320);
 		Gui::DrawString((320-Gui::GetStringWidth(0.55, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK")))/2, 220, 0.55, Config::TxtColor, discordText ? Lang::get("SHOW_QR") : Lang::get("LINK"), 320);
-	} else if (DisplayMode == 2) {
+
+	} else if (this->DisplayMode == 2) {
 		GFX::DrawTop();
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		GFX::DrawSprite(sprites_discord_idx, 115, 35);
@@ -60,25 +59,30 @@ void Credits::Draw(void) const {
 
 void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	gspWaitForVBlank();
-	if(delay > 0) {
-		delay--;
+	if (this->delay > 0) {
+		this->delay--;
+
 	} else {
-		delay = 120;
-		discordText = !discordText;
+		this->delay = 120;
+		this->discordText = !this->discordText;
 	}
-	if (DisplayMode == 1) {
+
+	if (this->DisplayMode == 1) {
+
 		if (hDown & KEY_TOUCH) {
-			if (touching(touch, barPos[0])) {
-				DisplayMode = 2;
+			if (touching(touch, this->barPos[0])) {
+				this->DisplayMode = 2;
 			}
 		}
+
 		if (hDown & KEY_B) {
 			Gui::screenBack();
 			return;
 		}
-	} else if (DisplayMode == 2) {
+
+	} else if (this->DisplayMode == 2) {
 		if (hDown & KEY_B) {
-			DisplayMode = 1;
+			this->DisplayMode = 1;
 		}
 	}
 }

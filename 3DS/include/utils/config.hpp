@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef _UNIVERSAL_EDIT_CONFIG_HPP
+#define _UNIVERSAL_EDIT_CONFIG_HPP
 
 #include <string>
 
@@ -47,6 +47,6 @@ namespace Config {
 	void setString(const std::string &key, const std::string &v);
 
 	int getLang(const std::string &key);
-}
+};
 
 #endif

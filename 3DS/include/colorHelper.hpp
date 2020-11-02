@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,21 +24,22 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef COLORHELPER_HPP
-#define COLORHELPER_HPP
+#ifndef _UNIVERSAL_EDIT_COLOR_HELPER_HPP
+#define _UNIVERSAL_EDIT_COLOR_HELPER_HPP
 
 #include <citro2d.h>
 #include <citro3d.h>
 #include <sstream>
 #include <string>
 
-/**
- * @brief Creates a 8 byte RGBA color
- * @param r red component of the color
- * @param g green component of the color
- * @param b blue component of the color
- * @param a alpha component of the color
- */
+/*
+	@brief Creates a 8 byte RGBA color.
+
+	@param r red component of the color.
+	@param g green component of the color.
+	@param b blue component of the color.
+	@param a alpha component of the color.
+*/
 #define RGBA8(r, g, b, a) ((((r)&0xFF)<<0) | (((g)&0xFF)<<8) | (((b)&0xFF)<<16) | (((a)&0xFF)<<24))
 
 #define BarColor 		C2D_Color32(57, 84, 114, 255)
@@ -47,11 +48,9 @@
 #define BLACK 			C2D_Color32(0, 0, 0, 255)
 #define WHITE 			C2D_Color32(255, 255, 255, 255)
 
-typedef u32 Color;
-
 namespace ColorHelper {
 	int getColorValue(int color, int bgr);
 	std::string getColorName(int color, int bgr);
-}
+};
 
 #endif

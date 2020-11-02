@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -27,21 +27,29 @@
 #include "common.hpp"
 #include "msg.hpp"
 
-void Msg::DisplayMsg(std::string text) {
+/*
+	Display a message.
+
+	const std::string &text: Const Reference to the Text, which should be displayed.
+*/
+void Msg::DisplayMsg(const std::string &text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
 	C2D_TargetClear(Bottom, BLACK);
 	GFX::DrawTop();
 	Gui::Draw_Rect(0, 80, 400, 80, Config::Color1);
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.72f, text))/2, 0.72f, Config::TxtColor, text, 390, 70);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.72f, text)) / 2, 0.72f, Config::TxtColor, text, 390, 70);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
 
-// Displays a Warn Message.
-void Msg::DisplayWarnMsg(std::string Text)
-{
+/*
+	Display a warn message for 3 seconds.
+
+	const std::string &Text: Const Reference to the Text, which should be displayed.
+*/
+void Msg::DisplayWarnMsg(const std::string &Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -51,14 +59,18 @@ void Msg::DisplayWarnMsg(std::string Text)
 	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.72f, Text))/2, 0.72f, Config::TxtColor, Text, 395, 70);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
+
 	for (int i = 0; i < 60*3; i++) {
 		gspWaitForVBlank();
 	}
 }
 
-// Display a Message, which needs to be confirmed with A/B.
-bool Msg::promptMsg(std::string promptMsg)
-{
+/*
+	Display a Message, which needs to be confirmed with A/B.
+
+	const std::string &promptMsg: Const Reference to the prompt message.
+*/
+bool Msg::promptMsg(const std::string &promptMsg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -69,14 +81,12 @@ bool Msg::promptMsg(std::string promptMsg)
 	Gui::DrawStringCentered(0, 216, 0.72f, Config::TxtColor, "Press A to confirm, B to cancel.", 390);
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
-	while(1)
-	{
+
+	while(1) {
 		gspWaitForVBlank();
 		hidScanInput();
-		if(hidKeysDown() & KEY_A) {
-			return true;
-		} else if(hidKeysDown() & KEY_B) {
-			return false;
-		}
+
+		if (hidKeysDown() & KEY_A) return true;
+		else if(hidKeysDown() & KEY_B) return false;
 	}
 }

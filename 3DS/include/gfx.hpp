@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef GFX_HPP
-#define GFX_HPP
+#ifndef _UNIVERSAL_EDIT_GFX_HPP
+#define _UNIVERSAL_EDIT_GFX_HPP
 
 #include "colorHelper.hpp"
 #include "sprites.h"
@@ -38,20 +38,18 @@
 #define FONT_SIZE_11 0.46f
 #define FONT_SIZE_9 0.37f
 
-namespace GFX
-{
-	// Basic GUI.
+namespace GFX {
 	void DrawTop(void);
 	void DrawBottom(void);
 
 	void DrawSprite(int img, int x, int y, float ScaleX = 1, float ScaleY = 1);
 
-	// External Font & Draw Functions.
+	/* External Font & Draw Functions. */
 	Result loadEditorFont();
 	Result unloadEditorFont();
 	void DrawText(float x, float y, float size, u32 color, const char *text);
 	void GetTextSize(float size, float *width, float *height, const char *text);
 	float GetTextWidth(float size, const char *text);
-}
+};
 
 #endif

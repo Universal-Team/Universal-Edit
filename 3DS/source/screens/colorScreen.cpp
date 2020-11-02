@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -34,9 +34,7 @@ void ColorScreen::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 2, 0.7f, Config::TxtColor, "Universal-Edit", 400);
 
-	if (colorMode == 3) {
-		Gui::DrawStringCentered(0, 45, 0.7f, Config::TxtColor, Lang::get("TEXT_COLOR"), 320);
-	}
+	if (colorMode == 3) Gui::DrawStringCentered(0, 45, 0.7f, Config::TxtColor, Lang::get("TEXT_COLOR"), 320);
 
 	GFX::DrawBottom();
 
@@ -57,115 +55,162 @@ void ColorScreen::Draw(void) const {
 	Gui::Draw_Rect(buttons[1].x, buttons[1].y, 95, 41, C2D_Color32(0, 255, 0, 255));
 	Gui::Draw_Rect(buttons[2].x, buttons[2].y, 95, 41, C2D_Color32(0, 0, 255, 255));
 
-	if (colorMode == 0) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BAR_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 0).c_str(), 400);
-	} else if (colorMode == 1) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("TOP_BG_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 0).c_str(), 400);
-	} else if (colorMode == 2) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BOTTOM_BG_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 0).c_str(), 400);
-	} else if (colorMode == 3) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("TEXT_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 0).c_str(), 400);
-	} else if (colorMode == 4) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::selectedColor, Lang::get("SELECTED_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 0).c_str(), 400);
-	} else if (colorMode == 5) {
-		Gui::DrawStringCentered(0, 60, 0.7f, Config::unselectedColor, Lang::get("UNSELECTED_COLOR"), 320);
-		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 2).c_str(), 400);
-		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 1).c_str(), 400);
-		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 0).c_str(), 400);
+	switch(this->colorMode) {
+		case 0:
+			Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BAR_COLOR"), 320);
+			Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 2).c_str(), 400);
+			Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 1).c_str(), 400);
+			Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color1, 0).c_str(), 400);
+			break;
+
+		case 1:
+			Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("TOP_BG_COLOR"), 320);
+			Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 2).c_str(), 400);
+			Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 1).c_str(), 400);
+			Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color2, 0).c_str(), 400);
+			break;
+
+		case 2:
+			Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("BOTTOM_BG_COLOR"), 320);
+			Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 2).c_str(), 400);
+			Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 1).c_str(), 400);
+			Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::Color3, 0).c_str(), 400);
+			break;
+
+		case 3:
+			Gui::DrawStringCentered(0, 60, 0.7f, Config::TxtColor, Lang::get("TEXT_COLOR"), 320);
+			Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 2).c_str(), 400);
+			Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 1).c_str(), 400);
+			Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::TxtColor, 0).c_str(), 400);
+			break;
+
+		case 4:
+			Gui::DrawStringCentered(0, 60, 0.7f, Config::selectedColor, Lang::get("SELECTED_COLOR"), 320);
+			Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 2).c_str(), 400);
+			Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 1).c_str(), 400);
+			Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::selectedColor, 0).c_str(), 400);
+			break;
+
+		case 5:
+			Gui::DrawStringCentered(0, 60, 0.7f, Config::unselectedColor, Lang::get("UNSELECTED_COLOR"), 320);
+			Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 2).c_str(), 400);
+			Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 1).c_str(), 400);
+			Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(Config::unselectedColor, 0).c_str(), 400);
+			break;
 	}
 }
 
 void ColorScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	int red;
-	int green;
-	int blue;
-
 	if (hDown & KEY_B) {
 		Gui::screenBack();
 		return;
 	}
 
 	if (hDown & KEY_L || hDown & KEY_LEFT) {
-		if(colorMode > 0)	colorMode--;
+		if (this->colorMode > 0) this->colorMode--;
 	}
 
 	if (hDown & KEY_R || hDown & KEY_RIGHT) {
-		if(colorMode < 5)	colorMode++;
+		if (this->colorMode < 5) this->colorMode++;
 	}
 
 	if (hDown & KEY_TOUCH) {
-		if (touching(touch, buttons[0])) {
-			int temp = Input::getUint(255, Lang::get("ENTER_RED_RGB"));
-			if(temp != -1) {
-				red = temp;
-				if (colorMode == 0) {
-					Config::Color1 = RGBA8(red, ColorHelper::getColorValue(Config::Color1, 1), ColorHelper::getColorValue(Config::Color1, 0), 255);
-				} else if (colorMode == 1) {
-					Config::Color2 = RGBA8(red, ColorHelper::getColorValue(Config::Color2, 1), ColorHelper::getColorValue(Config::Color2, 0), 255);
-				} else if (colorMode == 2) {
-					Config::Color3 = RGBA8(red, ColorHelper::getColorValue(Config::Color3, 1), ColorHelper::getColorValue(Config::Color3, 0), 255);
-				} else if (colorMode == 3) {
-					Config::TxtColor = RGBA8(red, ColorHelper::getColorValue(Config::TxtColor, 1), ColorHelper::getColorValue(Config::TxtColor, 0), 255);
-				} else if (colorMode == 4) {
-					Config::selectedColor = RGBA8(red, ColorHelper::getColorValue(Config::selectedColor, 1), ColorHelper::getColorValue(Config::selectedColor, 0), 255);
-				} else if (colorMode == 5) {
-					Config::unselectedColor = RGBA8(red, ColorHelper::getColorValue(Config::unselectedColor, 1), ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
+		if (touching(touch, this->buttons[0])) {
+			const int temp = Input::getUint(255, Lang::get("ENTER_RED_RGB"));
+
+			if (temp != -1) {
+				switch(this->colorMode) {
+					case 0:
+						Config::Color1 = RGBA8(temp, ColorHelper::getColorValue(Config::Color1, 1), ColorHelper::getColorValue(Config::Color1, 0), 255);
+						break;
+
+					case 1:
+						Config::Color2 = RGBA8(temp, ColorHelper::getColorValue(Config::Color2, 1), ColorHelper::getColorValue(Config::Color2, 0), 255);
+						break;
+
+					case 2:
+						Config::Color3 = RGBA8(temp, ColorHelper::getColorValue(Config::Color3, 1), ColorHelper::getColorValue(Config::Color3, 0), 255);
+						break;
+
+					case 3:
+						Config::TxtColor = RGBA8(temp, ColorHelper::getColorValue(Config::TxtColor, 1), ColorHelper::getColorValue(Config::TxtColor, 0), 255);
+						break;
+
+					case 4:
+						Config::selectedColor = RGBA8(temp, ColorHelper::getColorValue(Config::selectedColor, 1), ColorHelper::getColorValue(Config::selectedColor, 0), 255);
+						break;
+
+					case 5:
+						Config::unselectedColor = RGBA8(temp, ColorHelper::getColorValue(Config::unselectedColor, 1), ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
+						break;
 				}
+
 				changesMade = true;
 			}
-
 
 		} else if (touching(touch, buttons[1])) {
-			int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
-			if(temp != -1) {
-				green = temp;
-				if (colorMode == 0) {
-					Config::Color1 = RGBA8(ColorHelper::getColorValue(Config::Color1, 2), green, ColorHelper::getColorValue(Config::Color1, 0), 255);
-				} else if (colorMode == 1) {
-					Config::Color2 = RGBA8(ColorHelper::getColorValue(Config::Color2, 2), green, ColorHelper::getColorValue(Config::Color2, 0), 255);
-				} else if (colorMode == 2) {
-					Config::Color3 = RGBA8(ColorHelper::getColorValue(Config::Color3, 2), green, ColorHelper::getColorValue(Config::Color3, 0), 255);
-				} else if (colorMode == 3) {
-					Config::TxtColor = RGBA8(ColorHelper::getColorValue(Config::TxtColor, 2), green, ColorHelper::getColorValue(Config::TxtColor, 0), 255);
-				} else if (colorMode == 4) {
-					Config::selectedColor = RGBA8(ColorHelper::getColorValue(Config::selectedColor, 2), green, ColorHelper::getColorValue(Config::selectedColor, 0), 255);
-				} else if (colorMode == 5) {
-					Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), green, ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
+			const int temp = Input::getUint(255, Lang::get("ENTER_GREEN_RGB"));
+
+			if (temp != -1) {
+				switch(this->colorMode) {
+					case 0:
+						Config::Color1 = RGBA8(ColorHelper::getColorValue(Config::Color1, 2), temp, ColorHelper::getColorValue(Config::Color1, 0), 255);
+						break;
+
+					case 1:
+						Config::Color2 = RGBA8(ColorHelper::getColorValue(Config::Color2, 2), temp, ColorHelper::getColorValue(Config::Color2, 0), 255);
+						break;
+
+					case 2:
+						Config::Color3 = RGBA8(ColorHelper::getColorValue(Config::Color3, 2), temp, ColorHelper::getColorValue(Config::Color3, 0), 255);
+						break;
+
+					case 3:
+						Config::TxtColor = RGBA8(ColorHelper::getColorValue(Config::TxtColor, 2), temp, ColorHelper::getColorValue(Config::TxtColor, 0), 255);
+						break;
+
+					case 4:
+						Config::selectedColor = RGBA8(ColorHelper::getColorValue(Config::selectedColor, 2), temp, ColorHelper::getColorValue(Config::selectedColor, 0), 255);
+						break;
+
+					case 5:
+						Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), temp, ColorHelper::getColorValue(Config::unselectedColor, 0), 255);
+						break;
 				}
+
 				changesMade = true;
 			}
+
 		} else if (touching(touch, buttons[2])) {
-			int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
-			if(temp != -1) {
-				blue = temp;
-				if (colorMode == 0) {
-					Config::Color1 = RGBA8(ColorHelper::getColorValue(Config::Color1, 2), ColorHelper::getColorValue(Config::Color1, 1), blue, 255);
-				} else if (colorMode == 1) {
-					Config::Color2 = RGBA8(ColorHelper::getColorValue(Config::Color2, 2), ColorHelper::getColorValue(Config::Color2, 1), blue, 255);
-				} else if (colorMode == 2) {
-					Config::Color3 = RGBA8(ColorHelper::getColorValue(Config::Color3, 2), ColorHelper::getColorValue(Config::Color3, 1), blue, 255);
-				} else if (colorMode == 3) {
-					Config::TxtColor = RGBA8(ColorHelper::getColorValue(Config::TxtColor, 2), ColorHelper::getColorValue(Config::TxtColor, 1), blue, 255);
-				} else if (colorMode == 4) {
-					Config::selectedColor = RGBA8(ColorHelper::getColorValue(Config::selectedColor, 2), ColorHelper::getColorValue(Config::selectedColor, 1), blue, 255);
-				} else if (colorMode == 5) {
-					Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), ColorHelper::getColorValue(Config::unselectedColor, 1), blue, 255);
+			const int temp = Input::getUint(255, Lang::get("ENTER_BLUE_RGB"));
+
+			if (temp != -1) {
+				switch(this->colorMode) {
+					case 0:
+						Config::Color1 = RGBA8(ColorHelper::getColorValue(Config::Color1, 2), ColorHelper::getColorValue(Config::Color1, 1), temp, 255);
+						break;
+
+					case 1:
+						Config::Color2 = RGBA8(ColorHelper::getColorValue(Config::Color2, 2), ColorHelper::getColorValue(Config::Color2, 1), temp, 255);
+						break;
+
+					case 2:
+						Config::Color3 = RGBA8(ColorHelper::getColorValue(Config::Color3, 2), ColorHelper::getColorValue(Config::Color3, 1), temp, 255);
+						break;
+
+					case 3:
+						Config::TxtColor = RGBA8(ColorHelper::getColorValue(Config::TxtColor, 2), ColorHelper::getColorValue(Config::TxtColor, 1), temp, 255);
+						break;
+
+					case 4:
+						Config::selectedColor = RGBA8(ColorHelper::getColorValue(Config::selectedColor, 2), ColorHelper::getColorValue(Config::selectedColor, 1), temp, 255);
+						break;
+
+					case 5:
+						Config::unselectedColor = RGBA8(ColorHelper::getColorValue(Config::unselectedColor, 2), ColorHelper::getColorValue(Config::unselectedColor, 1), temp, 255);
+						break;
 				}
+
 				changesMade = true;
 			}
 		}

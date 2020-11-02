@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,23 +24,21 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef LANGSCREEN_HPP
-#define LANGSCREEN_HPP
+#ifndef _UNIVERSAL_EDIT_LANG_SCREEN_HPP
+#define _UNIVERSAL_EDIT_LANG_SCREEN_HPP
 
 #include "common.hpp"
 #include "structs.hpp"
-
 #include <vector>
 
-class LangScreen : public Screen
-{
+class LangScreen : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 private:
 	int Selection = 0;
 
-	std::vector<Structs::ButtonPos> langBlocks = {
+	const std::vector<Structs::ButtonPos> langBlocks = {
 		{37, 32, 20, 20},
 		{37, 72, 20, 20},
 		{37, 112, 20, 20},
@@ -50,7 +48,7 @@ private:
 		{177, 72, 20, 20},
 		{177, 112, 20, 20},
 		{177, 152, 20, 20},
-		{177, 188, 20, 20},
+		{177, 188, 20, 20}
 	};
 };
 

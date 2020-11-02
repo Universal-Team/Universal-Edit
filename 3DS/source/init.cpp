@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -33,17 +33,16 @@
 #include <unistd.h>
 
 bool exiting = false;
+int fadeAlpha = 0;
 touchPosition touch;
 bool changesMade = false;
-// Include all spritesheet's.
+/* Include all spritesheet's. */
 C2D_SpriteSheet sprites;
 
-// If button Position pressed -> Do something.
+/* If button Position pressed -> Do something. */
 bool touching(touchPosition touch, Structs::ButtonPos button) {
-	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h))
-		return true;
-	else
-		return false;
+	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h)) return true;
+	return false;
 }
 
 
@@ -54,29 +53,30 @@ Result Init::Initialize() {
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	GFX::loadEditorFont();
 	cfguInit();
-	// Create Folder if missing.
+	/* Create Folder if missing. */
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Edit", 0777);
 
-	// We need to make sure, the file exist.
+	/* We need to make sure, the file exist. */
 	if(access("sdmc:/3ds/Universal-Edit/Settings.json", F_OK) == -1 ) {
 		Config::initializeNewConfig();
 	}
 	Config::load();
 	Lang::load(Config::lang);
 
-	Gui::setScreen(std::make_unique<MainMenu>());
-	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users.
+	Gui::setScreen(std::make_unique<MainMenu>(), false, true);
+	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 	return 0;
 }
 
 Result Init::MainLoop() {
-	// Initialize everything.
+	bool fullExit = false;
+	/* Initialize everything. */
 	Initialize();
+	hidSetRepeatParameters(10, 8);
 
-	// Loop as long as the status is not exiting.
-	while (aptMainLoop() && !exiting)
-	{
+	/* Loop as long as the status is not exiting. */
+	while (aptMainLoop() && !fullExit) {
 		hidScanInput();
 		u32 hHeld = hidKeysHeld();
 		u32 hDown = hidKeysDown();
@@ -85,17 +85,29 @@ Result Init::MainLoop() {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		Gui::clearTextBufs();
-		Gui::mainLoop(hDown, hHeld, touch);
+
+		Gui::DrawScreen(true);
+		if (!exiting) Gui::ScreenLogic(hDown, hHeld, touch, false, true);
 		C3D_FrameEnd(0);
-		gspWaitForVBlank();
+
+		if (exiting) {
+			if (hDown & KEY_SELECT) fullExit = true; // Make it optionally faster.
+
+			if (fadeAlpha < 255) {
+				fadeAlpha += 4;
+				if (fadeAlpha >= 255) {
+					fullExit = true;
+				}
+			}
+		}
 	}
-	// Exit all services and exit the app.
+
 	Exit();
 	return 0;
 }
 
 Result Init::Exit() {
-	if (changesMade)	Config::save();
+	if (changesMade) Config::save();
 	Gui::exit();
 	GFX::unloadEditorFont();
 	Gui::unloadSheet(sprites);

@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -37,147 +37,157 @@ extern std::string editingFileName;
 extern bool changesMade;
 
 TextEditor::TextEditor() {
-	textEditorText.clear();
+	this->textEditorText.clear();
 	std::string line;
 	std::ifstream in(currentEditingFile);
-	if(in.good()) {
+
+	if (in.good()) {
 		while(std::getline(in, line)) {
-			textEditorText.push_back(line);
+			this->textEditorText.push_back(line);
 		}
 	}
-	if(textEditorText.size() == 0)	textEditorText.push_back("");
+
+	if (this->textEditorText.size() == 0) this->textEditorText.push_back("");
 	in.close();
-	textRead = true;
+	this->textRead = true;
 	changesMade = true; // Needed to save the last edited file.
 }
 
 
-void TextEditor::Draw(void) const
-{
+void TextEditor::Draw(void) const {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
 	C2D_TargetClear(Bottom, BLACK);
-	textRead = false;
+	this->textRead = false;
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, FONT_SIZE_17, Config::TxtColor, editingFileName, 395);
 
-	int textX = GFX::GetTextWidth(FONT_SIZE_12, std::to_string(textEditorText.size()).c_str()) + 4;
-	for(uint i=0, ii=0;i+textEditorScrnPos<textEditorText.size() && ii<15;i++) {
+	const int textX = GFX::GetTextWidth(FONT_SIZE_12, std::to_string(this->textEditorText.size()).c_str()) + 4;
+	for(uint i = 0, ii = 0; i + this->textEditorScrnPos < this->textEditorText.size() && ii < 15; i++) {
 		std::vector<std::string> lines;
 		uint sizeDone = 0;
+
 		do {
-			lines.push_back(textEditorText[i+textEditorScrnPos].substr(sizeDone, 60));
+			lines.push_back(this->textEditorText[i + this->textEditorScrnPos].substr(sizeDone, 60));
 			sizeDone += 60;
-		} while(sizeDone < textEditorText[i+textEditorScrnPos].size());
 
-		if(i+textEditorScrnPos == textEditorCurPos) {
-			GFX::DrawText(0, 28+(ii*12), FONT_SIZE_14, Config::selectedColor, std::to_string(i+textEditorScrnPos+1).c_str());
+		} while(sizeDone < this->textEditorText[i + this->textEditorScrnPos].size());
 
-			if(showCursor > 0)	C2D_DrawRectSolid(textX+(6.15*(stringPos-(int)((stringPos/60)*60))), 28+((ii+(stringPos/60))*12), 0.5f, 1, 8, Config::selectedColor);
+		if (i + this->textEditorScrnPos == this->textEditorCurPos) {
+			GFX::DrawText(0, 28+(ii*12), FONT_SIZE_14, Config::selectedColor, std::to_string(i + this->textEditorScrnPos + 1).c_str());
 
-			for(uint l=0;l<lines.size();l++) {
-				GFX::DrawText(textX, 28+(ii*12), FONT_SIZE_14, Config::selectedColor, lines[l].c_str());
+			if (this->showCursor > 0) C2D_DrawRectSolid(textX + (6.15 * ( this->stringPos - (int)((this->stringPos / 60) *60))), 28 + ((ii + (this->stringPos / 60)) * 12), 0.5f, 1, 8, Config::selectedColor);
+
+			for(uint l = 0; l < lines.size(); l++) {
+				GFX::DrawText(textX, 28 + (ii * 12), FONT_SIZE_14, Config::selectedColor, lines[l].c_str());
 				ii++;
 			}
-		} else {
-			GFX::DrawText(0, 28+(ii*12), FONT_SIZE_14, Config::unselectedColor, std::to_string(i+textEditorScrnPos+1).c_str());
 
-			for(uint l=0;l<lines.size();l++) {
-				GFX::DrawText(textX, 28+(ii*12), FONT_SIZE_14, Config::unselectedColor, lines[l].c_str());
+		} else {
+			GFX::DrawText(0, 28+(ii*12), FONT_SIZE_14, Config::unselectedColor, std::to_string(i + this->textEditorScrnPos + 1).c_str());
+
+			for(uint l = 0; l < lines.size(); l++) {
+				GFX::DrawText(textX, 28 + (ii * 12), FONT_SIZE_14, Config::unselectedColor, lines[l].c_str());
 				ii++;
 			}
 		}
 
-		rowsDisplayed = i;
+		this->rowsDisplayed = i;
 	}
 
-	std::string totalLines = Lang::get("LINES") + std::to_string(textEditorText.size());
+	std::string totalLines = Lang::get("LINES") + std::to_string(this->textEditorText.size());
 	Gui::DrawString(4, 220, FONT_SIZE_18, Config::TxtColor, totalLines.c_str());
 
 	std::string currentLine = Lang::get("CURRENT_LINE") + std::to_string(textEditorCurPos+1);
-	Gui::DrawString(400-Gui::GetStringWidth(FONT_SIZE_18, currentLine.c_str())-4, 220, FONT_SIZE_18, Config::TxtColor, currentLine.c_str());
+	Gui::DrawString(400-Gui::GetStringWidth(FONT_SIZE_18, currentLine.c_str()) - 4, 220, FONT_SIZE_18, Config::TxtColor, currentLine.c_str());
 
 	GFX::DrawBottom();
 	Input::drawKeyboard();
 }
 
 void TextEditor::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if(showCursor > -30) {
-		showCursor--;
-	} else {
-		showCursor = 30;
-	}
+	if (this->showCursor > -30) this->showCursor--;
+	else this->showCursor = 30;
 
-	if(hHeld & KEY_CPAD_UP || hDown & KEY_UP) {
-		if(textEditorCurPos > 0) textEditorCurPos--;
-		if(stringPos > textEditorText[textEditorCurPos].length())	stringPos = textEditorText[textEditorCurPos].length();
-		showCursor = 30;
-	} else if(hHeld & KEY_CPAD_DOWN || hDown & KEY_DOWN) {
-		if(textEditorCurPos < textEditorText.size()-1) textEditorCurPos++;
-		if(stringPos > textEditorText[textEditorCurPos].length())	stringPos = textEditorText[textEditorCurPos].length();
-		showCursor = 30;
-	} else if(hHeld & KEY_CPAD_LEFT || hDown & KEY_LEFT) {
-		if(stringPos > 0)	stringPos--;
-		showCursor = 30;
-	} else if(hHeld & KEY_CPAD_RIGHT || hDown & KEY_RIGHT) {
-		if(stringPos < textEditorText[textEditorCurPos].length())	stringPos++;
-		showCursor = 30;
+	if (hHeld & KEY_CPAD_UP || hDown & KEY_UP) {
+		if (this->textEditorCurPos > 0) this->textEditorCurPos--;
+		if (this->stringPos > this->textEditorText[this->textEditorCurPos].length()) this->stringPos = this->textEditorText[this->textEditorCurPos].length();
+		this->showCursor = 30;
+
+	} else if (hHeld & KEY_CPAD_DOWN || hDown & KEY_DOWN) {
+		if (this->textEditorCurPos < this->textEditorText.size() - 1) this->textEditorCurPos++;
+		if (this->stringPos > this->textEditorText[this->textEditorCurPos].length()) this->stringPos = this->textEditorText[this->textEditorCurPos].length();
+		this->showCursor = 30;
+
+	} else if (hHeld & KEY_CPAD_LEFT || hDown & KEY_LEFT) {
+		if (this->stringPos > 0) this->stringPos--;
+		this->showCursor = 30;
+
+	} else if (hHeld & KEY_CPAD_RIGHT || hDown & KEY_RIGHT) {
+		if (this->stringPos < this->textEditorText[this->textEditorCurPos].length()) this->stringPos++;
+		this->showCursor = 30;
+
 	} else if(hDown & KEY_L) {
-		stringPos = 0;
+		this->stringPos = 0;
+
 	} else if(hDown & KEY_R) {
-		stringPos = textEditorText[textEditorCurPos].length();
+		this->stringPos = this->textEditorText[this->textEditorCurPos].length();
+
 	} else if (hDown & KEY_START) {
-		if(Msg::promptMsg(Lang::get("SAVE_CHANGES"))) {
+		if (Msg::promptMsg(Lang::get("SAVE_CHANGES"))) {
 			std::ofstream out(currentEditingFile);
-			for(uint i=0;i<textEditorText.size();i++) {
-				out << textEditorText[i] << std::endl;
+			for(uint i = 0; i < this->textEditorText.size(); i++) {
+				out << this->textEditorText[i] << std::endl;
 			}
+
 			out.close();
 		}
+
 	} else if(hDown & KEY_B) {
-		if(Msg::promptMsg(Lang::get("DISCARD_CHANGES"))) {
-			stringPos = 0;
-			textEditorCurPos = 0;
+		if (Msg::promptMsg(Lang::get("DISCARD_CHANGES"))) {
+			this->stringPos = 0;
+			this->textEditorCurPos = 0;
 			Gui::screenBack();
 			return;
 		}
+
 	} else if(hDown & KEY_X) {
-		if(textEditorText.size() > 1) {
-			textEditorText.erase(textEditorText.begin()+textEditorCurPos);
-			if(textEditorCurPos != 0) {
-				textEditorCurPos--;
-			}
+		if (this->textEditorText.size() > 1) {
+			this->textEditorText.erase(this->textEditorText.begin() + this->textEditorCurPos);
+
+			if (this->textEditorCurPos != 0) this->textEditorCurPos--;
 		}
 	}
 
-	// Scroll screen if needed
-	if (textEditorCurPos < textEditorScrnPos)	{
-		textEditorScrnPos = textEditorCurPos;
-	}
-	if (textEditorCurPos > textEditorScrnPos + rowsDisplayed) {
-		textEditorScrnPos = textEditorCurPos - rowsDisplayed;
-	}
+	/* Scroll screen if needed. */
+	if (this->textEditorCurPos < this->textEditorScrnPos) this->textEditorScrnPos = this->textEditorCurPos;
+	if (this->textEditorCurPos > this->textEditorScrnPos + this->rowsDisplayed) this->textEditorScrnPos = this->textEditorCurPos - this->rowsDisplayed;
 
 	char c = Input::checkKeyboard(hDown, hHeld);
-	if(c == '\b') {
-		if(textEditorText[textEditorCurPos].size() > 0) {
-			if(stringPos > 0) {
-				textEditorText[textEditorCurPos].erase(stringPos-1, 1);
-				stringPos--;
+
+	if (c == '\b') {
+		if (this->textEditorText[this->textEditorCurPos].size() > 0) {
+			if (this->stringPos > 0) {
+				this->textEditorText[this->textEditorCurPos].erase(this->stringPos - 1, 1);
+				this->stringPos--;
 			}
-		} else if(textEditorText.size() > 1) {
-			textEditorText.erase(textEditorText.begin()+textEditorCurPos);
-			if(textEditorCurPos != 0)	textEditorCurPos--;
-			stringPos = textEditorText[textEditorCurPos].length();
+
+		} else if (this->textEditorText.size() > 1) {
+			this->textEditorText.erase(this->textEditorText.begin() + this->textEditorCurPos);
+			if (this->textEditorCurPos != 0) this->textEditorCurPos--;
+			this->stringPos = this->textEditorText[this->textEditorCurPos].length();
 		}
-		if(stringPos > textEditorText[textEditorCurPos].length())	stringPos = textEditorText[textEditorCurPos].length();
+
+		if (this->stringPos > this->textEditorText[textEditorCurPos].length()) this->stringPos = this->textEditorText[this->textEditorCurPos].length();
+
 	} else if(c == '\n') {
-		textEditorCurPos++;
-		textEditorText.insert(textEditorText.begin()+textEditorCurPos, "");
-		stringPos = 0;
-	} else if(c != '\0') {
-		textEditorText[textEditorCurPos].insert(stringPos, 1, c);
-		stringPos++;
+		this->textEditorCurPos++;
+		this->textEditorText.insert(this->textEditorText.begin() + this->textEditorCurPos, "");
+		this->stringPos = 0;
+
+	} else if (c != '\0') {
+		this->textEditorText[this->textEditorCurPos].insert(this->stringPos, 1, c);
+		this->stringPos++;
 	}
 }

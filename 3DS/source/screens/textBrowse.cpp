@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 *         reasonable ways as different from the original version.
 */
 
-
-
 #include "keyboard.hpp"
 #include "textBrowse.hpp"
 #include "textEditor.hpp"
@@ -40,22 +38,37 @@ std::string TextFile = "";
 std::string currentEditingFile = "";
 std::string editingFileName = "";
 
-void TextBrowse::Draw(void) const
-{
+TextBrowse::TextBrowse() {
+	chdir("sdmc:/");
+	std::vector<DirEntry> dirContentsTemp;
+	getDirectoryContents(dirContentsTemp);
+
+	for(uint i = 0; i < dirContentsTemp.size(); i++) {
+		this->dirContents.push_back(dirContentsTemp[i]);
+	}
+
+	this->dirChanged = false;
+}
+
+void TextBrowse::Draw(void) const {
 	GFX::DrawTop();
 	char path[PATH_MAX];
 	getcwd(path, PATH_MAX);
-	Gui::DrawString((400-(Gui::GetStringWidth(0.60f, path)))/2, 218, 0.60f, Config::TxtColor, path);
-	Gui::DrawStringCentered(0, 0, 0.60f, Config::TxtColor, Lang::get("SELECT_FILE_EDIT"), 400);
+
+	Gui::DrawStringCentered(0, 218, 0.60f, Config::TxtColor, path, 390);
+	Gui::DrawStringCentered(0, 1, 0.7f, Config::TxtColor, Lang::get("SELECT_FILE_EDIT"), 390);
+
 	std::string dirs;
-	for (uint i=(selectedFile<5) ? 0 : selectedFile-5;i<dirContents.size()&&i<((selectedFile<5) ? 6 : selectedFile+1);i++) {
-		if (i == selectedFile) {
-			dirs +=  "> " + dirContents[i].name + "\n\n";
+	for (int i = (this->selectedFile < 5) ? 0 : this->selectedFile - 5; i < (int)this->dirContents.size() && i < ((this->selectedFile < 5) ? 6 : this->selectedFile + 1); i++) {
+		if (i == this->selectedFile) {
+			dirs +=  "> " + this->dirContents[i].name + "\n\n";
+
 		} else {
-			dirs +=  dirContents[i].name + "\n\n";
+			dirs +=  this->dirContents[i].name + "\n\n";
 		}
 	}
-	for (uint i=0;i<((dirContents.size()<6) ? 6-dirContents.size() : 0);i++) {
+
+	for (uint i = 0; i < ((this->dirContents.size() < 6) ? 6 - this->dirContents.size() : 0); i++) {
 		dirs += "\n\n";
 	}
 
@@ -64,35 +77,39 @@ void TextBrowse::Draw(void) const
 }
 
 void TextBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (keyRepeatDelay)	keyRepeatDelay--;
+	u32 hRepeat = hidKeysDownRepeat();
 
-			if (dirChanged) {
-				dirContents.clear();
-				std::vector<DirEntry> dirContentsTemp;
-				getDirectoryContents(dirContentsTemp);
-				for(uint i=0;i<dirContentsTemp.size();i++) {
-				dirContents.push_back(dirContentsTemp[i]);
-			}
-		dirChanged = false;
+	if (this->dirChanged) {
+		this->dirContents.clear();
+		std::vector<DirEntry> dirContentsTemp;
+		getDirectoryContents(dirContentsTemp);
+
+		for(uint i = 0; i < dirContentsTemp.size(); i++) {
+			this->dirContents.push_back(dirContentsTemp[i]);
+		}
+
+		this->dirChanged = false;
 	}
 
 	if (hDown & KEY_A) {
-		if (dirContents.size() != 0) {
-			if (dirContents[selectedFile].isDirectory) {
-				chdir(dirContents[selectedFile].name.c_str());
-				selectedFile = 0;
-				dirChanged = true;
+		if (this->dirContents.size() > 0) {
+			if (this->dirContents[selectedFile].isDirectory) {
+				chdir(this->dirContents[this->selectedFile].name.c_str());
+				this->selectedFile = 0;
+				this->dirChanged = true;
+
 			} else {
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
 				std::string currentPath = path;
-				currentPath += dirContents[selectedFile].name;
+				currentPath += this->dirContents[this->selectedFile].name;
 				currentEditingFile = currentPath;
-				editingFileName = dirContents[selectedFile].name;
+				editingFileName = this->dirContents[this->selectedFile].name;
 				Config::lastEditedFile = currentEditingFile;
-				Gui::setScreen(std::make_unique<TextEditor>());
+				Gui::setScreen(std::make_unique<TextEditor>(), false, true);
 			}
 		}
+
 	} else if (hDown &  KEY_Y) {
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
@@ -100,38 +117,35 @@ void TextBrowse::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		currentPath += Input::getLine(Lang::get("ENTER_NEW_FILENAME"));
 		std::ofstream file { currentPath.c_str() };
 		dirChanged = true;
+
 	} else if (hDown & KEY_B) {
 		char path[PATH_MAX];
 		getcwd(path, PATH_MAX);
-		if(strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
+
+		if (strcmp(path, "sdmc:/") == 0 || strcmp(path, "/") == 0) {
 			Gui::screenBack();
 			return;
+
 		} else {
 			chdir("..");
 			selectedFile = 0;
 			dirChanged = true;
 		}
-	} else if (hHeld & KEY_UP) {
-		if (selectedFile > 0 && !keyRepeatDelay) {
-			selectedFile--;
-			if (fastMode == true) {
-				keyRepeatDelay = 3;
-			} else if (fastMode == false){
-				keyRepeatDelay = 6;
-			}
-		}
-	} else if (hHeld & KEY_DOWN && !keyRepeatDelay) {
-		if (selectedFile < dirContents.size()-1) {
-			selectedFile++;
-			if (fastMode == true) {
-				keyRepeatDelay = 3;
-			} else if (fastMode == false){
-				keyRepeatDelay = 6;
-			}
-		}
-	} else if (hDown & KEY_R) {
-		fastMode = true;
-	} else if (hDown & KEY_L) {
-		fastMode = false;
+
+	} else if (hRepeat & KEY_UP) {
+		if (this->selectedFile > 0) this->selectedFile--;
+
+	} else if (hRepeat & KEY_DOWN) {
+		if (this->selectedFile < (int)this->dirContents.size() - 1) this->selectedFile++;
+	}
+
+	if (hRepeat & KEY_RIGHT) {
+		if (this->selectedFile + 6 < (int)this->dirContents.size() - 1) this->selectedFile += 6;
+		else this->selectedFile = (int)this->dirContents.size() - 1;
+	}
+
+	if (hRepeat & KEY_LEFT) {
+		if (this->selectedFile - 6 > 0) this->selectedFile -= 6;
+		else this->selectedFile = 0;
 	}
 }

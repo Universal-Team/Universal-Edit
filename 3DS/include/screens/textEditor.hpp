@@ -1,6 +1,6 @@
 /*
 *   This file is part of Universal-Edit
-*   Copyright (C) 2019-2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2019-2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,22 +24,19 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef TEXTEDITOR_HPP
-#define TEXTEDITOR_HPP
+#ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
+#define _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
 
 #include "common.hpp"
 #include "structs.hpp"
-
 #include <string>
 #include <vector>
 
-class TextEditor : public Screen
-{
+class TextEditor : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
 	TextEditor();
-
 private:
 	mutable bool textRead = false;
 	uint textEditorCurPos = 0;
