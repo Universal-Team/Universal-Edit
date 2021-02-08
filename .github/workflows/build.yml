@@ -2,7 +2,7 @@ name: Build Universal-Edit
 
 on:
   push:
-    branches-ignore: [translation]
+    branches-ignore: [translation, hex-editor]
   pull_request:
     branches: ["*"]
   release:
