@@ -34,6 +34,8 @@ Data::Data() {
 	this->FileData[0] = { 0x0 }; // Init with 0x0.
 	this->FileGood = true;
 	this->File = "sdmc:/3ds/Universal-Edit/Temp.txt";
+
+	this->LoadEncoding("romfs:/encodings/ascii.json");
 };
 
 Data::Data(const std::string &File) {
@@ -56,6 +58,8 @@ Data::Data(const std::string &File) {
 	} else {
 		this->FileGood = false;
 	};
+
+	this->LoadEncoding("romfs:/encodings/ascii.json");
 };
 
 void Data::InsertBytes(const uint32_t Offs, const std::vector<uint8_t> &ToInsert) {

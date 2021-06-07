@@ -90,7 +90,7 @@ private:
 	std::vector<uint8_t> FileData;
 	bool FileGood = false, ChangesMade = false;
 
-	std::string Encoding[256] = { "." };
+	std::string Encoding[256];
 };
 
 #endif
