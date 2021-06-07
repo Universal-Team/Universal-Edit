@@ -132,10 +132,5 @@ void Analyzer::Handler() {
 
 
 void Analyzer::Back() {
-	/* Reset. */
-	this->SelectionSize = 1; // 1 byte.
-	this->Endian = false; // Little Endian.
-	this->Hex = true; // Hexadecimal.
-
 	HexEditor::Mode = HexEditor::SubMode::Sub;
 };
