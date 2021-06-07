@@ -238,18 +238,20 @@ static int Prompt(lua_State *LState) {
 	Usage:
 	local SelectedIdx = UniversalEdit.SelectList(4, "Select Something from the list.", "Slot 1", "Slot 2", "Slot 3", "Slot 4");
 
-	First: Amount of Strings on the list.
-	Second: Message to display of what should be selected or so.
-	Third until Last: The Strings.
+	First: Message to display of what should be selected or so.
+	Second: Table of Strings.
 */
 static int SelectList(lua_State *LState) {
-	const int StringAmount = luaL_checkinteger(LState, 1);
-	if (lua_gettop(LState) != StringAmount + 2) return luaL_error(LState, Utils::GetStr("INCORRECT_USAGE_OF_FUNCTION").c_str());
-	const std::string Msg = (std::string)(luaL_checkstring(LState, 2));
+	if (lua_gettop(LState) != 2) return luaL_error(LState, Utils::GetStr("INCORRECT_USAGE_OF_FUNCTION").c_str());
+	const char *Msg luaL_checkstring(LState, 1);
 
 	std::vector<std::string> List;
-	for (int Idx = 0; Idx < StringAmount; Idx++) {
-		List.push_back((std::string)(luaL_checkstring(LState, 3 + Idx))); // Get all the options from the args.
+	if(lua_istable(LState, 2)) {
+		lua_pushnil(LState);
+		while (lua_next(LState, 2)) {
+			List.push_back(lua_tostring(LState, -1));
+			lua_pop(LState, 1);
+		};
 	};
 
 	std::unique_ptr<ListSelection> LS = std::make_unique<ListSelection>();
