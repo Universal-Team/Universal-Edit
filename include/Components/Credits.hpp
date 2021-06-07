@@ -24,48 +24,15 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_HPP
-#define _UNIVERSAL_EDIT_HPP
+#ifndef _UNIVERSAL_EDIT_CREDITS_HPP
+#define _UNIVERSAL_EDIT_CREDITS_HPP
 
-#include "ConfigData.hpp"
-#include "Data.hpp"
-#include "GFXData.hpp"
-#include "ThemeData.hpp"
+#include "structs.hpp"
 #include <string>
 
-/* Include all Components. */
-#include "Credits.hpp"
-#include "FileHandler.hpp"
-#include "HexEditor.hpp"
-#include "Tab.hpp"
-
-class UniversalEdit {
+class Credits {
 public:
-	enum class Tabs : uint8_t { FileHandler = 0, HexEditor = 1, TextEditor = 2, Settings = 3, Credits = 4 };
-	UniversalEdit();
-	int Handler();
-
-	static std::unique_ptr<UniversalEdit> UE;
-
-	std::unique_ptr<Data> CurrentFile = nullptr; // Needs to be accessible for LUA Scripts, Hex Editor etc.
-	std::unique_ptr<ThemeData> TData = nullptr; // Needs to be accessible for the other Components.
-	std::unique_ptr<GFXData> GData = nullptr;
-	std::unique_ptr<ConfigData> CData = nullptr;
-	Tabs ActiveTab = Tabs::FileHandler;
-	void DrawTop();
-	void DrawBottom(const bool OnlyTab = false);
-	bool HexEditMode = true;
-
-	uint32_t Down = 0, Repeat = 0;
-	touchPosition T;
-private:
-	bool Exiting = false;
-	
-	/* Include all Components. */
-	std::unique_ptr<Credits> CR = nullptr;
-	std::unique_ptr<FileHandler> FH = nullptr;
-	std::unique_ptr<HexEditor> HE = nullptr;
-	std::unique_ptr<Tab> _Tab = nullptr;
+	void Draw();
 };
 
 #endif

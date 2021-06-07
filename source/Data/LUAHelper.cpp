@@ -236,18 +236,19 @@ static int Prompt(lua_State *LState) {
 	Select something from a list and return the selected index as an integer.
 
 	Usage:
-	local SelectedIdx = UniversalEdit.SelectList(4, "Select Something from the list.", "Slot 1", "Slot 2", "Slot 3", "Slot 4");
+	local SelectedIdx = UniversalEdit.SelectList("Select Something from the list.", { "Option 1", "Option 2" });
 
 	First: Message to display of what should be selected or so.
 	Second: Table of Strings.
 */
 static int SelectList(lua_State *LState) {
-	if (lua_gettop(LState) != 2) return luaL_error(LState, Utils::GetStr("INCORRECT_USAGE_OF_FUNCTION").c_str());
-	const char *Msg luaL_checkstring(LState, 1);
+	if (lua_gettop(LState) != 2) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+	const char *Msg = luaL_checkstring(LState, 1);
 
 	std::vector<std::string> List;
-	if(lua_istable(LState, 2)) {
+	if (lua_istable(LState, 2)) {
 		lua_pushnil(LState);
+
 		while (lua_next(LState, 2)) {
 			List.push_back(lua_tostring(LState, -1));
 			lua_pop(LState, 1);
@@ -404,32 +405,35 @@ static int InjectBytes(lua_State *LState) {
 	};
 
 	return 0;
-}
+};
 
 
 /*
 	Select a file from the SD Card and return the selected filepath.
 
 	Usage:
-	local SelectedFilePath = UniversalEdit.SelectFile(2, "Select a file", "sdmc:/3ds/Universal-Edit/", true, "scpt", "lbl");
+	local SelectedFilePath = UniversalEdit.SelectFile("Select a file", "sdmc:/3ds/Universal-Edit/", true, { "lua" });
 
-	First: Amount of Strings on the list.
-	Second: Message to display of what should be selected or so.
-	Third: Default Path.
-	Fourth: If limiting the go back to the specified directory (true) or nah (false).
-	Fifth until Last: The extensions.
+	First: Message to display of what should be selected or so.
+	Second: Default Path.
+	Third: If limiting the go back to the specified directory (true) or nah (false).
+	Fourth: The table of extensions.
 */
 static int SelectFile(lua_State *LState) {
-	const int ExtensionAmount = luaL_checkinteger(LState, 1);
-	if (lua_gettop(LState) != ExtensionAmount + 4) return luaL_error(LState, Utils::GetStr("INCORRECT_USAGE_OF_FUNCTION").c_str());
+	if (lua_gettop(LState) != 4) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
 
-	const std::string Msg = (std::string)(luaL_checkstring(LState, 2));
-	const std::string StartPath = (std::string)(luaL_checkstring(LState, 3));
-	const bool LimitAccess = lua_toboolean(LState, 4);
+	const std::string Msg = (std::string)(luaL_checkstring(LState, 1));
+	const std::string StartPath = (std::string)(luaL_checkstring(LState, 2));
+	const bool LimitAccess = lua_toboolean(LState, 3);
 
 	std::vector<std::string> Extensions;
-	for (int Idx = 0; Idx < ExtensionAmount; Idx++) {
-		Extensions.push_back((std::string)(luaL_checkstring(LState, 5 + Idx))); // Get all the extensions from the args.
+	if (lua_istable(LState, 4)) {
+		lua_pushnil(LState);
+
+		while (lua_next(LState, 4)) {
+			Extensions.push_back(lua_tostring(LState, -1));
+			lua_pop(LState, 1);
+		};
 	};
 
 	std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
@@ -438,6 +442,39 @@ static int SelectFile(lua_State *LState) {
 	lua_pushstring(LState, Res.c_str());
 	return 1;
 };
+
+
+/*
+	Return the size of the current open file.
+
+	Usage:
+		local Size = UniversalEdit.FileSize();
+*/
+static int FileSize(lua_State *LState) {
+	if (lua_gettop(LState) != 0) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+
+	lua_pushinteger(LState, UniversalEdit::UE->CurrentFile->GetSize());
+	return 1;
+};
+
+
+/*
+	Displays a frame / progress message.
+
+	Usage:
+		UniversalEdit.ProgressMessage("I'm doing this right now.");
+
+	First: The message to display as the progress.
+*/
+static int ProgressMessage(lua_State *LState) {
+	if (lua_gettop(LState) != 1) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+	const std::string Msg = (std::string)(luaL_checkstring(LState, 1));
+	Utils::ProgressMessage(Msg);
+
+	return 0;
+};
+
+
 
 /* Register our Universal-Edit functions here. */
 static constexpr luaL_Reg UniversalEditFunctions[] = {
@@ -456,6 +493,8 @@ static constexpr luaL_Reg UniversalEditFunctions[] = {
 	{ "DumpBytes", DumpBytes },
 	{ "InjectBytes", InjectBytes },
 	{ "SelectFile", SelectFile },
+	{ "FileSize", FileSize },
+	{ "ProgressMessage", ProgressMessage },
 	{ 0, 0 }
 };
 

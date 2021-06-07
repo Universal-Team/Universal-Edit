@@ -62,6 +62,7 @@ UniversalEdit::UniversalEdit() {
 	
 
 	/* Initialize all components. */
+	this->CR = std::make_unique<Credits>();
 	this->FH = std::make_unique<FileHandler>();
 	this->HE = std::make_unique<HexEditor>();
 	this->_Tab = std::make_unique<Tab>();
@@ -81,7 +82,7 @@ void UniversalEdit::DrawTop() {
 		};
 
 	} else {
-		Gui::DrawStringCentered(0, 1, 0.55f, this->TData->TextColor(), "Universal-Edit v0.1.0");
+		Gui::DrawStringCentered(0, 1, 0.55f, this->TData->TextColor(), "Universal-Edit");
 	};
 };
 
@@ -101,7 +102,10 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 
 		case Tabs::TextEditor:
 		case Tabs::Settings:
+			break;
+			
 		case Tabs::Credits:
+			this->CR->Draw();
 			break;
 	};
 };
@@ -129,7 +133,10 @@ int UniversalEdit::Handler() {
 				std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
 				const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_EXIT"));
 
-				if (Res) UniversalEdit::UE->CurrentFile->WriteBack(UniversalEdit::UE->CurrentFile->EditFile());
+				if (Res) {
+					Utils::ProgressMessage(Utils::GetStr("SAVING_FILE"));
+					UniversalEdit::UE->CurrentFile->WriteBack(UniversalEdit::UE->CurrentFile->EditFile());
+				};
 			};
 
 			this->Exiting = true;

@@ -36,6 +36,7 @@
 #define LINES 0xD
 
 size_t HexEditor::CursorIdx = 0, HexEditor::OffsIdx = 0, HexEditor::EditorMode = 0;
+HexEditor::SubMode HexEditor::Mode = HexEditor::SubMode::Sub; // Main Sub mode.
 
 void HexEditor::DrawHexOnly() {
 	/* Display the top bytes '00, 01 02 03 04 ... 0F. */
@@ -148,17 +149,33 @@ void HexEditor::DrawTop() {
 };
 
 void HexEditor::DrawBottom() {
-	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
-	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("HEX_EDITOR_MENU"), 310);
+	/* Handle the sub menus. */
+	switch(HexEditor::Mode) {
+		case HexEditor::SubMode::Sub: // Draw Main Sub.
+			Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
+			Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
+			Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("HEX_EDITOR_MENU"), 310);
 
-	/* Draw Buttons. */
-	if (FileHandler::Loaded) {
-		for (uint8_t Idx = 0; Idx < 6; Idx++) {
-			Gui::Draw_Rect(this->HexMenu[Idx].x - 2, this->HexMenu[Idx].y - 2, this->HexMenu[Idx].w + 4, this->HexMenu[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
-			Gui::Draw_Rect(this->HexMenu[Idx].x, this->HexMenu[Idx].y, this->HexMenu[Idx].w, this->HexMenu[Idx].h, UniversalEdit::UE->TData->BarColor());
-			Gui::DrawString(this->HexMenu[Idx].x + 5, this->HexMenu[Idx].y + 5, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
-		};
+			/* Draw Buttons. */
+			if (FileHandler::Loaded) {
+				for (uint8_t Idx = 0; Idx < 6; Idx++) {
+					Gui::Draw_Rect(this->HexMenu[Idx].x - 2, this->HexMenu[Idx].y - 2, this->HexMenu[Idx].w + 4, this->HexMenu[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
+					Gui::Draw_Rect(this->HexMenu[Idx].x, this->HexMenu[Idx].y, this->HexMenu[Idx].w, this->HexMenu[Idx].h, UniversalEdit::UE->TData->BarColor());
+					Gui::DrawString(this->HexMenu[Idx].x + 5, this->HexMenu[Idx].y + 5, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
+				};
+			};
+			break;
+
+		case HexEditor::SubMode::Navigation:
+			this->Navi->Draw();
+			break;
+
+		case HexEditor::SubMode::Analyzer:
+			this->_Analyzer->Draw();
+			break;
+
+		case HexEditor::SubMode::InsertRem:
+			break;
 	};
 };
 
@@ -167,23 +184,31 @@ void HexEditor::Handler() {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		if (this->IsEditMode()) { // Edit the selected byte.
 			if (UniversalEdit::UE->Repeat & KEY_UP) {
-				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] < 0xFF)
+				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] < 0xFF) {
 					UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)]++;
+					UniversalEdit::UE->CurrentFile->SetChanges(true);
+				};
 			};
 
 			if (UniversalEdit::UE->Repeat & KEY_DOWN) {
-				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] > 0x0)
+				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] > 0x0) {
 					UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)]--;
+					UniversalEdit::UE->CurrentFile->SetChanges(true);
+				};
 			};
 
 			if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
-				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] < 0xF0)
+				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] < 0xF0) {
 					UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] += 0x10;
+					UniversalEdit::UE->CurrentFile->SetChanges(true);
+				};
 			};
 
 			if (UniversalEdit::UE->Repeat & KEY_LEFT) {
-				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] > 0xF)
+				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] > 0xF) {
 					UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] -= 0x10;
+					UniversalEdit::UE->CurrentFile->SetChanges(true);
+				};
 			};
 
 			if (UniversalEdit::UE->Down & KEY_B) {
@@ -250,24 +275,42 @@ void HexEditor::Handler() {
 		};
 	};
 
-	/* Button Clicks. */
-	if (FileHandler::Loaded) {
-		if (UniversalEdit::UE->Down & KEY_TOUCH) {
-			for (uint8_t Idx = 0; Idx < 5; Idx++) {
-				if (Utils::Touching(UniversalEdit::UE->T, this->HexMenu[Idx])) {
-					this->Funcs[Idx]();
-					break;
+
+	/* Handle the sub menus. */
+	switch(HexEditor::Mode) {
+		case HexEditor::SubMode::Sub:
+			/* Button Clicks. */
+			if (FileHandler::Loaded) {
+				if (UniversalEdit::UE->Down & KEY_TOUCH) {
+					for (uint8_t Idx = 0; Idx < 6; Idx++) {
+						if (Utils::Touching(UniversalEdit::UE->T, this->HexMenu[Idx])) {
+							this->Funcs[Idx]();
+							break;
+						};
+					};
 				};
 			};
-		};
+			break;
+
+		case HexEditor::SubMode::Navigation:
+			this->Navi->Handler();
+			break;
+
+		case HexEditor::SubMode::Analyzer:
+			this->_Analyzer->Handler();
+			break;
+
+		case HexEditor::SubMode::InsertRem:
+			break;
 	};
 };
 
-void HexEditor::Scripts() {
-	if (FileHandler::Loaded) {
-		std::unique_ptr<LUAHelper> LH = std::make_unique<LUAHelper>();
-		LH->RunScript();
-	};
+void HexEditor::AccessNavigation() {
+	if (FileHandler::Loaded) HexEditor::Mode = HexEditor::SubMode::Navigation;
+};
+
+void HexEditor::AccessAnalyzer() {
+	if (FileHandler::Loaded) HexEditor::Mode = HexEditor::SubMode::Analyzer;
 };
 
 void HexEditor::Labels() {
@@ -293,6 +336,18 @@ void HexEditor::Labels() {
 	};
 };
 
+void HexEditor::Scripts() {
+	if (FileHandler::Loaded) {
+		std::unique_ptr<LUAHelper> LH = std::make_unique<LUAHelper>();
+		LH->RunScript();
+	};
+};
+
+void HexEditor::AccessInsertRem() {
+	//if (FileHandler::Loaded) HexEditor::Mode = HexEditor::SubMode::InsertRem;
+};
+
+
 void HexEditor::Encoding() {
 	if (FileHandler::Loaded) {
 		std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
@@ -302,24 +357,5 @@ void HexEditor::Encoding() {
 		const std::string EncodingFile = FB->Handler((Res ? "sdmc:/3ds/Universal-Edit/Hex-Editor/Encodings/" : "romfs:/encodings/"), true, "Select the Encoding you like to use.", { "json" });
 
 		if (EncodingFile != "") UniversalEdit::UE->CurrentFile->LoadEncoding(EncodingFile);
-	};
-};
-
-
-void HexEditor::Convert() {
-	if (FileHandler::Loaded) {
-
-	};
-};
-
-void HexEditor::InsertBytes() {
-	if (FileHandler::Loaded) {
-
-	};
-};
-
-void HexEditor::EraseBytes() {
-	if (FileHandler::Loaded) {
-
 	};
 };

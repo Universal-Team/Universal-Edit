@@ -63,6 +63,8 @@ int LabelSelector::Handler(const std::string &LabelJSON) {
 	nlohmann::ordered_json LData = nullptr;
 	FILE *File = fopen(LabelJSON.c_str(), "r");
 	if (File) {
+		Utils::ProgressMessage(Utils::GetStr("LOADING_LABELS"));
+
 		LData = nlohmann::ordered_json::parse(File, nullptr, false);
 		fclose(File);
 

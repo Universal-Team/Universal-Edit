@@ -69,6 +69,7 @@ void FileHandler::LoadFile() {
 	const std::string EditFile = FB->Handler("sdmc:/", false, Utils::GetStr("SELECT_FILE"), { });
 
 	if (EditFile != "") {
+		Utils::ProgressMessage(Utils::GetStr("LOADING_FILE"));
 		UniversalEdit::UE->CurrentFile = std::make_unique<Data>(EditFile);
 		
 		if (UniversalEdit::UE->CurrentFile->IsGood()) {
@@ -83,16 +84,25 @@ void FileHandler::LoadFile() {
 			Ovl->Handler(Utils::GetStr("FILE_NOT_EXIST_BAD"), -1);
 			FileHandler::Loaded = false;
 		};
+
+		HexEditor::Mode = HexEditor::SubMode::Sub;
 	};
 };
 
 void FileHandler::SaveFile() {
 	if (FileHandler::Loaded) {
-		const bool Success = UniversalEdit::UE->CurrentFile->WriteBack(UniversalEdit::UE->CurrentFile->EditFile());
+		if (UniversalEdit::UE->CurrentFile->Changes()) { // Only write if changes have been made.
+			Utils::ProgressMessage(Utils::GetStr("SAVING_FILE"));
+			const bool Success = UniversalEdit::UE->CurrentFile->WriteBack(UniversalEdit::UE->CurrentFile->EditFile());
 
-		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-		Ovl->Handler((Success ? Utils::GetStr("PROPERLY_SAVED_TO_FILE") : Utils::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
-		UniversalEdit::UE->CurrentFile->SetChanges(false); // Since we saved, no changes have been made.
+			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
+			Ovl->Handler((Success ? Utils::GetStr("PROPERLY_SAVED_TO_FILE") : Utils::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
+			UniversalEdit::UE->CurrentFile->SetChanges(false); // Since we saved, no changes have been made.
+
+		} else {
+			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
+			Ovl->Handler(Utils::GetStr("NO_CHANGES_MADE"), -1);
+		};
 
 	} else {
 		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
@@ -102,6 +112,13 @@ void FileHandler::SaveFile() {
 
 
 void FileHandler::NewFile() {
+	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->Changes()) {
+		std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
+		const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_LOAD"));
+
+		if (!Res) return;
+	};
+
 	UniversalEdit::UE->CurrentFile = std::make_unique<Data>();
 	
 	HexEditor::CursorIdx = 0; // After sucessful loading, also reset the Hex Editor cursor.
@@ -109,4 +126,5 @@ void FileHandler::NewFile() {
 	FileHandler::Loaded = true;
 	UniversalEdit::UE->HexEditMode = true;
 	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::HexEditor;
+	HexEditor::Mode = HexEditor::SubMode::Sub;
 };

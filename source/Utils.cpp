@@ -55,7 +55,10 @@ int Utils::Numpad(const std::string &Text, const int CurVal, const int MinVal, c
 	Input[Length] = '\0';
 
 	if (Input[0] < '0' || Input[0] > '9') return CurVal; // Because citra allows you to enter actual characters for dumb reasons.
-	return (Ret == SWKBD_BUTTON_CONFIRM ? (int)std::min(std::stoi(Input), MaxVal) : CurVal);
+	int Num = (int)std::min(std::stoi(Input), MaxVal);
+
+	if (Num < MinVal) Num = MinVal; // If smaller than MinVal, set to MinVal.
+	return (Ret == SWKBD_BUTTON_CONFIRM ? Num : CurVal);
 };
 
 std::string Utils::Keyboard(const std::string &Text, const std::string &CurStr, const int Length) {
@@ -80,6 +83,22 @@ std::string Utils::Keyboard(const std::string &Text, const std::string &CurStr, 
 	SwkbdButton Ret = swkbdInputText(&State, Input, sizeof(Input));
 	Input[Length] = '\0';
 	return (Ret == SWKBD_BUTTON_CONFIRM ? Input : CurStr);
+};
+
+void Utils::ProgressMessage(const std::string &Msg) {
+	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+
+	UniversalEdit::UE->DrawTop(); // Keep the top screen for sure.
+	UniversalEdit::UE->GData->DrawBottom();
+
+	Gui::Draw_Rect(0, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
+	Gui::Draw_Rect(0, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
+	Gui::DrawStringCentered(0, 1, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("PROGRESS_MSG"), 310);
+	Gui::DrawStringCentered(0, 60, 0.5f, UniversalEdit::UE->TData->TextColor(), Msg, 300, 120, nullptr, C2D_WordWrap);
+	C3D_FrameEnd(0);
 };
 
 

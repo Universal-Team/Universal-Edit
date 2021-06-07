@@ -31,15 +31,27 @@
 #include <string>
 #include <vector>
 
+/* Include the components of the Hex Editor here. */
+#include "Analyzer.hpp"
+#include "Navigation.hpp"
+
+
 class HexEditor {
 public:
-	HexEditor() { };
+	enum class SubMode : uint8_t { Sub = 0, Navigation = 1, Analyzer = 2, InsertRem = 3 };
+
+	HexEditor() {
+		this->_Analyzer = std::make_unique<Analyzer>();
+		this->Navi = std::make_unique<Navigation>();
+	};
+
 	void DrawTop();
 	void DrawBottom();
 	void Handler();
 
 	bool IsEditMode() const { return this->EditMode; };
 	static size_t CursorIdx, OffsIdx, EditorMode; // Needs to be accessible elsewhere.
+	static SubMode Mode;
 private:
 	uint8_t SButton = 0;
 	bool EditMode = false, Loaded = false;
@@ -50,12 +62,12 @@ private:
 	void DrawTextAndHex();
 
 	/* Actions. */
-	void Scripts();
+	void AccessNavigation();
+	void AccessAnalyzer();
 	void Labels();
+	void Scripts();
+	void AccessInsertRem();
 	void Encoding();
-	void Convert();
-	void InsertBytes();
-	void EraseBytes();
 
 	const std::vector<Structs::ButtonPos> HexMenu = {
 		{ 70, 40, 100, 30 },
@@ -69,14 +81,14 @@ private:
 		{ 200, 190, 100, 30 }
 	};
 
-	const std::vector<std::string> MenuOptions = { "SCRIPTS", "LABELS", "ENCODING", "CONVERT", "INSERT_BYTES", "ERASE_BYTES" };
+	const std::vector<std::string> MenuOptions = { "NAVIGATION", "ANALYZER", "LABELS", "SCRIPTS", "INSERT_REM", "ENCODING" };
 	const std::vector<std::function<void()>> Funcs = {
-		{ [this]() { this->Scripts(); } },
+		{ [this]() { this->AccessNavigation(); } },
+		{ [this]() { this->AccessAnalyzer(); } },
 		{ [this]() { this->Labels(); } },
-		{ [this]() { this->Encoding(); } },
-		{ [this]() { this->Convert(); } },
-		{ [this]() { this->InsertBytes(); } },
-		{ [this]() { this->EraseBytes(); } }
+		{ [this]() { this->Scripts(); } },
+		{ [this]() { this->AccessInsertRem(); } },
+		{ [this]() { this->Encoding(); } }
 	};
 
 	/* Used for Hex / Text only Mode. */
@@ -99,6 +111,10 @@ private:
 		346, 352, 359, 366,
 		373, 379, 386, 393
 	};
+
+	/* Hex Editor components. */
+	std::unique_ptr<Analyzer> _Analyzer = nullptr;
+	std::unique_ptr<Navigation> Navi = nullptr;
 };
 
 #endif
