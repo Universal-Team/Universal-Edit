@@ -38,18 +38,6 @@ public:
 	void Sav();
 
 
-	int OffsetColor() const { return this->VOffsetColor; };
-	void OffsetColor(const int V) { this->VOffsetColor = V; if (!this->ChangesMade) this->ChangesMade = true; };
-
-	int OffsetHighlightColor() const { return this->VOffsetHighlightColor; };
-	void OffsetHighlightColor(const int V) { this->VOffsetHighlightColor = V; if (!this->ChangesMade) this->ChangesMade = true; };
-
-	int RowColor() const { return this->VRowColor; };
-	void RowColor(const int V) { this->VRowColor = V; if (!this->ChangesMade) this->ChangesMade = true; };
-
-	int RowHighlightColor() const { return this->VRowHighlightColor; };
-	void RowHighlightColor(const int V) { this->VRowHighlightColor = V; if (!this->ChangesMade) this->ChangesMade = true; };
-
 	/* The current Language. */
 	std::string Lang() const { return this->VLang; };
 	void Lang(const std::string &V) { this->VLang = V; if (!this->ChangesMade) this->ChangesMade = true; };
@@ -73,7 +61,6 @@ private:
 	/* Returns the language code of the system language. */
 	std::string SysLang(void);
 
-	int VOffsetColor, VOffsetHighlightColor, VRowColor, VRowHighlightColor = 0;
 	std::string VLang = "en", VTheme = "Default";
 	bool ChangesMade = false;
 	nlohmann::json CFG = nullptr;

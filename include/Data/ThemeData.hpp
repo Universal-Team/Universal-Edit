@@ -48,14 +48,14 @@ public:
 	uint32_t SelectedByte() const { return this->vSelectedByte; };
 	uint32_t UnselectedByte() const { return this->vUnselectedByte; };
 	uint32_t SidebarIconColor() const { return this->vSideBarIconColor; };
+	uint32_t HexOffsetColor() const { return this->vHexOffsetColor; };
+	uint32_t HexOffsetHighlight() const { return this->vHexOffsetHighlight; };
 
-	uint32_t HexRowColor(const size_t Idx) const {
-		if (Idx < this->vHexRowColors.size()) return this->vHexRowColors[Idx];
-		return 0;
-	};
+	uint32_t HexRowColor(const size_t Idx) const { return this->vHexRowColors[Idx % this->vHexRowColors.size()]; };
+
 private:
 	uint32_t vBarColor, vBGColor, vTextColor, vButtonColor, vSelectedByte, vUnselectedByte, vButtonSelected,
-			 vBarOutline, vSideBarIconColor = 0;
+			 vBarOutline, vSideBarIconColor = 0, vHexOffsetColor, vHexOffsetHighlight;
 
 	std::vector<uint32_t> vHexRowColors = { 0 };
 	int SelectedTheme = 0;

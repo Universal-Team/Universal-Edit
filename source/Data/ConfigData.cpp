@@ -82,10 +82,6 @@ void ConfigData::Load() {
 	fclose(File);
 
 	if (!this->CFG.is_discarded()) {
-		this->OffsetColor(this->Get<nlohmann::json::number_integer_t>("OffsetColor", this->OffsetColor()));
-		this->OffsetHighlightColor(this->Get<nlohmann::json::number_integer_t>("OffsetHighlightColor", this->OffsetHighlightColor()));
-		this->RowColor(this->Get<nlohmann::json::number_integer_t>("RowColor", this->RowColor()));
-		this->RowHighlightColor(this->Get<nlohmann::json::number_integer_t>("RowHighlightColor", this->RowHighlightColor()));
 		this->Lang(this->Get<std::string>("Lang", this->Lang()));
 		this->Theme(this->Get<std::string>("Theme", this->Theme()));
 	};
@@ -96,10 +92,6 @@ void ConfigData::Initialize() {
 	FILE *Temp = fopen("sdmc:/3ds/Universal-Edit/Config.json", "w");
 
 	const nlohmann::json OBJ = {
-		{ "OffsetColor", this->OffsetColor() },
-		{ "OffsetHighlightColor", this->OffsetHighlightColor() },
-		{ "RowColor", this->RowColor() },
-		{ "RowHighlightColor", this->RowHighlightColor() },
 		{ "Lang", this->SysLang() },
 		{ "Theme", this->Theme() }
 	};
@@ -112,10 +104,6 @@ void ConfigData::Initialize() {
 /* SAV changes to the Configuration, if changes made. */
 void ConfigData::Sav() {
 	if (this->ChangesMade) {
-		this->Set<nlohmann::json::number_integer_t>("OffsetColor", this->OffsetColor());
-		this->Set<nlohmann::json::number_integer_t>("OffsetHighlightColor", this->OffsetHighlightColor());
-		this->Set<nlohmann::json::number_integer_t>("RowColor", this->RowColor());
-		this->Set<nlohmann::json::number_integer_t>("RowHighlightColor", this->RowHighlightColor());
 		this->Set<std::string>("Lang", this->Lang());
 		this->Set<std::string>("Theme", this->Theme());
 

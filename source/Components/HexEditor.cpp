@@ -40,87 +40,88 @@ size_t HexEditor::CursorIdx = 0, HexEditor::OffsIdx = 0, HexEditor::EditorMode =
 void HexEditor::DrawHexOnly() {
 	/* Display the top bytes '00, 01 02 03 04 ... 0F. */
 	for (uint8_t Idx = 0; Idx < BYTES_PER_OFFS; Idx++) { // 16 Nums per line.
-		if (HexEditor::CursorIdx % BYTES_PER_OFFS == Idx) Gui::DrawString(70 + (Idx * 20), 27, 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->RowHighlightColor()), Utils::ToHex<uint8_t>(Idx));
-		else Gui::DrawString(70 + (Idx * 20), 27, 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->RowColor()), Utils::ToHex<uint8_t>(Idx));
+		Gui::DrawString(70 + (Idx * 20), 27, 0.4f, HexEditor::CursorIdx % BYTES_PER_OFFS == Idx ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint8_t>(Idx));
 	};
 
 	/* Draw Offset list. */
 	for (uint8_t Idx = 0; Idx < LINES; Idx++) {
-		if (HexEditor::CursorIdx / BYTES_PER_OFFS == Idx) Gui::DrawString(5, this->YPositions[Idx], 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetHighlightColor()), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
-		else Gui::DrawString(5, this->YPositions[Idx], 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetColor()), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
+		Gui::DrawString(5, this->YPositions[Idx], 0.4f, HexEditor::CursorIdx / BYTES_PER_OFFS == Idx ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
 	};
 
 	for (size_t Idx = HexEditor::OffsIdx * BYTES_PER_OFFS, Idx2 = 0; Idx < (HexEditor::OffsIdx * BYTES_PER_OFFS) + BYTES_PER_LIST && Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++, Idx2++) {
+		uint32_t Color;
 		if (Idx2 == HexEditor::CursorIdx) {
 			if (this->IsEditMode()) {
-				Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, UniversalEdit::UE->TData->SelectedByte(), UniversalEdit::UE->CurrentFile->ByteToString(Idx));
+				Color = UniversalEdit::UE->TData->SelectedByte();
 
 			} else {
-				Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, UniversalEdit::UE->TData->UnselectedByte(), UniversalEdit::UE->CurrentFile->ByteToString(Idx));
+				Color = UniversalEdit::UE->TData->UnselectedByte();
 			};
 
 		} else {
-			Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->ByteToString(Idx));
+			Color = UniversalEdit::UE->TData->HexRowColor(Idx2 / 0x10);
 		};
+
+		Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, Color, UniversalEdit::UE->CurrentFile->ByteToString(Idx));
 	};
 };
 
 void HexEditor::DrawTextOnly() {
 	/* Display the top bytes '00, 01 02 03 04 ... 0F. */
 	for (uint8_t Idx = 0; Idx < BYTES_PER_OFFS; Idx++) { // 16 Nums per line.
-		if (HexEditor::CursorIdx % BYTES_PER_OFFS == Idx) Gui::DrawString(70 + (Idx * 20), 27, 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->RowHighlightColor()), Utils::ToHex<uint8_t>(Idx));
-		else Gui::DrawString(70 + (Idx * 20), 27, 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->RowColor()), Utils::ToHex<uint8_t>(Idx));
+		Gui::DrawString(70 + (Idx * 20), 27, 0.4f, HexEditor::CursorIdx % BYTES_PER_OFFS == Idx ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint8_t>(Idx));
 	};
 
 	/* Draw Offset list. */
 	for (uint8_t Idx = 0; Idx < LINES; Idx++) {
-		if (HexEditor::CursorIdx / BYTES_PER_OFFS == Idx) Gui::DrawString(5, this->YPositions[Idx], 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetHighlightColor()), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
-		else Gui::DrawString(5, this->YPositions[Idx], 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetColor()), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
+		Gui::DrawString(5, this->YPositions[Idx], 0.4f, HexEditor::CursorIdx / BYTES_PER_OFFS == Idx ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
 	};
 
 	for (size_t Idx = HexEditor::OffsIdx * BYTES_PER_OFFS, Idx2 = 0; Idx < (HexEditor::OffsIdx * BYTES_PER_OFFS) + BYTES_PER_LIST && Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++, Idx2++) {
+		uint32_t Color;
 		if (Idx2 == HexEditor::CursorIdx) {
 			if (this->IsEditMode()) {
-				Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, UniversalEdit::UE->TData->SelectedByte(), UniversalEdit::UE->CurrentFile->GetChar(Idx));
+				Color = UniversalEdit::UE->TData->SelectedByte();
 
 			} else {
-				Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, UniversalEdit::UE->TData->UnselectedByte(), UniversalEdit::UE->CurrentFile->GetChar(Idx));
+				Color = UniversalEdit::UE->TData->UnselectedByte();
 			};
 
 		} else {
-			Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetChar(Idx));
+			Color = UniversalEdit::UE->TData->HexRowColor(Idx2 / 0x10);
 		};
+
+		Gui::DrawString(this->XPositions[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.4f, Color, UniversalEdit::UE->CurrentFile->GetChar(Idx));
 	};
 };
 
 void HexEditor::DrawTextAndHex() {
 	/* Display the top bytes '00, 04, 08, 0C. */
 	for (uint8_t Idx = 0; Idx < 4; Idx++) { // 32 bit sections.
-		if (HexEditor::CursorIdx % BYTES_PER_OFFS == Idx * 4) Gui::DrawString(this->XPositionsAlt[Idx * 4], 27, 0.38f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->RowHighlightColor()), Utils::ToHex<uint8_t>(Idx * 0x4));
-		else Gui::DrawString(this->XPositionsAlt[Idx * 4], 27, 0.38f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->RowColor()), Utils::ToHex<uint8_t>(Idx * 0x4));
+		Gui::DrawString(this->XPositionsAlt[Idx * 4], 27, 0.38f, HexEditor::CursorIdx % BYTES_PER_OFFS == Idx * 4 ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint8_t>(Idx * 0x4));
 	};
 
 	/* Draw Offset list. */
 	for (uint8_t Idx = 0; Idx < LINES; Idx++) {
-		if (HexEditor::CursorIdx / BYTES_PER_OFFS == Idx) Gui::DrawString(5, this->YPositions[Idx], 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetHighlightColor()), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
-		else Gui::DrawString(5, this->YPositions[Idx], 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetColor()), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
+		Gui::DrawString(5, this->YPositions[Idx], 0.4f, HexEditor::CursorIdx / BYTES_PER_OFFS == Idx ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint32_t>((HexEditor::OffsIdx + Idx) * 0x10));
 	};
 
 	for (size_t Idx = HexEditor::OffsIdx * BYTES_PER_OFFS, Idx2 = 0; Idx < (HexEditor::OffsIdx * BYTES_PER_OFFS) + BYTES_PER_LIST && Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++, Idx2++) {
+		uint32_t Color;
 		if (Idx2 == HexEditor::CursorIdx) {
 			if (this->IsEditMode()) {
-				Gui::DrawString(this->XPositionsAlt[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, UniversalEdit::UE->TData->SelectedByte(), UniversalEdit::UE->CurrentFile->ByteToString(Idx));
-				Gui::DrawString(this->DecodedPos[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, UniversalEdit::UE->TData->SelectedByte(), UniversalEdit::UE->CurrentFile->GetChar(Idx));
+				Color = UniversalEdit::UE->TData->SelectedByte();
 
 			} else {
-				Gui::DrawString(this->XPositionsAlt[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, UniversalEdit::UE->TData->UnselectedByte(), UniversalEdit::UE->CurrentFile->ByteToString(Idx));
-				Gui::DrawString(this->DecodedPos[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, UniversalEdit::UE->TData->UnselectedByte(), UniversalEdit::UE->CurrentFile->GetChar(Idx));
+				Color = UniversalEdit::UE->TData->UnselectedByte();
 			};
 
 		} else {
-			Gui::DrawString(this->XPositionsAlt[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->ByteToString(Idx));
-			Gui::DrawString(this->DecodedPos[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetChar(Idx));
+			Color = UniversalEdit::UE->TData->HexRowColor(Idx2 / 0x10);
 		};
+
+		Gui::DrawString(this->XPositionsAlt[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, Color, UniversalEdit::UE->CurrentFile->ByteToString(Idx));
+		Gui::DrawString(this->DecodedPos[Idx2 % 0x10], this->YPositions[Idx2 / 0x10], 0.38f, Color, UniversalEdit::UE->CurrentFile->GetChar(Idx));
 	};
 };
 
@@ -142,7 +143,7 @@ void HexEditor::DrawTop() {
 				break;
 		};
 
-		Gui::DrawString(5, 27, 0.4f, UniversalEdit::UE->TData->HexRowColor(UniversalEdit::UE->CData->OffsetColor()), Utils::GetStr("OFFSET_H"), 390);
+		Gui::DrawString(5, 27, 0.4f, UniversalEdit::UE->TData->HexOffsetColor(), Utils::GetStr("OFFSET_H"), 390);
 	};
 };
 
