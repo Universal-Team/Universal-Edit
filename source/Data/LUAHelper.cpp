@@ -531,6 +531,6 @@ void LUAHelper::RunScript() {
 
 	if (Status.first) {
 		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-		Ovl->Handler(Status.second, Status.first);
+		Ovl->Handler(Status.second.substr(44), Status.first);
 	};
 };
