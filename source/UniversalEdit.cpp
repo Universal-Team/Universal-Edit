@@ -59,7 +59,7 @@ UniversalEdit::UniversalEdit() {
 
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 	hidSetRepeatParameters(25, 2);
-	Utils::LoadLanguage();
+	
 
 	/* Initialize all components. */
 	this->FH = std::make_unique<FileHandler>();
@@ -108,6 +108,8 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 
 
 int UniversalEdit::Handler() {
+	Utils::LoadLanguage();
+	
 	while(aptMainLoop() && !this->Exiting) {
 		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));

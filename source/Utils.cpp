@@ -113,15 +113,17 @@ void Utils::LoadLanguage() {
 	};
 
 	if (Good) {
-		if (access(("romfs:/lang/" + UniversalEdit::UE->CData->Lang() + "/app.json").c_str(), F_OK) == 0) { // Ensure access is ok.
-			In = fopen(("romfs:/lang/" + UniversalEdit::UE->CData->Lang() + "/app.json").c_str(), "r");
-			if (In)	AppJSON = nlohmann::json::parse(In, nullptr, false);
-			fclose(In);
-
-		} else {
-			Good = false;
+		if (access(std::string(std::string("romfs:/lang/") + UniversalEdit::UE->CData->Lang()).c_str(), F_OK) == 0) { // Ensure access is ok.
+			if (access((std::string(std::string("romfs:/lang/") + UniversalEdit::UE->CData->Lang() + std::string("/app.json")).c_str()), F_OK) == 0) { // Ensure access is ok.
+				In = fopen(std::string(std::string("romfs:/lang/") + UniversalEdit::UE->CData->Lang() + std::string("/app.json")).c_str(), "r");
+				if (In)	AppJSON = nlohmann::json::parse(In, nullptr, false);
+				fclose(In);
+				return;
+			};
 		};
 	};
+
+	Good = false;
 
 	if (!Good) {
 		/* Load English. */
