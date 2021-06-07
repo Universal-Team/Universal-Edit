@@ -98,7 +98,7 @@ void HexEditor::DrawTextOnly() {
 void HexEditor::DrawTextAndHex() {
 	/* Display the top bytes '00, 04, 08, 0C. */
 	for (uint8_t Idx = 0; Idx < 4; Idx++) { // 32 bit sections.
-		Gui::DrawString(this->XPositionsAlt[Idx * 4], 27, 0.38f, HexEditor::CursorIdx % BYTES_PER_OFFS == Idx * 4 ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint8_t>(Idx * 0x4));
+		Gui::DrawString(this->XPositionsAlt[Idx * 4], 27, 0.38f, HexEditor::CursorIdx % BYTES_PER_OFFS / 4 == Idx ? UniversalEdit::UE->TData->HexOffsetHighlight() : UniversalEdit::UE->TData->HexOffsetColor(), Utils::ToHex<uint8_t>(Idx * 0x4));
 	};
 
 	/* Draw Offset list. */
