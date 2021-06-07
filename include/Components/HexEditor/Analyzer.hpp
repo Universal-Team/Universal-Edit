@@ -42,23 +42,13 @@ private:
 	void Fetch();
 
 	void SwitchByteSize(const uint8_t Size);
-	void ToggleUnsigned(const bool OnFirst);
-	void ToggleSigned(const bool OnFirst);
-	void ToggleFloat();
+	void ToggleEndian();
+	void ToggleHex();
 
 	uint8_t SelectionSize = 1; // 1 byte.
 
-	std::pair<bool, bool> UnsignedByte = std::make_pair(true, true); // Hex | Dec; LE | BE.
-	std::string UnsignedByteVal = "0";
-	
-	std::pair<bool, bool> SignedByte = std::make_pair(true, true); // Hex | Dec; LE | BE.
-	std::string SignedByteVal = "0";
-
-	std::string Float = "0.0";
-	bool FloatBE = true;
-
-	std::string UTF8 = ".";
-	std::string Binary = "00000000";
+	bool Endian = false; // Little Endian.
+	bool Hex = true; // Hexadecimal.
 
 	const std::vector<Structs::ButtonPos> Menu = {
 		{ 50, 0, 20, 20 }, // Back.
@@ -67,23 +57,24 @@ private:
 		{ 150, 40, 20, 20 },
 		{ 180, 40, 20, 20 },
 		{ 210, 40, 20, 20 },
-		{ 240, 40, 20, 20 },
+
+		/* Endian/Hex buttons */
+		{ 280, 40, 30, 20 },
+		{ 280, 80, 30, 20 },
 
 		/* Unsigned Byte. */
 		{ 210, 80, 30, 20 },
-		{ 260, 80, 30, 20 },
 
 		/* Signed Byte. */
 		{ 210, 110, 30, 20 },
-		{ 260, 110, 30, 20 },
 
 		/* Float. */
 		{ 260, 140, 30, 20 },
 
-		/* UTF-8. */
+		/* Binary. */
 		{ 260, 170, 30, 20 },
 
-		/* Binary. */
+		/* UTF-8. */
 		{ 260, 200, 30, 20 },
 	};
 
@@ -92,16 +83,11 @@ private:
 
 		{ [this]() { this->SwitchByteSize(1); } },
 		{ [this]() { this->SwitchByteSize(2); } },
-		{ [this]() { this->SwitchByteSize(3); } },
 		{ [this]() { this->SwitchByteSize(4); } },
 
-		{ [this]() { this->ToggleUnsigned(true); } },
-		{ [this]() { this->ToggleUnsigned(false); } },
+		{ [this]() { this->ToggleEndian(); } },
 
-		{ [this]() { this->ToggleSigned(true); } },
-		{ [this]() { this->ToggleSigned(false); } },
-
-		{ [this]() { this->ToggleFloat(); } }
+		{ [this]() { this->ToggleHex(); } },
 	};
 };
 
