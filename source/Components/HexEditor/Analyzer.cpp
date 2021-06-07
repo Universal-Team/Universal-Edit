@@ -97,10 +97,10 @@ void Analyzer::Draw() {
 
 
 	/* Draw UTF-8. */
-	memcpy(str, UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx, 4);
+	memcpy(str, UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx, std::min((uint32_t)SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx));
 	for (int i = 0; i < this->SelectionSize; i++)
 		if(str[i] == 0) str[i] = '.';
-	str[this->SelectionSize] = 0;
+	str[std::min((uint32_t)SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx)] = 0;
 	Gui::DrawString(60, this->Menu[10].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("UTF_8") + str);
 };
 
