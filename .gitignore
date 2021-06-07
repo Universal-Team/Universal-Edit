@@ -1,0 +1,17 @@
+
+*.bin
+*.d
+*.o
+*.smdh
+*.elf
+*.cia
+*.3dsx
+*build
+*.map
+*.lst
+.vscode
+*.DS_Store
+romfs/gfx/*.t3x
+
+bannertool*
+makerom*

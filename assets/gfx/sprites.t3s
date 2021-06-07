@@ -1,0 +1,7 @@
+--atlas -f rgba -z auto
+
+sprites/credits.png
+sprites/filehandler.png
+sprites/hexeditor.png
+sprites/settings.png
+sprites/texteditor.png
