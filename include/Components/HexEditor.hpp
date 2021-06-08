@@ -34,15 +34,17 @@
 /* Include the components of the Hex Editor here. */
 #include "Analyzer.hpp"
 #include "Navigation.hpp"
+#include "Reminsert.hpp"
 
 
 class HexEditor {
 public:
-	enum class SubMode : uint8_t { Sub = 0, Navigation = 1, Analyzer = 2, InsertRem = 3 };
+	enum class SubMode : uint8_t { Sub = 0, Navigation = 1, Analyzer = 2, Reminsert = 3 };
 
 	HexEditor() {
 		this->_Analyzer = std::make_unique<Analyzer>();
 		this->Navi = std::make_unique<Navigation>();
+		this->RI = std::make_unique<Reminsert>();
 	};
 
 	void DrawTop();
@@ -67,7 +69,7 @@ private:
 	void AccessAnalyzer();
 	void Labels();
 	void Scripts();
-	void AccessInsertRem();
+	void AccessReminsert();
 	void Encoding();
 
 	const std::vector<Structs::ButtonPos> HexMenu = {
@@ -82,13 +84,13 @@ private:
 		{ 200, 190, 100, 30 }
 	};
 
-	const std::vector<std::string> MenuOptions = { "NAVIGATION", "ANALYZER", "LABELS", "SCRIPTS", "INSERT_REM", "ENCODING" };
+	const std::vector<std::string> MenuOptions = { "NAVIGATION", "ANALYZER", "LABELS", "SCRIPTS", "REMINSERT", "ENCODING" };
 	const std::vector<std::function<void()>> Funcs = {
 		{ [this]() { this->AccessNavigation(); } },
 		{ [this]() { this->AccessAnalyzer(); } },
 		{ [this]() { this->Labels(); } },
 		{ [this]() { this->Scripts(); } },
-		{ [this]() { this->AccessInsertRem(); } },
+		{ [this]() { this->AccessReminsert(); } },
 		{ [this]() { this->Encoding(); } }
 	};
 
@@ -116,6 +118,7 @@ private:
 	/* Hex Editor components. */
 	std::unique_ptr<Analyzer> _Analyzer = nullptr;
 	std::unique_ptr<Navigation> Navi = nullptr;
+	std::unique_ptr<Reminsert> RI = nullptr;
 };
 
 #endif

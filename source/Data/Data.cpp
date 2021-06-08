@@ -62,13 +62,13 @@ void Data::Load(const std::string &File) {
 
 
 void Data::InsertBytes(const uint32_t Offs, const std::vector<uint8_t> &ToInsert) {
-	if (Offs >= this->GetSize()) return; // Out of bounds.
+	if (Offs > this->GetSize()) return; // Out of bounds.
 
 	this->FileData.insert(this->FileData.begin() + Offs, ToInsert.begin(), ToInsert.end());
 };
 
 void Data::EraseBytes(const uint32_t Offs, const uint32_t Size) {
-	if (Offs >= this->GetSize() || Offs + Size >= this->GetSize()) return; // Out of bounds.
+	if (Offs >= this->GetSize() || Offs + Size > this->GetSize()) return; // Out of bounds.
 	this->FileData.erase(this->FileData.begin() + Offs, this->FileData.begin() + Offs + Size);
 };
 

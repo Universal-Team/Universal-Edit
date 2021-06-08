@@ -317,6 +317,32 @@ static int Numpad(lua_State *LState) {
 	return 1;
 };
 
+
+/*
+	Opens the system keyboard to enter a hex value.
+
+	Usage:
+		local Str = UniversalEdit.Hexpad("What should be entered in hex?", 0x0, 0x0, 0x64, 4);
+
+	First: Display what the user should input.
+	Second: What should be returned, when the user does cancel.
+	Third: The min value.
+	Fourth: The max value.
+	Fifth: The length of numbers, including the '0x' identifier
+*/
+static int HexPad(lua_State *LState) {
+	if (lua_gettop(LState) != 5) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+	const std::string Msg = (std::string)(luaL_checkstring(LState, 1));
+
+	const int CurVal = luaL_checkinteger(LState, 2);
+	const int MinVal = luaL_checkinteger(LState, 3);
+	const int MaxVal = luaL_checkinteger(LState, 4);
+	const int Length = luaL_checkinteger(LState, 5);
+
+	lua_pushinteger(LState, Utils::HexPad(Msg, CurVal, MinVal, MaxVal, Length));
+	return 1;
+};
+
 /*
 	Opens the system keyboard to enter a string.
 
@@ -512,6 +538,7 @@ static constexpr luaL_Reg UniversalEditFunctions[] = {
 	{ "SelectList", SelectList },
 	{ "SelectJSONList", SelectJSONList },
 	{ "Numpad", Numpad },
+	{ "HexPad", HexPad },
 	{ "Keyboard", Keyboard },
 	{ "DumpBytes", DumpBytes },
 	{ "InjectBytes", InjectBytes },

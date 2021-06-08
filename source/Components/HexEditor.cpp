@@ -177,14 +177,15 @@ void HexEditor::DrawBottom() {
 			this->_Analyzer->Draw();
 			break;
 
-		case HexEditor::SubMode::InsertRem:
+		case HexEditor::SubMode::Reminsert:
+			this->RI->Draw();
 			break;
 	};
 };
 
 
 void HexEditor::Handler() {
-	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
+	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood() && UniversalEdit::UE->CurrentFile->GetSize() > 0) {
 		if (this->IsEditMode()) { // Edit the selected byte.
 			if (UniversalEdit::UE->Repeat & KEY_UP) {
 				if (UniversalEdit::UE->CurrentFile->GetData()[(HexEditor::OffsIdx * BYTES_PER_OFFS + HexEditor::CursorIdx)] < 0xFF) {
@@ -268,15 +269,16 @@ void HexEditor::Handler() {
 				this->EditMode = true;
 			};
 		};
-
-		if (UniversalEdit::UE->Down & KEY_R) {
-			if (UniversalEdit::UE->CData->DefaultHexView() < 2) UniversalEdit::UE->CData->DefaultHexView(UniversalEdit::UE->CData->DefaultHexView() + 1);
-		};
-
-		if (UniversalEdit::UE->Down & KEY_L) {
-			if (UniversalEdit::UE->CData->DefaultHexView() > 0) UniversalEdit::UE->CData->DefaultHexView(UniversalEdit::UE->CData->DefaultHexView() - 1);
-		};
 	};
+		
+	if (UniversalEdit::UE->Down & KEY_R) {
+		if (UniversalEdit::UE->CData->DefaultHexView() < 2) UniversalEdit::UE->CData->DefaultHexView(UniversalEdit::UE->CData->DefaultHexView() + 1);
+	};
+
+	if (UniversalEdit::UE->Down & KEY_L) {
+		if (UniversalEdit::UE->CData->DefaultHexView() > 0) UniversalEdit::UE->CData->DefaultHexView(UniversalEdit::UE->CData->DefaultHexView() - 1);
+	};
+	
 
 
 	/* Handle the sub menus. */
@@ -303,7 +305,8 @@ void HexEditor::Handler() {
 			this->_Analyzer->Handler();
 			break;
 
-		case HexEditor::SubMode::InsertRem:
+		case HexEditor::SubMode::Reminsert:
+			this->RI->Handler();
 			break;
 	};
 };
@@ -346,8 +349,8 @@ void HexEditor::Scripts() {
 	};
 };
 
-void HexEditor::AccessInsertRem() {
-	//if (FileHandler::Loaded) HexEditor::Mode = HexEditor::SubMode::InsertRem;
+void HexEditor::AccessReminsert() {
+	if (FileHandler::Loaded) HexEditor::Mode = HexEditor::SubMode::Reminsert;
 };
 
 

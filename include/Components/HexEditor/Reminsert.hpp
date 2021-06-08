@@ -24,34 +24,53 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_UTILS_HPP
-#define _UNIVERSAL_EDIT_UTILS_HPP
+#ifndef _UNIVERSAL_EDIT_HEX_EDITOR_REMOVE_INSERT_HPP
+#define _UNIVERSAL_EDIT_HEX_EDITOR_REMOVE_INSERT_HPP
 
 #include "structs.hpp"
-#include <3ds.h>
+#include <functional>
 #include <string>
+#include <vector>
 
-namespace Utils {
-	bool Touching(const touchPosition T, const Structs::ButtonPos P);
+class Reminsert {
+public:
+	void Draw();
+	void Handler();
+private:
+	void SetOffs();
+	void SetSize();
+	void SetVal();
 
-	template <class T> std::string ToHex(T Value) {
-		char Buffer[sizeof(T) * 2 + 1] = { 0 };
 
-		for (int Idx = sizeof(T) * 2 - 1; Idx >= 0; Idx--) {
-			Buffer[Idx] = ((Value & 0xF) >= 0xA ? 'A' + (Value & 0xF) - 0xA : '0' + (Value & 0xF));
-			Value >>= 4;
-		};
+	void Remove();
+	void Insert();
+	void Back();
 
-		return Buffer;
+	uint8_t ValueToInsert = 0x0;
+	uint32_t Offset = 0x0;
+	uint32_t Size = 0x0;
+
+	const std::vector<Structs::ButtonPos> Menu = {
+		{ 58, 38, 200, 30 }, // Offset.
+		{ 58, 78, 200, 30 }, // Size.
+		{ 58, 118, 200, 30 }, // Value to insert.
+
+
+		{ 70, 170, 100, 30 }, // Insert.
+		{ 200, 170, 100, 30 }, // Remove
+		{ 50, 0, 20, 20 } // Back.
 	};
 
-	int Numpad(const std::string &Text, const int CurVal, const int MinVal, const int MaxVal, const int Length);
-	uint32_t HexPad(const std::string &Text, const uint32_t CurVal, const uint32_t MinVal, const uint32_t MaxVal, const int Length);
-	std::string Keyboard(const std::string &Text, const std::string &CurStr, const int Length);
-	void ProgressMessage(const std::string &Msg);
-	
-	const std::string &GetStr(const std::string &Key);
-	void LoadLanguage();
+	const std::vector<std::string> MenuOptions = { "INSERT", "REMOVE" };
+	const std::vector<std::function<void()>> Funcs = {
+		{ [this]() { this->SetOffs(); } },
+		{ [this]() { this->SetSize(); } },
+		{ [this]() { this->SetVal(); } },
+
+		{ [this]() { this->Insert(); } },
+		{ [this]() { this->Remove(); } },
+		{ [this]() { this->Back(); } }
+	};
 };
 
 #endif

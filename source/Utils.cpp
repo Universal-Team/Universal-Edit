@@ -61,6 +61,78 @@ int Utils::Numpad(const std::string &Text, const int CurVal, const int MinVal, c
 	return (Ret == SWKBD_BUTTON_CONFIRM ? Num : CurVal);
 };
 
+uint32_t Utils::HexPad(const std::string &Text, const uint32_t CurVal, const uint32_t MinVal, const uint32_t MaxVal, const int Length) {
+	uint32_t Res = CurVal;
+
+	/* Display one frame on top of what should be entered. */
+	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	UniversalEdit::UE->GData->DrawTop();
+	Gui::DrawStringCentered(0, 50, 0.6f, UniversalEdit::UE->TData->TextColor(), Text, 395, 100, nullptr, C2D_WordWrap);
+	UniversalEdit::UE->GData->DrawBottom();
+	C3D_FrameEnd(0);
+
+	SwkbdState State;
+	swkbdInit(&State, SWKBD_TYPE_QWERTY, 3, Length);
+	swkbdSetHintText(&State, Text.c_str());
+	swkbdSetInitialText(&State, "0x0"); // Set the initial display to 0x0, so the user knows this must be entered in hex.
+	swkbdSetValidation(&State, SWKBD_ANYTHING, SWKBD_FILTER_CALLBACK, 0); // Using custom callback for this.
+
+	/* Custom callback, to check for valid hex input. */
+	swkbdSetFilterCallback(&State, [](void *UserData, const char **CallbackMsg, const char *Input, size_t InputLen) {
+		if (InputLen == 0) return SWKBD_CALLBACK_OK; // 0 can also cancel there.
+
+		const std::vector<char> Valid = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f' };	
+
+		/* Ensure at least 3 characters are in. */
+		if (InputLen >= 0x3) {
+			if (Input[0] == '0' && Input[1] == 'x') { // First: Check if the 0x specifier is included.
+
+				/* Check all characters there for valid input. */
+				for (size_t Idx = 2; Idx < InputLen; Idx++) { // Starting at 2, since we already checked 0 and 1 before.
+					bool IsGood = false;
+
+					for (size_t Idx2 = 0; Idx2 < Valid.size(); Idx2++) {
+						if (Input[Idx] == Valid[Idx2]) IsGood = true;
+						if (IsGood) break;
+					};
+
+					if (!IsGood) { // Not valid!
+						*CallbackMsg = Utils::GetStr("NOT_VALID_HEX_INPUT").c_str();
+						return SWKBD_CALLBACK_CONTINUE;
+					};
+				};
+
+			} else {
+				*CallbackMsg = Utils::GetStr("HEX_IDENTIFIER_MISSING").c_str();
+				return SWKBD_CALLBACK_CONTINUE;
+			};
+
+		} else { // Input smaller as 0x3.
+			*CallbackMsg = Utils::GetStr("HEX_INPUT_TOO_SMALL").c_str();
+			return SWKBD_CALLBACK_CONTINUE;
+		};
+
+		return SWKBD_CALLBACK_OK;
+	}, nullptr);
+
+	/* Do the hexpad magic. */
+	char Input[Length + 1] = { '\0' };
+	SwkbdButton Ret = swkbdInputText(&State, Input, sizeof(Input));
+	Input[Length] = '\0';
+
+	if (Ret == SWKBD_BUTTON_CONFIRM) {
+		if (Input[0] != '\0') {
+			Res = (uint32_t)std::min(std::stoul(Input, nullptr, 16), MaxVal);
+			if (Res < MinVal) Res = MinVal; // If smaller than MinVal, set to MinVal.
+		};
+	};
+	
+	return Res;
+};
+
 std::string Utils::Keyboard(const std::string &Text, const std::string &CurStr, const int Length) {
 	/* Display one frame on top of what should be entered. */
 	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
@@ -104,14 +176,15 @@ void Utils::ProgressMessage(const std::string &Msg) {
 
 
 static nlohmann::json AppJSON;
+static std::string IfNotFound = "";
 
 /*
 	Gets a translated string from the JSON.
 
 	const std::string &Key: The string to get from the translation.
 */
-std::string Utils::GetStr(const std::string &Key) {
-	if (!AppJSON.contains(Key)) return "";
+const std::string &Utils::GetStr(const std::string &Key) {
+	if (!AppJSON.contains(Key)) return IfNotFound; // Since we'd return a reference there, we need to have it like this.
 
 	return AppJSON.at(Key).get_ref<const std::string &>();
 };

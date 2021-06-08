@@ -56,14 +56,26 @@ void Navigation::Handler() {
 
 
 void Navigation::Search() {
-	if (FileHandler::Loaded) {
-		
+	/* TODO: Get ideas how to implement this nicely. */
+	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->GetSize() > 0) {
+
 	};
 };
 
 void Navigation::JumpTo() {
-	if (FileHandler::Loaded) {
+	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->GetSize() > 0) {
+		const uint32_t Offs = Utils::HexPad(Utils::GetStr("ENTER_OFFSET_IN_HEX"), (HexEditor::OffsIdx * 0x10) + HexEditor::CursorIdx, 0, UniversalEdit::UE->CurrentFile->GetSize() - 1, 10);
 
+		if (Offs != (HexEditor::OffsIdx * 0x10) + HexEditor::CursorIdx) {
+			if (Offs < 0xD0) {
+				HexEditor::OffsIdx = 0;
+				HexEditor::CursorIdx = Offs;
+
+			} else {
+				HexEditor::OffsIdx = 1 + ((Offs - 0xD0) / 0x10);
+				HexEditor::CursorIdx = (0xD0 - 0x10) + (Offs % 0x10);
+			};
+		};
 	};
 };
 
