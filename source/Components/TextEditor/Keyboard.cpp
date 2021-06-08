@@ -27,6 +27,7 @@
 #include "Common.hpp"
 #include "JSON.hpp"
 #include "Keyboard.hpp"
+#include "TextUtils.hpp"
 #include <unistd.h>
 
 void Keyboard::Load(const std::string &KeyboardJSON) {
@@ -119,14 +120,14 @@ void Keyboard::Handler() {
 							/* Special action, such as modifying other characters */
 							case Key::Property::Action:
 								if (Value == "backspace") {
-									// TODO: Handle UTF-8
+									while ((this->Out.back() & 0xC0) == 0x80 && this->Out.size() > 0) this->Out.pop_back(); // UTF-8 multi byte
 									if (this->Out.size() > 0) this->Out.pop_back();
 								} else if (Value == "dakuten") {
-									// TODO: Modify kana
-									this->Out += "゛";
+									TextUtils::Dakutenify(Out, false);
 								} else if (Value == "handakuten") {
-									// TODO: ^
-									this->Out += "゜";
+									TextUtils::Dakutenify(Out, true);
+								} else if (Value == "exit") {
+									TextEditor::Mode = TextEditor::SubMode::Sub;
 								}
 								break;
 							/* Changes mode, such as to Shift mode */
