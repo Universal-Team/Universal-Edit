@@ -24,37 +24,20 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
-#define _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
-
-#include "structs.hpp"
-#include <memory>
-#include <string>
-#include <vector>
-
-/* Include the Text Editor components here. */
+#include "Common.hpp"
+#include "JSON.hpp"
 #include "Keyboard.hpp"
-#include "Phrases.hpp"
+#include <unistd.h>
 
+void Keyboard::Load(const std::string &KeyboardJSON) {
 
-class TextEditor {
-public:
-	enum class SubMode : uint8_t { Sub = 0, Keyboard = 1, Phrases = 2 };
-
-	TextEditor() {
-		this->Phrase = std::make_unique<Phrases>();
-		this->Kbd = std::make_unique<Keyboard>();
-	};
-	void DrawTop();
-	void DrawBottom();
-	void Handler();
-
-	static size_t CursorPos;
-	static SubMode Mode;
-private:
-	/* The Text Editor components. */
-	std::unique_ptr<Keyboard> Kbd = nullptr;
-	std::unique_ptr<Phrases> Phrase = nullptr; 
 };
 
-#endif
+void Keyboard::Draw() {
+
+};
+
+
+void Keyboard::Handler() {
+
+};

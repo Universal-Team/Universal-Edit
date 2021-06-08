@@ -50,6 +50,8 @@ UniversalEdit::UniversalEdit() {
 
 	/* Text Editor related. */
 	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor", 0777);
+	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard", 0777);
+	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases", 0777);
 	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor/Syntax", 0777);
 
 	this->CData = std::make_unique<ConfigData>();

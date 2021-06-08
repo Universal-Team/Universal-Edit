@@ -24,37 +24,31 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
-#define _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
+#ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_PHRASES_HPP
+#define _UNIVERSAL_EDIT_TEXT_EDITOR_PHRASES_HPP
 
 #include "structs.hpp"
-#include <memory>
 #include <string>
 #include <vector>
 
-/* Include the Text Editor components here. */
-#include "Keyboard.hpp"
-#include "Phrases.hpp"
-
-
-class TextEditor {
+class Phrases {
 public:
-	enum class SubMode : uint8_t { Sub = 0, Keyboard = 1, Phrases = 2 };
-
-	TextEditor() {
-		this->Phrase = std::make_unique<Phrases>();
-		this->Kbd = std::make_unique<Keyboard>();
-	};
-	void DrawTop();
-	void DrawBottom();
+	void Load(const std::string &PhaseJSON);
+	void Draw();
 	void Handler();
-
-	static size_t CursorPos;
-	static SubMode Mode;
 private:
-	/* The Text Editor components. */
-	std::unique_ptr<Keyboard> Kbd = nullptr;
-	std::unique_ptr<Phrases> Phrase = nullptr; 
+	std::vector<std::string> PhraseList;
+	size_t PIdx = 0, PPos = 0;
+
+	void Insert(const size_t Idx);
+
+	const std::vector<Structs::ButtonPos> ListPos = {
+		{ 80, 35, 200, 30 },
+		{ 80, 70, 200, 30 },
+		{ 80, 105, 200, 30 },
+		{ 80, 140, 200, 30 },
+		{ 80, 175, 200, 30 }
+	};
 };
 
 #endif
