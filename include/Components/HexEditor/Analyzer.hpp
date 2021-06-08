@@ -45,8 +45,6 @@ private:
 	void ToggleEndian();
 	void ToggleHex();
 
-	uint8_t SelectionSize = 1; // 1 byte.
-
 	bool Endian = false; // Little Endian.
 	bool Hex = true; // Hexadecimal.
 

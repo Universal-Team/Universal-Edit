@@ -51,6 +51,7 @@ public:
 
 	bool IsEditMode() const { return this->EditMode; };
 	static size_t CursorIdx, OffsIdx, EditorMode; // Needs to be accessible elsewhere.
+	static uint8_t SelectionSize;
 	static SubMode Mode;
 private:
 	uint8_t SButton = 0;

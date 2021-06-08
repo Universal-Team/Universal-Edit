@@ -38,7 +38,7 @@ void Analyzer::Draw() {
 	Gui::DrawString(60, this->Menu[1].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SELECTION_SIZE"));
 	Gui::DrawString(this->Menu[3].x + 30, this->Menu[1].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("BYTES"));
 	for (uint8_t Idx = 0; Idx < 3; Idx++) {
-		if (this->SelectionSize == 1 << Idx) {
+		if (HexEditor::SelectionSize == 1 << Idx) {
 			Gui::Draw_Rect(this->Menu[Idx + 1].x - 2, this->Menu[Idx + 1].y - 2, this->Menu[Idx + 1].w + 4, this->Menu[Idx + 1].h + 4, UniversalEdit::UE->TData->ButtonColor());
 		};
 
@@ -62,11 +62,11 @@ void Analyzer::Draw() {
 		float f;
 	} Val;
 	if (this->Endian) { // Big Endian
-		for (int i = 0; i < this->SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i < UniversalEdit::UE->CurrentFile->GetSize(); i++) {
-			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i) << (this->SelectionSize - 1 - i) * 8;
+		for (int i = 0; i < HexEditor::SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i < UniversalEdit::UE->CurrentFile->GetSize(); i++) {
+			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i) << (HexEditor::SelectionSize - 1 - i) * 8;
 		}
 	} else { // Little Endian
-		for (int i = 0; i < this->SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i < UniversalEdit::UE->CurrentFile->GetSize(); i++) {
+		for (int i = 0; i < HexEditor::SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i < UniversalEdit::UE->CurrentFile->GetSize(); i++) {
 			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i) << i * 8;
 		}
 	}
@@ -78,7 +78,7 @@ void Analyzer::Draw() {
 
 
 	/* Draw Signed Integer. */
-	snprintf(str, sizeof(str), "%ld", this->SelectionSize == 1 ? Val.s8 : (this->SelectionSize == 2 ? Val.s16 : Val.s32));
+	snprintf(str, sizeof(str), "%ld", HexEditor::SelectionSize == 1 ? Val.s8 : (HexEditor::SelectionSize == 2 ? Val.s16 : Val.s32));
 	Gui::DrawString(60, this->Menu[7].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SIGNED_INT") + str);
 
 
@@ -88,26 +88,26 @@ void Analyzer::Draw() {
 
 
 	/* Draw Binary. */
-	for (int i = 0; i < SelectionSize * 9; i++) {
+	for (int i = 0; i < HexEditor::SelectionSize * 9; i++) {
 		if (i % 9 == 8) str[i] = ' ';
 		else str[i] = ((Val.u32 & (1 << i)) >> i) ? '1' : '0';
 	};
-	str[this->SelectionSize * 9] = 0;
+	str[HexEditor::SelectionSize * 9] = 0;
 	Gui::DrawString(60, this->Menu[9].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("BINARY") + str);
 
 
 	/* Draw UTF-8. */
-	memcpy(str, UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx, std::min((uint32_t)SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx));
-	for (int i = 0; i < this->SelectionSize; i++)
+	memcpy(str, UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx, std::min((uint32_t)HexEditor::SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx));
+	for (int i = 0; i < HexEditor::SelectionSize; i++)
 		if (str[i] == 0) str[i] = '.';
-	str[std::min((uint32_t)SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx)] = 0;
+	str[std::min((uint32_t)HexEditor::SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx)] = 0;
 	Gui::DrawString(60, this->Menu[10].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("UTF_8") + str);
 };
 
 void Analyzer::SwitchByteSize(const uint8_t Size) {
 	/* Ensure size is within range. */
 	if (((HexEditor::OffsIdx * 0x10) + HexEditor::CursorIdx) + Size - 1 < UniversalEdit::UE->CurrentFile->GetSize()) {
-		this->SelectionSize = Size;
+		HexEditor::SelectionSize = Size;
 	};
 };
 

@@ -36,6 +36,7 @@
 #define LINES 0xD
 
 size_t HexEditor::CursorIdx = 0, HexEditor::OffsIdx = 0, HexEditor::EditorMode = 0;
+uint8_t HexEditor::SelectionSize = 1;
 HexEditor::SubMode HexEditor::Mode = HexEditor::SubMode::Sub; // Main Sub mode.
 
 void HexEditor::DrawHexOnly() {
@@ -51,8 +52,8 @@ void HexEditor::DrawHexOnly() {
 
 	for (size_t Idx = HexEditor::OffsIdx * BYTES_PER_OFFS, Idx2 = 0; Idx < (HexEditor::OffsIdx * BYTES_PER_OFFS) + BYTES_PER_LIST && Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++, Idx2++) {
 		uint32_t Color;
-		if (Idx2 == HexEditor::CursorIdx) {
-			if (this->IsEditMode()) {
+		if (Idx2 >= HexEditor::CursorIdx && Idx2 < HexEditor::CursorIdx + SelectionSize) {
+			if (this->IsEditMode() && Idx2 == HexEditor::CursorIdx) {
 				Color = UniversalEdit::UE->TData->SelectedByte();
 
 			} else {
@@ -80,8 +81,8 @@ void HexEditor::DrawTextOnly() {
 
 	for (size_t Idx = HexEditor::OffsIdx * BYTES_PER_OFFS, Idx2 = 0; Idx < (HexEditor::OffsIdx * BYTES_PER_OFFS) + BYTES_PER_LIST && Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++, Idx2++) {
 		uint32_t Color;
-		if (Idx2 == HexEditor::CursorIdx) {
-			if (this->IsEditMode()) {
+		if (Idx2 >= HexEditor::CursorIdx && Idx2 < HexEditor::CursorIdx + SelectionSize) {
+			if (this->IsEditMode() && Idx2 == HexEditor::CursorIdx) {
 				Color = UniversalEdit::UE->TData->SelectedByte();
 
 			} else {
@@ -109,8 +110,8 @@ void HexEditor::DrawTextAndHex() {
 
 	for (size_t Idx = HexEditor::OffsIdx * BYTES_PER_OFFS, Idx2 = 0; Idx < (HexEditor::OffsIdx * BYTES_PER_OFFS) + BYTES_PER_LIST && Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++, Idx2++) {
 		uint32_t Color;
-		if (Idx2 == HexEditor::CursorIdx) {
-			if (this->IsEditMode()) {
+		if (Idx2 >= HexEditor::CursorIdx && Idx2 < HexEditor::CursorIdx + SelectionSize) {
+			if (this->IsEditMode() && Idx2 == HexEditor::CursorIdx) {
 				Color = UniversalEdit::UE->TData->SelectedByte();
 
 			} else {
