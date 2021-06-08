@@ -37,7 +37,9 @@
 #include "Credits.hpp"
 #include "FileHandler.hpp"
 #include "HexEditor.hpp"
+#include "Settings.hpp"
 #include "Tab.hpp"
+#include "TextEditor.hpp"
 
 class UniversalEdit {
 public:
@@ -65,7 +67,9 @@ private:
 	std::unique_ptr<Credits> CR = nullptr;
 	std::unique_ptr<FileHandler> FH = nullptr;
 	std::unique_ptr<HexEditor> HE = nullptr;
+	std::unique_ptr<Settings> SE = nullptr;
 	std::unique_ptr<Tab> _Tab = nullptr;
+	std::unique_ptr<TextEditor> TE = nullptr;
 };
 
 #endif

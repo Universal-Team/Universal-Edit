@@ -34,8 +34,12 @@
 class Data {
 public:
 	Data();
-	Data(const std::string &File);
+	Data(const std::string &File) {
+		this->Load(File);
+		this->LoadEncoding("romfs:/encodings/ascii.json");
+	};
 
+	void Load(const std::string &File);
 	bool Changes() const { return this->ChangesMade; };
 	void SetChanges(const bool V) { this->ChangesMade = V; };
 	bool IsGood() const { return this->FileGood; };

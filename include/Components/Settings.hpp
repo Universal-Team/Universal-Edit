@@ -24,32 +24,28 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_FILE_BROWSER_HPP
-#define _UNIVERSAL_EDIT_FILE_BROWSER_HPP
+#ifndef _UNIVERSAL_EDIT_SETTINGS_HPP
+#define _UNIVERSAL_EDIT_SETTINGS_HPP
 
-#include "BrowseData.hpp"
 #include "structs.hpp"
-#include <memory> // unique_ptr.
+#include <functional>
 #include <string>
 #include <vector>
 
-class FileBrowser {
+class Settings {
 public:
 	void Draw();
-	std::string Handler(const std::string &BasePath, const bool Limit, const std::string &Text, const std::vector<std::string> &Extensions);
+	void Handler();
 private:
-	bool Limit = false;
-	std::string BasePath, Text = "";
-	std::unique_ptr<BrowseData> Browser = nullptr;
-	int SPos = 0;
-	std::vector<std::string> CurrentFileData;
+	void LanguageHandler();
 
-	const std::vector<Structs::ButtonPos> FBPos = {
-		{ 30, 35, 260, 30 },
-		{ 30, 70, 260, 30 },
-		{ 30, 105, 260, 30 },
-		{ 30, 140, 260, 30 },
-		{ 30, 175, 260, 30 }
+	const std::vector<Structs::ButtonPos> Menu = {
+		{ 70, 40, 100, 30 } // Language.
+	};
+
+	const std::vector<std::string> MenuOptions = { "LANGUAGE" };
+	const std::vector<std::function<void()>> Funcs = {
+		{ [this]() { this->LanguageHandler(); } }
 	};
 };
 

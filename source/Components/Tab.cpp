@@ -29,8 +29,8 @@
 
 void Tab::Draw() {
 	for (uint8_t Idx = 0; Idx < 5; Idx++) {
-		if (Idx == (uint8_t)UniversalEdit::UE->ActiveTab) Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->ButtonSelected());
-		else Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->ButtonColor());
+		if (Idx == (uint8_t)UniversalEdit::UE->ActiveTab) Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->SidebarSelected());
+		else Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->SidebarColor());
 	};
 
 	UniversalEdit::UE->GData->SpriteBlend(sprites_filehandler_idx, this->Tabs[0].x, this->Tabs[0].y, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);

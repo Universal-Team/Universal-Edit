@@ -65,20 +65,23 @@ UniversalEdit::UniversalEdit() {
 	this->CR = std::make_unique<Credits>();
 	this->FH = std::make_unique<FileHandler>();
 	this->HE = std::make_unique<HexEditor>();
+	this->SE = std::make_unique<Settings>();
 	this->_Tab = std::make_unique<Tab>();
+	this->TE = std::make_unique<TextEditor>();
 };
 
 void UniversalEdit::DrawTop() {
 	UniversalEdit::GData->DrawTop();
 
 	if (FileHandler::Loaded) {
-		if (this->HexEditMode) {
+		if (this->HexEditMode) { // Hex Edit mode.
 			if (this->CurrentFile && this->CurrentFile->IsGood()) {
 				this->HE->DrawTop();
 
 			};
-		} else { // Text Editor.
 
+		} else { // Text Editor.
+			this->TE->DrawTop();
 		};
 
 	} else {
@@ -101,7 +104,11 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 			break;
 
 		case Tabs::TextEditor:
+			this->TE->DrawBottom();
+			break;
+
 		case Tabs::Settings:
+			this->SE->Draw();
 			break;
 			
 		case Tabs::Credits:
@@ -154,7 +161,13 @@ int UniversalEdit::Handler() {
 				break;
 
 			case Tabs::TextEditor:
+				this->TE->Handler();
+				break;
+
 			case Tabs::Settings:
+				this->SE->Handler();
+				break;
+				
 			case Tabs::Credits:
 				break;
 		};

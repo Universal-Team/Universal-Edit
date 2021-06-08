@@ -27,7 +27,7 @@
 #include "Common.hpp"
 #include "FileBrowser.hpp"
 
-#define ENTRIES_ON_LIST 4
+#define ENTRIES_ON_LIST 5
 
 void FileBrowser::Draw() {
 	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
@@ -48,10 +48,10 @@ void FileBrowser::Draw() {
 
 	/* Now begin to draw the filebrowser. */
 	for (int Idx = 0; Idx < ENTRIES_ON_LIST && Idx < (int)this->CurrentFileData.size(); Idx++) {
-		if (this->SPos + Idx == this->Browser->GetSelectedIndex()) Gui::Draw_Rect(this->FBPos[Idx].x - 2, this->FBPos[Idx].y - 2, this->FBPos[Idx].w + 4, this->FBPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
-		Gui::Draw_Rect(this->FBPos[Idx].x, this->FBPos[Idx].y, this->FBPos[Idx].w, this->FBPos[Idx].h, UniversalEdit::UE->TData->BarColor());
+		if (this->SPos + Idx == this->Browser->GetSelectedIndex()) Gui::Draw_Rect(this->FBPos[Idx].x - 2, this->FBPos[Idx].y - 2, this->FBPos[Idx].w + 4, this->FBPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+		Gui::Draw_Rect(this->FBPos[Idx].x, this->FBPos[Idx].y, this->FBPos[Idx].w, this->FBPos[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 
-		Gui::DrawStringCentered(0, this->FBPos[Idx].y + 5, 0.5f, UniversalEdit::UE->TData->TextColor(), this->CurrentFileData[this->SPos + Idx], 240);
+		Gui::DrawStringCentered(0, this->FBPos[Idx].y + 6, 0.5f, UniversalEdit::UE->TData->TextColor(), this->CurrentFileData[this->SPos + Idx], 240);
 	};
 
 	C3D_FrameEnd(0);

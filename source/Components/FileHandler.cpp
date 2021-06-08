@@ -39,8 +39,9 @@ void FileHandler::Draw() {
 	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("FILE_HANDLER_MENU"), 310);
 
 	for (uint8_t Idx = 0; Idx < 3; Idx++) {
-		Gui::Draw_Rect(this->Menu[Idx].x - 2, this->Menu[Idx].y - 2, this->Menu[Idx].w + 4, this->Menu[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
-		Gui::Draw_Rect(this->Menu[Idx].x, this->Menu[Idx].y, this->Menu[Idx].w, this->Menu[Idx].h, UniversalEdit::UE->TData->BarColor());
+		Gui::Draw_Rect(this->Menu[Idx].x - 2, this->Menu[Idx].y - 2, this->Menu[Idx].w + 4, this->Menu[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+		Gui::Draw_Rect(this->Menu[Idx].x, this->Menu[Idx].y, this->Menu[Idx].w, this->Menu[Idx].h, UniversalEdit::UE->TData->ButtonColor());
+		
 		Gui::DrawString(this->Menu[Idx].x + 5, this->Menu[Idx].y + 5, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
 	};
 };
@@ -70,8 +71,10 @@ void FileHandler::LoadFile() {
 
 	if (EditFile != "") {
 		Utils::ProgressMessage(Utils::GetStr("LOADING_FILE"));
-		UniversalEdit::UE->CurrentFile = std::make_unique<Data>(EditFile);
-		
+		/* If nullptr, initialize the unique_ptr. */
+		if (!UniversalEdit::UE->CurrentFile) UniversalEdit::UE->CurrentFile = std::make_unique<Data>(EditFile);
+		else UniversalEdit::UE->CurrentFile->Load(EditFile); // Otherwise load.
+
 		if (UniversalEdit::UE->CurrentFile->IsGood()) {
 			HexEditor::CursorIdx = 0; // After sucessful loading, also reset the Hex Editor cursor.
 			HexEditor::OffsIdx = 0;

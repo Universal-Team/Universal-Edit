@@ -44,8 +44,8 @@ void JSONListSelector::Draw() {
 
 	/* Now begin to draw the contents. */
 	for (int Idx = 0; Idx < ENTRIES_ON_LIST && Idx < (int)this->Content.size(); Idx++) {
-		if (this->SPos + Idx == this->Selection) Gui::Draw_Rect(this->ListPos[Idx].x - 2, this->ListPos[Idx].y - 2, this->ListPos[Idx].w + 4, this->ListPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
-		Gui::Draw_Rect(this->ListPos[Idx].x, this->ListPos[Idx].y, this->ListPos[Idx].w, this->ListPos[Idx].h, UniversalEdit::UE->TData->BarColor());
+		if (this->SPos + Idx == this->Selection) Gui::Draw_Rect(this->ListPos[Idx].x - 2, this->ListPos[Idx].y - 2, this->ListPos[Idx].w + 4, this->ListPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+		Gui::Draw_Rect(this->ListPos[Idx].x, this->ListPos[Idx].y, this->ListPos[Idx].w, this->ListPos[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		
 		Gui::DrawStringCentered(0, this->ListPos[Idx].y + 5, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Content[this->SPos + Idx].first, 240);
 	};

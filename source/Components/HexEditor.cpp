@@ -35,7 +35,7 @@
 #define BYTES_PER_OFFS 0x10
 #define LINES 0xD
 
-size_t HexEditor::CursorIdx = 0, HexEditor::OffsIdx = 0, HexEditor::EditorMode = 0;
+size_t HexEditor::CursorIdx = 0, HexEditor::OffsIdx = 0;
 uint8_t HexEditor::SelectionSize = 1;
 HexEditor::SubMode HexEditor::Mode = HexEditor::SubMode::Sub; // Main Sub mode.
 
@@ -131,8 +131,9 @@ void HexEditor::DrawTop() {
 	if (UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
 
-		switch(HexEditor::EditorMode) {
+		switch(UniversalEdit::UE->CData->DefaultHexView()) {
 			case 0:
+			default:
 				this->DrawHexOnly();
 				break;
 
@@ -160,8 +161,9 @@ void HexEditor::DrawBottom() {
 			/* Draw Buttons. */
 			if (FileHandler::Loaded) {
 				for (uint8_t Idx = 0; Idx < 6; Idx++) {
-					Gui::Draw_Rect(this->HexMenu[Idx].x - 2, this->HexMenu[Idx].y - 2, this->HexMenu[Idx].w + 4, this->HexMenu[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
-					Gui::Draw_Rect(this->HexMenu[Idx].x, this->HexMenu[Idx].y, this->HexMenu[Idx].w, this->HexMenu[Idx].h, UniversalEdit::UE->TData->BarColor());
+					Gui::Draw_Rect(this->HexMenu[Idx].x - 2, this->HexMenu[Idx].y - 2, this->HexMenu[Idx].w + 4, this->HexMenu[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+					Gui::Draw_Rect(this->HexMenu[Idx].x, this->HexMenu[Idx].y, this->HexMenu[Idx].w, this->HexMenu[Idx].h, UniversalEdit::UE->TData->ButtonColor());
+					
 					Gui::DrawString(this->HexMenu[Idx].x + 5, this->HexMenu[Idx].y + 5, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
 				};
 			};
@@ -268,11 +270,11 @@ void HexEditor::Handler() {
 		};
 
 		if (UniversalEdit::UE->Down & KEY_R) {
-			if (HexEditor::EditorMode < 2) HexEditor::EditorMode++;
+			if (UniversalEdit::UE->CData->DefaultHexView() < 2) UniversalEdit::UE->CData->DefaultHexView(UniversalEdit::UE->CData->DefaultHexView() + 1);
 		};
 
 		if (UniversalEdit::UE->Down & KEY_L) {
-			if (HexEditor::EditorMode > 0) HexEditor::EditorMode--;
+			if (UniversalEdit::UE->CData->DefaultHexView() > 0) UniversalEdit::UE->CData->DefaultHexView(UniversalEdit::UE->CData->DefaultHexView() - 1);
 		};
 	};
 

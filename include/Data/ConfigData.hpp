@@ -44,7 +44,10 @@ public:
 
 	/* The active Theme. */
 	std::string Theme() const { return this->VTheme; };
-	void Theme(const std::string &v) { this->VTheme = v; if (!this->ChangesMade) this->ChangesMade = true; };
+	void Theme(const std::string &V) { this->VTheme = V; if (!this->ChangesMade) this->ChangesMade = true; };
+
+	int DefaultHexView() const { return this->VDefaultHexView; };
+	void DefaultHexView(const int V) { this->VDefaultHexView = V; if (!this->ChangesMade) this->ChangesMade = true; };
 private:
 	template <class T>
 	T Get(const std::string &Key, const T IfNotFound) {
@@ -62,6 +65,7 @@ private:
 	std::string SysLang(void);
 
 	std::string VLang = "en", VTheme = "Default";
+	int VDefaultHexView = 0;
 	bool ChangesMade = false;
 	nlohmann::json CFG = nullptr;
 };

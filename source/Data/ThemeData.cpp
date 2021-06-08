@@ -57,13 +57,16 @@ nlohmann::json ThemeData::InitWithDefaultColors(const std::string &ThemePath) {
 			{ "BGColor", "#333333" },
 			{ "TextColor", "#F0F0F0" },
 			{ "ButtonColor", "#193A64" },
-			{ "ButtonSelected", "#294A84"},
+			{ "ButtonSelected", "#C0C0C0"},
 			{ "HexOffsetColor", "#00AAAA" },
 			{ "HexOffsetHighlight", "#00EEEE" },
 			{ "HexRowColor", { "#F0F0F0", "#C0C0C0" } },
 			{ "SelectedByte", "#00AA00" },
 			{ "UnselectedByte", "#AA0000" },
 			{ "SideBarIconColor", "#ADCCEF" },
+			{ "SidebarColor", "#193A64" },
+			{ "SidebarSelected", "#294A84" },
+			{ "BackArrowColor", "#ADCCEF" },
 			{ "Description", "Universal-Edit's default Theme.\n\nBy: Universal-Team" }
 		}}
 	};
@@ -85,12 +88,15 @@ void ThemeData::LoadTheme(const std::string &ThemeName) {
 	this->vBGColor				= this->GetThemeColor(ThemeName, "BGColor", RGBA8(51, 51, 51, 255));
 	this->vTextColor			= this->GetThemeColor(ThemeName, "TextColor", RGBA8(240, 240, 240, 255));
 	this->vButtonColor			= this->GetThemeColor(ThemeName, "ButtonColor", RGBA8(25, 58, 100, 255));
-	this->vButtonSelected		= this->GetThemeColor(ThemeName, "ButtonSelected", RGBA8(41, 74, 132, 255));
+	this->vButtonSelected		= this->GetThemeColor(ThemeName, "ButtonSelected", RGBA8(192, 192, 192, 255));
 	this->vSelectedByte			= this->GetThemeColor(ThemeName, "SelectedByte", RGBA8(0, 170, 0, 255));
 	this->vUnselectedByte		= this->GetThemeColor(ThemeName, "UnselectedByte", RGBA8(170, 0, 0, 255));
 	this->vSideBarIconColor		= this->GetThemeColor(ThemeName, "SideBarIconColor", RGBA8(173, 204, 239, 255));
 	this->vHexOffsetColor		= this->GetThemeColor(ThemeName, "HexOffsetColor", RGBA8(0, 170, 170, 255));
 	this->vHexOffsetHighlight	= this->GetThemeColor(ThemeName, "HexOffsetHighlight", RGBA8(0, 238, 238, 255));
+	this->vSidebarColor			= this->GetThemeColor(ThemeName, "SidebarColor", RGBA8(25, 58, 100, 255));
+	this->vSidebarSelected		= this->GetThemeColor(ThemeName, "SidebarSelected", RGBA8(41, 74, 132, 255));
+	this->vBackArrowColor		= this->GetThemeColor(ThemeName, "BackArrowColor", RGBA8(173, 204, 239, 255));
 
 	if (this->TJson.contains(ThemeName) && this->TJson[ThemeName].is_object() && this->TJson[ThemeName].contains("HexRowColor") && this->TJson[ThemeName]["HexRowColor"].is_array()) {
 		for (size_t Idx = 0; Idx < this->TJson[ThemeName]["HexRowColor"].size(); Idx++) {

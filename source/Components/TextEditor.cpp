@@ -24,33 +24,21 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_FILE_BROWSER_HPP
-#define _UNIVERSAL_EDIT_FILE_BROWSER_HPP
+#include "Common.hpp"
+#include "TextEditor.hpp"
 
-#include "BrowseData.hpp"
-#include "structs.hpp"
-#include <memory> // unique_ptr.
-#include <string>
-#include <vector>
 
-class FileBrowser {
-public:
-	void Draw();
-	std::string Handler(const std::string &BasePath, const bool Limit, const std::string &Text, const std::vector<std::string> &Extensions);
-private:
-	bool Limit = false;
-	std::string BasePath, Text = "";
-	std::unique_ptr<BrowseData> Browser = nullptr;
-	int SPos = 0;
-	std::vector<std::string> CurrentFileData;
+/* TODO: Display Text from the Data class. */
+void TextEditor::DrawTop() {
 
-	const std::vector<Structs::ButtonPos> FBPos = {
-		{ 30, 35, 260, 30 },
-		{ 30, 70, 260, 30 },
-		{ 30, 105, 260, 30 },
-		{ 30, 140, 260, 30 },
-		{ 30, 175, 260, 30 }
-	};
 };
 
-#endif
+void TextEditor::DrawBottom() {
+	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
+	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
+	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("TEXT_EDITOR_MENU"), 310);
+};
+
+void TextEditor::Handler() {
+
+};

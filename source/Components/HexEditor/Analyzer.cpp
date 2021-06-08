@@ -30,7 +30,7 @@
 void Analyzer::Draw() {
 	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
-	UniversalEdit::UE->GData->SpriteBlend(sprites_arrow_idx, 50, 0, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);
+	UniversalEdit::UE->GData->SpriteBlend(sprites_arrow_idx, 50, 0, UniversalEdit::UE->TData->BackArrowColor(), 1.0f);
 	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("ANALYZER"), 310);
 
 
@@ -38,19 +38,17 @@ void Analyzer::Draw() {
 	Gui::DrawString(60, this->Menu[1].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SELECTION_SIZE"));
 	Gui::DrawString(this->Menu[3].x + 30, this->Menu[1].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("BYTES"));
 	for (uint8_t Idx = 0; Idx < 3; Idx++) {
-		if (HexEditor::SelectionSize == 1 << Idx) {
-			Gui::Draw_Rect(this->Menu[Idx + 1].x - 2, this->Menu[Idx + 1].y - 2, this->Menu[Idx + 1].w + 4, this->Menu[Idx + 1].h + 4, UniversalEdit::UE->TData->ButtonColor());
-		};
-
-		Gui::Draw_Rect(this->Menu[Idx + 1].x, this->Menu[Idx + 1].y, this->Menu[Idx + 1].w, this->Menu[Idx + 1].h, UniversalEdit::UE->TData->BarColor());
+		if (HexEditor::SelectionSize == 1 << Idx) Gui::Draw_Rect(this->Menu[Idx + 1].x - 2, this->Menu[Idx + 1].y - 2, this->Menu[Idx + 1].w + 4, this->Menu[Idx + 1].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+		
+		Gui::Draw_Rect(this->Menu[Idx + 1].x, this->Menu[Idx + 1].y, this->Menu[Idx + 1].w, this->Menu[Idx + 1].h, UniversalEdit::UE->TData->ButtonColor());
 		Gui::DrawString(this->Menu[Idx + 1].x + 1, this->Menu[Idx + 1].y + 1, 0.4f, UniversalEdit::UE->TData->TextColor(), std::to_string(1 << Idx));
 	};
 
 	/* Draw Endian and Hex/Dec buttons. */
-	Gui::Draw_Rect(this->Menu[4].x, this->Menu[4].y, this->Menu[4].w, this->Menu[4].h, UniversalEdit::UE->TData->BarColor()); // LE / BE.
+	Gui::Draw_Rect(this->Menu[4].x, this->Menu[4].y, this->Menu[4].w, this->Menu[4].h, UniversalEdit::UE->TData->ButtonColor()); // LE / BE.
 	Gui::DrawString(this->Menu[4].x + 1, this->Menu[4].y + 1, 0.4f, UniversalEdit::UE->TData->TextColor(), (this->Endian ? "BE" : "LE"));
 
-	Gui::Draw_Rect(this->Menu[5].x, this->Menu[5].y, this->Menu[5].w, this->Menu[5].h, UniversalEdit::UE->TData->BarColor()); // Hex / Dec.
+	Gui::Draw_Rect(this->Menu[5].x, this->Menu[5].y, this->Menu[5].w, this->Menu[5].h, UniversalEdit::UE->TData->ButtonColor()); // Hex / Dec.
 	Gui::DrawString(this->Menu[5].x + 1, this->Menu[5].y + 1, 0.4f, UniversalEdit::UE->TData->TextColor(), (this->Hex ? "Hex" : "Dec"));
 
 
@@ -61,47 +59,49 @@ void Analyzer::Draw() {
 		int32_t s32;
 		float f;
 	} Val;
-	if (this->Endian) { // Big Endian
-		for (int i = 0; i < HexEditor::SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i < UniversalEdit::UE->CurrentFile->GetSize(); i++) {
-			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i) << (HexEditor::SelectionSize - 1 - i) * 8;
-		}
-	} else { // Little Endian
-		for (int i = 0; i < HexEditor::SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i < UniversalEdit::UE->CurrentFile->GetSize(); i++) {
-			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + i) << i * 8;
-		}
-	}
-	char str[32] = {0};
+
+	if (this->Endian) { // Big Endian.
+		for (int Idx = 0; Idx < HexEditor::SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++) {
+			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + Idx) << (HexEditor::SelectionSize - 1 - Idx) * 8;
+		};
+
+	} else { // Little Endian.
+		for (int Idx = 0; Idx < HexEditor::SelectionSize && HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + Idx < UniversalEdit::UE->CurrentFile->GetSize(); Idx++) {
+			Val.u32 |= *(UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx + Idx) << Idx * 8;
+		};
+	};
+
+	char Str[32] = { 0 };
 
 	/* Draw Unsigned Integer. */
-	snprintf(str, sizeof(str), this->Hex ? "0x%lX" : "%lu", Val.u32);
-	Gui::DrawString(60, this->Menu[6].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("UNSIGNED_INT") + str);
-
+	snprintf(Str, sizeof(Str), this->Hex ? "0x%lX" : "%lu", Val.u32);
+	Gui::DrawString(60, this->Menu[6].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("UNSIGNED_INT") + Str);
 
 	/* Draw Signed Integer. */
-	snprintf(str, sizeof(str), "%ld", HexEditor::SelectionSize == 1 ? Val.s8 : (HexEditor::SelectionSize == 2 ? Val.s16 : Val.s32));
-	Gui::DrawString(60, this->Menu[7].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SIGNED_INT") + str);
-
+	snprintf(Str, sizeof(Str), "%ld", HexEditor::SelectionSize == 1 ? Val.s8 : (HexEditor::SelectionSize == 2 ? Val.s16 : Val.s32));
+	Gui::DrawString(60, this->Menu[7].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SIGNED_INT") + Str);
 
 	/* Draw Float. */
-	snprintf(str, sizeof(str), "%e", Val.f);
-	Gui::DrawString(60, this->Menu[8].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("FLOAT") + str);
-
+	snprintf(Str, sizeof(Str), "%e", Val.f);
+	Gui::DrawString(60, this->Menu[8].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("FLOAT") + Str);
 
 	/* Draw Binary. */
-	for (int i = 0; i < HexEditor::SelectionSize * 9; i++) {
-		if (i % 9 == 8) str[i] = ' ';
-		else str[i] = ((Val.u32 & (1 << i)) >> i) ? '1' : '0';
+	for (uint8_t Idx = 0; Idx < HexEditor::SelectionSize * 9; Idx++) {
+		if (Idx % 9 == 8) Str[Idx] = ' ';
+		else Str[Idx] = ((Val.u32 & (1 << Idx)) >> Idx) ? '1' : '0';
 	};
-	str[HexEditor::SelectionSize * 9] = 0;
-	Gui::DrawString(60, this->Menu[9].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("BINARY") + str);
 
+	Str[HexEditor::SelectionSize * 9] = 0;
+	Gui::DrawString(60, this->Menu[9].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("BINARY") + Str, 260);
 
 	/* Draw UTF-8. */
-	memcpy(str, UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx, std::min((uint32_t)HexEditor::SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx));
-	for (int i = 0; i < HexEditor::SelectionSize; i++)
-		if (str[i] == 0) str[i] = '.';
-	str[std::min((uint32_t)HexEditor::SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx)] = 0;
-	Gui::DrawString(60, this->Menu[10].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("UTF_8") + str);
+	memcpy(Str, UniversalEdit::UE->CurrentFile->GetData() + HexEditor::OffsIdx * 0x10 + HexEditor::CursorIdx, std::min((uint32_t)HexEditor::SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx));
+	for (uint8_t Idx = 0; Idx < HexEditor::SelectionSize; Idx++) {
+		if (Str[Idx] == 0) Str[Idx] = '.';
+	};
+
+	Str[std::min((uint32_t)HexEditor::SelectionSize, UniversalEdit::UE->CurrentFile->GetSize() - HexEditor::OffsIdx * 0x10 - HexEditor::CursorIdx)] = 0;
+	Gui::DrawString(60, this->Menu[10].y + 3, 0.45f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("UTF_8") + Str);
 };
 
 void Analyzer::SwitchByteSize(const uint8_t Size) {
@@ -111,17 +111,12 @@ void Analyzer::SwitchByteSize(const uint8_t Size) {
 	};
 };
 
-void Analyzer::ToggleEndian() {
-	this->Endian = !this->Endian;
-};
-
-void Analyzer::ToggleHex() {
-	this->Hex = !this->Hex;
-};
+void Analyzer::ToggleEndian() { this->Endian = !this->Endian; };
+void Analyzer::ToggleHex() { this->Hex = !this->Hex; };
 
 void Analyzer::Handler() {
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		for (uint8_t Idx = 0; Idx < 10; Idx++) {
+		for (uint8_t Idx = 0; Idx < 6; Idx++) {
 			if (Utils::Touching(UniversalEdit::UE->T, this->Menu[Idx])) {
 				this->Funcs[Idx]();
 				break;
@@ -131,6 +126,4 @@ void Analyzer::Handler() {
 };
 
 
-void Analyzer::Back() {
-	HexEditor::Mode = HexEditor::SubMode::Sub;
-};
+void Analyzer::Back() { HexEditor::Mode = HexEditor::SubMode::Sub; };

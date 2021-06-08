@@ -47,8 +47,8 @@ void StatusMessage::Handler(const std::string &Msg, const int Res) {
 		Gui::DrawStringCentered(0, 40, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("STATUS"), 310);
 		Gui::DrawStringCentered(0, 60, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Msg, 300, 120, nullptr, C2D_WordWrap);
 
-		Gui::Draw_Rect(this->OK.x - 2, this->OK.y - 2, this->OK.w + 4, this->OK.h + 4, UniversalEdit::UE->TData->ButtonColor());
-		Gui::Draw_Rect(this->OK.x, this->OK.y, this->OK.w, this->OK.h, UniversalEdit::UE->TData->BarColor());
+		Gui::Draw_Rect(this->OK.x - 2, this->OK.y - 2, this->OK.w + 4, this->OK.h + 4, UniversalEdit::UE->TData->ButtonSelected());
+		Gui::Draw_Rect(this->OK.x, this->OK.y, this->OK.w, this->OK.h, UniversalEdit::UE->TData->ButtonColor());
 		Gui::DrawStringCentered(0, this->OK.y + 3, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("OK"));
 		C3D_FrameEnd(0);
 

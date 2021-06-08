@@ -38,7 +38,7 @@ Data::Data() {
 	this->LoadEncoding("romfs:/encodings/ascii.json");
 };
 
-Data::Data(const std::string &File) {
+void Data::Load(const std::string &File) {
 	this->File = File;
 
 	if (access(this->File.c_str(), F_OK) == 0) {
@@ -58,9 +58,8 @@ Data::Data(const std::string &File) {
 	} else {
 		this->FileGood = false;
 	};
-
-	this->LoadEncoding("romfs:/encodings/ascii.json");
 };
+
 
 void Data::InsertBytes(const uint32_t Offs, const std::vector<uint8_t> &ToInsert) {
 	if (Offs >= this->GetSize()) return; // Out of bounds.

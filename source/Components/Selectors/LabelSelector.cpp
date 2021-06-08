@@ -44,8 +44,8 @@ void LabelSelector::Draw() {
 
 	/* Now begin to draw the filebrowser. */
 	for (int Idx = 0; Idx < ENTRIES_ON_LIST && Idx < (int)this->Labels.size(); Idx++) {
-		if (this->SPos + Idx == this->Selection) Gui::Draw_Rect(this->LPos[Idx].x - 2, this->LPos[Idx].y - 2, this->LPos[Idx].w + 4, this->LPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonColor());
-		Gui::Draw_Rect(this->LPos[Idx].x, this->LPos[Idx].y, this->LPos[Idx].w, this->LPos[Idx].h, UniversalEdit::UE->TData->BarColor());
+		if (this->SPos + Idx == this->Selection) Gui::Draw_Rect(this->LPos[Idx].x - 2, this->LPos[Idx].y - 2, this->LPos[Idx].w + 4, this->LPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+		Gui::Draw_Rect(this->LPos[Idx].x, this->LPos[Idx].y, this->LPos[Idx].w, this->LPos[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 
 		Gui::DrawStringCentered(0, this->LPos[Idx].y + 5, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Labels[this->SPos + Idx].Title, 240);
 		Gui::DrawStringCentered(0, this->LPos[Idx].y + 20, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("OFFSET") + this->Labels[this->SPos + Idx].Offset, 240);
