@@ -31,15 +31,15 @@
 /* Get last codepoint from a UTF-8 string */
 char32_t TextUtils::GetLastCodepoint(const char *Str) {
 	// Return 0 if nullptr or empty string
-	if(!Str || !*Str)
+	if (!Str || !*Str)
 		return 0;
 
 	char32_t Codepoint = 0;
 	Str += strlen(Str) - 1; // Move to end of string
-	for(int i = 0;; i++) {
-		if((*(Str - i) & 0xC0) == 0x80) {
+	for (int i = 0;; i++) {
+		if ((*(Str - i) & 0xC0) == 0x80) {
 			Codepoint |= (*(Str - i) & 0x3F) << (i * 6);
-		} else if(*(Str - i) & 0x80) {
+		} else if (*(Str - i) & 0x80) {
 			int Bit = 7;
 			while (*(Str - i) & (1 << (Bit--)));
 			Codepoint |= (*(Str - i) & ((1 << ++Bit) - 1)) << (i * 6);
@@ -53,23 +53,23 @@ char32_t TextUtils::GetLastCodepoint(const char *Str) {
 /* Try to make the last character in a string have a (han)dakuten */
 void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
 	char32_t Char = GetLastCodepoint(Str.c_str());
-	if(Char >= u'ァ' && Char <= u'ヶ') Char -= 96; // Katakana
+	if (Char >= u'ァ' && Char <= u'ヶ') Char -= 96; // Katakana
 
-	int change = 0;
+	int Change = 0;
 
-	if(Handakuten) {
+	if (Handakuten) {
 		constexpr std::array<char16_t, 20> Handakutenable = {
 			u'は', u'ひ', u'ふ', u'へ', u'ほ'
 		};
-		for(const char16_t item : Handakutenable) {
-			if(Char == item) {
-				change = 2;
+		for (const char16_t Item : Handakutenable) {
+			if (Char == Item) {
+				Change = 2;
 				break;
 			}
 		}
 	} else {
-		if(Char == u'う') {
-			change = 0x4E;
+		if (Char == u'う') {
+			Change = 0x4E;
 		} else {
 			constexpr std::array<char16_t, 20> Dakutenable = {
 				u'か', u'き', u'く', u'け', u'こ',
@@ -77,21 +77,21 @@ void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
 				u'た', u'ち', u'つ', u'て', u'と',
 				u'は', u'ひ', u'ふ', u'へ', u'ほ'
 			};
-			for(const char16_t item : Dakutenable) {
-				if(Char == item) {
-					change = 1;
+			for (const char16_t Item : Dakutenable) {
+				if (Char == Item) {
+					Change = 1;
 					break;
 				}
 			}
 		}
 	}
 
-	if(change) {
-		if((Str.back() & 0x3F) + change < 0x3F) {
-			Str.back() += change;
+	if (Change) {
+		if ((Str.back() & 0x3F) + Change < 0x3F) {
+			Str.back() += Change;
 		} else {
 			auto it = Str.end() - 1;
-			*it = 0x80 | ((*it + change) & 0x3F);
+			*it = 0x80 | ((*it + Change) & 0x3F);
 			it--;
 			(*it)++;
 		}
