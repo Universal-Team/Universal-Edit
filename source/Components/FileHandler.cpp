@@ -25,6 +25,7 @@
 */
 
 #include "Common.hpp"
+#include "DirSelector.hpp"
 #include "FileHandler.hpp"
 #include "FileBrowser.hpp"
 #include "HexEditor.hpp"
@@ -36,9 +37,9 @@ bool FileHandler::Loaded = false;
 void FileHandler::Draw() {
 	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("FILE_HANDLER_MENU"), 310);
+	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("FILE_HANDLER_MENU"), 310);
 
-	for (uint8_t Idx = 0; Idx < 3; Idx++) {
+	for (uint8_t Idx = 0; Idx < 4; Idx++) {
 		Gui::Draw_Rect(this->Menu[Idx].x - 2, this->Menu[Idx].y - 2, this->Menu[Idx].w + 4, this->Menu[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->Menu[Idx].x, this->Menu[Idx].y, this->Menu[Idx].w, this->Menu[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		
@@ -48,7 +49,7 @@ void FileHandler::Draw() {
 
 void FileHandler::Handler() {
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		for (uint8_t Idx = 0; Idx < 3; Idx++) {
+		for (uint8_t Idx = 0; Idx < 4; Idx++) {
 			if (Utils::Touching(UniversalEdit::UE->T, this->Menu[Idx])) {
 				this->Funcs[Idx]();
 				break;
@@ -92,6 +93,24 @@ void FileHandler::LoadFile() {
 	};
 };
 
+void FileHandler::NewFile() {
+	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->Changes()) {
+		std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
+		const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_LOAD"));
+
+		if (!Res) return;
+	};
+
+	UniversalEdit::UE->CurrentFile = std::make_unique<Data>();
+	
+	HexEditor::CursorIdx = 0; // After sucessful loading, also reset the Hex Editor cursor.
+	HexEditor::OffsIdx = 0;
+	FileHandler::Loaded = true;
+	UniversalEdit::UE->HexEditMode = true;
+	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::HexEditor;
+	HexEditor::Mode = HexEditor::SubMode::Sub;
+};
+
 void FileHandler::SaveFile() {
 	if (FileHandler::Loaded) {
 		if (UniversalEdit::UE->CurrentFile->Changes()) { // Only write if changes have been made.
@@ -113,21 +132,27 @@ void FileHandler::SaveFile() {
 	};
 };
 
+void FileHandler::SaveFileAs() {
+	if (FileHandler::Loaded) {
+		std::unique_ptr<DirSelector> DS = std::make_unique<DirSelector>();
+		const std::string Dest = DS->Handler("sdmc:/", Utils::GetStr("SELECT_DEST"));
 
-void FileHandler::NewFile() {
-	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->Changes()) {
-		std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
-		const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_LOAD"));
+		if (Dest != "") {
+			const std::string FName = Utils::Keyboard(Utils::GetStr("ENTER_FILE_NAME"), "", 100);
 
-		if (!Res) return;
-	};
+			if (FName != "") {
+				Utils::ProgressMessage(Utils::GetStr("SAVING_FILE"));
+				const bool Success = UniversalEdit::UE->CurrentFile->WriteBack(Dest + FName);
 
-	UniversalEdit::UE->CurrentFile = std::make_unique<Data>();
-	
-	HexEditor::CursorIdx = 0; // After sucessful loading, also reset the Hex Editor cursor.
-	HexEditor::OffsIdx = 0;
-	FileHandler::Loaded = true;
-	UniversalEdit::UE->HexEditMode = true;
-	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::HexEditor;
-	HexEditor::Mode = HexEditor::SubMode::Sub;
+				std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
+				Ovl->Handler((Success ? Utils::GetStr("PROPERLY_SAVED_TO_FILE") : Utils::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
+				UniversalEdit::UE->CurrentFile->SetChanges(false); // Since we saved, no changes have been made.
+				UniversalEdit::UE->CurrentFile->SetNewPath(Dest + FName); // Set new default file path.
+			};
+		};
+
+	} else {
+		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
+		Ovl->Handler(Utils::GetStr("NO_SAVE_ON_NO_LOAD"), -1);
+	}
 };

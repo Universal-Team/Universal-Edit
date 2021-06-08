@@ -42,12 +42,12 @@ void LabelSelector::Draw() {
 	Gui::Draw_Rect(0, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
 	Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SELECT_LABEL"), 310);
 
-	/* Now begin to draw the filebrowser. */
+	/* Now begin to draw the Labels. */
 	for (int Idx = 0; Idx < ENTRIES_ON_LIST && Idx < (int)this->Labels.size(); Idx++) {
 		if (this->SPos + Idx == this->Selection) Gui::Draw_Rect(this->LPos[Idx].x - 2, this->LPos[Idx].y - 2, this->LPos[Idx].w + 4, this->LPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->LPos[Idx].x, this->LPos[Idx].y, this->LPos[Idx].w, this->LPos[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 
-		Gui::DrawStringCentered(0, this->LPos[Idx].y + 5, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Labels[this->SPos + Idx].Title, 240);
+		Gui::DrawStringCentered(0, this->LPos[Idx].y + 4, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Labels[this->SPos + Idx].Title, 240);
 		Gui::DrawStringCentered(0, this->LPos[Idx].y + 20, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("OFFSET") + this->Labels[this->SPos + Idx].Offset, 240);
 		Gui::DrawStringCentered(0, this->LPos[Idx].y + 30, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SIZE") + std::to_string(this->Labels[this->SPos + Idx].Size), 240);
 	};
@@ -57,6 +57,8 @@ void LabelSelector::Draw() {
 
 
 int LabelSelector::Handler(const std::string &LabelJSON) {
+	this->SelectionMode = true;
+
 	if (access(LabelJSON.c_str(), F_OK) != 0) return -1;
 
 	/* Open Handle. */
@@ -87,23 +89,50 @@ int LabelSelector::Handler(const std::string &LabelJSON) {
 	};
 
 	if (!this->Labels.empty()) { // Only do action if not empty.
-		while(aptMainLoop()) {
+		while(aptMainLoop() && this->SelectionMode) {
 			this->Draw();
 
+			touchPosition T;
 			hidScanInput();
 			const uint32_t Down = hidKeysDown();
 			const uint32_t Repeat = hidKeysDownRepeat();
+			hidTouchRead(&T);
+
 
 			if (Repeat & KEY_DOWN) {
 				if (this->Selection < (int)this->Labels.size() - 1) this->Selection++;
+				else this->Selection = 0;
 			};
 
 			if (Repeat & KEY_UP) {
 				if (this->Selection > 0) this->Selection--;
+				else this->Selection = this->Labels.size() - 1;
 			};
 
-			if (Down & KEY_A) break;
+			if (Repeat & KEY_LEFT) {
+				if (this->Selection - ENTRIES_ON_LIST >= 0) this->Selection -= ENTRIES_ON_LIST;
+				else this->Selection = 0;
+			};
+
+			if (Repeat & KEY_RIGHT) {
+				if (this->Selection + ENTRIES_ON_LIST < (int)this->Labels.size()) this->Selection += ENTRIES_ON_LIST;
+				else this->Selection = this->Labels.size() - 1;
+			};
+
+			if (Down & KEY_A) this->SelectionMode = false;
 			if (Down & KEY_B) return -1;
+
+			if (Down & KEY_TOUCH) {
+				for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
+					if (this->SPos + Idx < (int)this->Labels.size()) {
+						if (Utils::Touching(T, this->LPos[Idx])) {
+							this->Selection = this->SPos + Idx;
+							this->SelectionMode = false;
+							break;
+						};
+					};
+				};
+			};
 
 			if (this->Selection < this->SPos) this->SPos = this->Selection;
 			else if (this->Selection > this->SPos + ENTRIES_ON_LIST - 1) this->SPos = this->Selection - ENTRIES_ON_LIST + 1;

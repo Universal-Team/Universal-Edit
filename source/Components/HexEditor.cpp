@@ -129,7 +129,7 @@ void HexEditor::DrawTextAndHex() {
 
 void HexEditor::DrawTop() {
 	if (UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
-		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
+		Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
 
 		switch(UniversalEdit::UE->CData->DefaultHexView()) {
 			case 0:
@@ -156,7 +156,7 @@ void HexEditor::DrawBottom() {
 		case HexEditor::SubMode::Sub: // Draw Main Sub.
 			Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
 			Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
-			Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("HEX_EDITOR_MENU"), 310);
+			Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("HEX_EDITOR_MENU"), 310);
 
 			/* Draw Buttons. */
 			if (FileHandler::Loaded) {

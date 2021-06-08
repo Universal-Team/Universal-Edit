@@ -39,6 +39,7 @@ public:
 		this->LoadEncoding("romfs:/encodings/ascii.json");
 	};
 
+	void SetNewPath(const std::string &P) { this->File = P; };
 	void Load(const std::string &File);
 	bool Changes() const { return this->ChangesMade; };
 	void SetChanges(const bool V) { this->ChangesMade = V; };

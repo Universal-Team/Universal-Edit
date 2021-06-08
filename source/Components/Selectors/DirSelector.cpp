@@ -25,13 +25,14 @@
 */
 
 #include "Common.hpp"
-#include "FileBrowser.hpp"
+#include "DirSelector.hpp"
+#include "Utils.hpp"
 #include <dirent.h>
 #include <unistd.h>
 
 #define ENTRIES_ON_LIST 5
 
-void FileBrowser::Draw() {
+void DirSelector::Draw() {
 	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 	Gui::clearTextBufs();
@@ -60,12 +61,12 @@ void FileBrowser::Draw() {
 };
 
 
-std::string FileBrowser::Handler(const std::string &BasePath, const bool Limit, const std::string &Text, const std::vector<std::string> &Extensions) {
+std::string DirSelector::Handler(const std::string &BasePath, const std::string &Text) {
 	this->BasePath = BasePath;
-	this->Limit = Limit;
 	this->Text = Text;
 
-	this->Browser = std::make_unique<BrowseData>(this->BasePath, Extensions);
+	const std::vector<std::string> Tmp = { "/" };
+	this->Browser = std::make_unique<BrowseData>(this->BasePath, Tmp);
 	this->CurrentFileData = this->Browser->GetList();
 
 	while(aptMainLoop()) {
@@ -85,62 +86,18 @@ std::string FileBrowser::Handler(const std::string &BasePath, const bool Limit, 
 
 
 		if (Down & KEY_B) {
-			if (this->Limit) { // Can only go down to the BasePath.
-				if (this->Browser->GetPath() == BasePath) return "";
+			if (this->Browser->CanDirBack()) {
+				this->Browser->GoDirBack();
+				this->CurrentFileData = this->Browser->GetList();
+				this->SPos = 0;
 
-				else {
-					this->Browser->GoDirBack();
-					this->CurrentFileData = this->Browser->GetList();
-					this->SPos = 0;
-				};
-
-			} else { // Can go until the root.
-				if (this->Browser->CanDirBack()) {
-					this->Browser->GoDirBack();
-					this->CurrentFileData = this->Browser->GetList();
-					this->SPos = 0;
-
-				} else {
-					return "";
-				};
+			} else {
+				return "";
 			};
 		};
 
-		if (Down & KEY_A) {
-			if (!this->Browser->OpenHandle()) {
-				if (this->Browser->GetSelectedName() != "..") {
-					return this->Browser->GetPath() + this->Browser->GetSelectedName();
-
-				} else { // Go back.
-					if (this->Limit) { // Can only go up to the BasePath.
-						if (this->Browser->GetPath() == BasePath) return "";
-						else {
-							this->Browser->GoDirBack();
-							this->CurrentFileData = this->Browser->GetList();
-							this->SPos = 0;
-						};
-
-					} else { // Can go until the root.
-						if (this->Browser->CanDirBack()) {
-							this->Browser->GoDirBack();
-							this->CurrentFileData = this->Browser->GetList();
-							this->SPos = 0;
-
-						} else {
-							return "";
-						};
-					};
-				};
-
-			} else { // We can go a directory up.
-				this->Browser->GoDirUp();
-				this->CurrentFileData = this->Browser->GetList();
-				this->SPos = 0;
-			};
-		}; 
-
 		if (Down & KEY_SELECT) {
-			if (this->Browser->GetPath().size() >= 5) {
+			if (this->Browser->GetPath().size() >= 5) { // sdmc: is also 5, so should be fine.
 				if (this->Browser->GetPath().substr(0, 5) != "romfs") {
 					const std::string Res = Utils::Keyboard(Utils::GetStr("ENTER_DIR_NAME"), "", 100);
 
@@ -156,6 +113,28 @@ std::string FileBrowser::Handler(const std::string &BasePath, const bool Limit, 
 			};
 		};
 
+		if (Down & KEY_A) {
+			if (!this->Browser->OpenHandle()) { // It's not a directory.
+				if (this->Browser->GetSelectedName() == "..") { // Go back.
+					if (this->Browser->CanDirBack()) {
+						this->Browser->GoDirBack();
+						this->CurrentFileData = this->Browser->GetList();
+						this->SPos = 0;
+
+					} else {
+						return "";
+					};
+				};
+
+			} else { // We can go a directory up.
+				this->Browser->GoDirUp();
+				this->CurrentFileData = this->Browser->GetList();
+				this->SPos = 0;
+			};
+		};
+
+		if (Down & KEY_X) return this->Browser->GetPath();
+
 		if (Down & KEY_TOUCH) {
 			for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
 				if (this->SPos + Idx < (int)this->CurrentFileData.size()) {
@@ -163,27 +142,14 @@ std::string FileBrowser::Handler(const std::string &BasePath, const bool Limit, 
 						this->Browser->SetSelection(this->SPos + Idx);
 
 						if (!this->Browser->OpenHandle()) { // It's not a directory.
-							if (this->Browser->GetSelectedName() != "..") {
-								return this->Browser->GetPath() + this->Browser->GetSelectedName();
+							if (this->Browser->GetSelectedName() == "..") { // Go back.
+								if (this->Browser->CanDirBack()) {
+									this->Browser->GoDirBack();
+									this->CurrentFileData = this->Browser->GetList();
+									this->SPos = 0;
 
-							} else { // Go back.
-								if (this->Limit) { // Can only go up to the BasePath.
-									if (this->Browser->GetPath() == BasePath) return "";
-									else {
-										this->Browser->GoDirBack();
-										this->CurrentFileData = this->Browser->GetList();
-										this->SPos = 0;
-									};
-
-								} else { // Can go until the root.
-									if (this->Browser->CanDirBack()) {
-										this->Browser->GoDirBack();
-										this->CurrentFileData = this->Browser->GetList();
-										this->SPos = 0;
-
-									} else {
-										return "";
-									};
+								} else {
+									return "";
 								};
 							};
 

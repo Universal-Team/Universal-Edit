@@ -55,14 +55,14 @@ void Phrases::Load(const std::string &PhrasesJSON) {
 void Phrases::Draw() {
 	Gui::Draw_Rect(48, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(48, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("PHRASE_LIST"), 310);
+	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("PHRASE_LIST"), 310);
 
 	/* Now begin to draw the contents. */
 	for (size_t Idx = 0; Idx < ENTRIES_ON_LIST && Idx < this->PhraseList.size(); Idx++) {
 		if (this->PPos + Idx == this->PIdx) Gui::Draw_Rect(this->ListPos[Idx].x - 2, this->ListPos[Idx].y - 2, this->ListPos[Idx].w + 4, this->ListPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->ListPos[Idx].x, this->ListPos[Idx].y, this->ListPos[Idx].w, this->ListPos[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		
-		Gui::DrawStringCentered(24, this->ListPos[Idx].y + 6, 0.5f, UniversalEdit::UE->TData->TextColor(), this->PhraseList[this->PPos + Idx], 200);
+		Gui::DrawStringCentered(24, this->ListPos[Idx].y + 7, 0.5f, UniversalEdit::UE->TData->TextColor(), this->PhraseList[this->PPos + Idx], 200);
 	};
 };
 
@@ -70,12 +70,13 @@ void Phrases::Insert(const size_t Idx) {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		if (Idx < this->PhraseList.size()) {
 			std::vector<uint8_t> ToInsert;
+			
 			for (size_t IPos = 0; IPos < this->PhraseList[Idx].size(); IPos++) {
 				ToInsert.push_back(this->PhraseList[Idx][IPos]);
 			};
 
 			UniversalEdit::UE->CurrentFile->InsertBytes(TextEditor::CursorPos, ToInsert); // Insert the bytes.
-			HexEditor::CursorIdx += ToInsert.size() - 1; // Is that right?
+			TextEditor::CursorPos += ToInsert.size(); // Is that right?
 		};
 	};
 };
@@ -84,26 +85,35 @@ void Phrases::Insert(const size_t Idx) {
 void Phrases::Handler() {
 	if (UniversalEdit::UE->Repeat & KEY_DOWN) {
 		if (this->PIdx < this->PhraseList.size() - 1) this->PIdx++;
+		else this->PIdx = 0;
 	};
 
 	if (UniversalEdit::UE->Repeat & KEY_UP) {
 		if (this->PIdx > 0) this->PIdx--;
+		else this->PIdx = this->PhraseList.size() - 1;
 	};
 
-	if (UniversalEdit::UE->Down & KEY_A) {
-		this->Insert(this->PIdx);
+	if (UniversalEdit::UE->Repeat & KEY_LEFT) {
+		if ((int)this->PIdx - ENTRIES_ON_LIST >= 0) this->PIdx -= ENTRIES_ON_LIST;
+		else this->PIdx = 0;
 	};
 
-	if (UniversalEdit::UE->Down & KEY_B) {
-		TextEditor::Mode = TextEditor::SubMode::Sub;
+	if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
+		if (this->PIdx + ENTRIES_ON_LIST < this->PhraseList.size()) this->PIdx += ENTRIES_ON_LIST;
+		else this->PIdx = this->PhraseList.size() - 1;
 	};
 
+
+	if (UniversalEdit::UE->Down & KEY_A) this->Insert(this->PIdx);
+	if (UniversalEdit::UE->Down & KEY_B) TextEditor::Mode = TextEditor::SubMode::Sub;
 
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
 			if (this->PPos + Idx < this->PhraseList.size()) {
-				this->Insert(Idx);
-				break;
+				if (Utils::Touching(UniversalEdit::UE->T, this->ListPos[Idx])) {
+					this->Insert(Idx);
+					break;
+				};
 			};
 		};
 	};

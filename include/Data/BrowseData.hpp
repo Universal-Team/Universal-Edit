@@ -52,6 +52,7 @@ public:
 	void GoDirBack();
 	void GoDirUp();
 	bool SetSelection(const int Selection);
+	void RefreshList();
 
 	/* Getters. */
 	std::vector<std::string> GetList() { return (this->Type == BrowserType::File ? this->GetFileList() : this->ListEntries); };
@@ -73,8 +74,8 @@ private:
 	std::vector<std::string> ExtensionList; // Well, the Extensions for File mode.
 
 	bool NameEndsWith(const std::string &Name, const std::vector<std::string> &ExtensionList);
-	void FetchDirectoryEntries(const std::vector<std::string> &ExtList = { });
 	std::vector<std::string> GetFileList();
+	void FetchDirectoryEntries(const std::vector<std::string> &ExtList = { });
 };
 
 #endif

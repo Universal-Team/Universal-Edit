@@ -40,7 +40,7 @@ BrowseData::BrowseData(const std::string &Path, const std::vector<std::string> &
 	this->Type = BrowserType::File;
 
 	chdir(Path.c_str());
-	this->FetchDirectoryEntries();
+	this->FetchDirectoryEntries(this->ExtensionList);
 };
 
 /*
@@ -273,4 +273,8 @@ std::string BrowseData::GetPath() const {
 	getcwd(Path, PATH_MAX);
 
 	return Path;
+};
+
+void BrowseData::RefreshList() {
+	this->FetchDirectoryEntries(this->ExtensionList);
 };

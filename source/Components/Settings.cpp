@@ -27,14 +27,15 @@
 #include "Common.hpp"
 #include "ListSelection.hpp"
 #include "Settings.hpp"
+#include "ThemeSelector.hpp"
 
 
 void Settings::Draw() {
 	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(24, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SETTINGS_MENU"), 310);
+	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SETTINGS_MENU"), 310);
 
-	for (uint8_t Idx = 0; Idx < 1; Idx++) {
+	for (uint8_t Idx = 0; Idx < 2; Idx++) {
 		Gui::Draw_Rect(this->Menu[Idx].x - 2, this->Menu[Idx].y - 2, this->Menu[Idx].w + 4, this->Menu[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->Menu[Idx].x, this->Menu[Idx].y, this->Menu[Idx].w, this->Menu[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		Gui::DrawString(this->Menu[Idx].x + 5, this->Menu[Idx].y + 5, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
@@ -43,7 +44,7 @@ void Settings::Draw() {
 
 void Settings::Handler() {
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		for (uint8_t Idx = 0; Idx < 1; Idx++) {
+		for (uint8_t Idx = 0; Idx < 2; Idx++) {
 			if (Utils::Touching(UniversalEdit::UE->T, this->Menu[Idx])) {
 				this->Funcs[Idx]();
 				break;
@@ -65,4 +66,9 @@ void Settings::LanguageHandler() {
 		if (Selection == 0) { UniversalEdit::UE->CData->Lang("en"); Utils::LoadLanguage(); };
 		// else if (Selection == 1) { UniversalEdit::UE->CData->Lang("de"); Utils::LoadLanguage(); }; // and so on.
 	};
+};
+
+void Settings::ThemeHandler() {
+	std::unique_ptr<ThemeSelector> TSelector = std::make_unique<ThemeSelector>();
+	TSelector->Handler();
 };

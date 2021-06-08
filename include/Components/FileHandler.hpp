@@ -41,20 +41,23 @@ public:
 private:
 	/* Actions. */
 	void LoadFile();
-	void SaveFile();
 	void NewFile();
+	void SaveFile();
+	void SaveFileAs();
 
 	const std::vector<Structs::ButtonPos> Menu = {
 		{ 70, 40, 100, 30 },
 		{ 200, 40, 100, 30 },
-		{ 70, 90, 100, 30 }
+		{ 70, 90, 100, 30 },
+		{ 200, 90, 100, 30 }
 	};
 
-	const std::vector<std::string> MenuOptions = { "LOAD_FILE", "SAVE_FILE", "NEW_FILE" };
+	const std::vector<std::string> MenuOptions = { "LOAD_FILE", "NEW_FILE", "SAVE_FILE", "SAVE_FILE_AS" };
 	const std::vector<std::function<void()>> Funcs = {
 		{ [this]() { this->LoadFile(); } },
+		{ [this]() { this->NewFile(); } },
 		{ [this]() { this->SaveFile(); } },
-		{ [this]() { this->NewFile(); } }
+		{ [this]() { this->SaveFileAs(); } }
 	};
 };
 

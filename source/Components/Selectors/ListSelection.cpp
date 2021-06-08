@@ -39,14 +39,14 @@ void ListSelection::Draw() {
 	UniversalEdit::UE->GData->DrawBottom();
 	Gui::Draw_Rect(0, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(0, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Text, 310);
+	Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Text, 310);
 
 	/* Now begin to draw the contents. */
 	for (int Idx = 0; Idx < ENTRIES_ON_LIST && Idx < (int)this->SelectData.size(); Idx++) {
 		if (this->SPos + Idx == this->Selection) Gui::Draw_Rect(this->ListPos[Idx].x - 2, this->ListPos[Idx].y - 2, this->ListPos[Idx].w + 4, this->ListPos[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->ListPos[Idx].x, this->ListPos[Idx].y, this->ListPos[Idx].w, this->ListPos[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		
-		Gui::DrawStringCentered(0, this->ListPos[Idx].y + 6, 0.5f, UniversalEdit::UE->TData->TextColor(), this->SelectData[this->SPos + Idx], 240);
+		Gui::DrawStringCentered(0, this->ListPos[Idx].y + 7, 0.5f, UniversalEdit::UE->TData->TextColor(), this->SelectData[this->SPos + Idx], 240);
 	};
 
 	C3D_FrameEnd(0);

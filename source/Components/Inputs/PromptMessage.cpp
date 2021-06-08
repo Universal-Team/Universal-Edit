@@ -46,7 +46,7 @@ bool PromptMessage::Handler(const std::string &Msg) {
 		Gui::DrawStringCentered(0, 60, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Msg, 300, 120, nullptr, C2D_WordWrap);
 
 		for (uint8_t Idx = 0; Idx < 2; Idx++) {
-			Gui::Draw_Rect(this->Buttons[Idx].x - 2, this->Buttons[Idx].y - 2, this->Buttons[Idx].w + 4, this->Buttons[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
+			if (Idx == this->Confirmed) Gui::Draw_Rect(this->Buttons[Idx].x - 2, this->Buttons[Idx].y - 2, this->Buttons[Idx].w + 4, this->Buttons[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 			Gui::Draw_Rect(this->Buttons[Idx].x, this->Buttons[Idx].y, this->Buttons[Idx].w, this->Buttons[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 
 			Gui::DrawStringCentered((Idx ? 60 : -60), this->Buttons[Idx].y + 3, 0.6f, UniversalEdit::UE->TData->TextColor(), (Idx ? Utils::GetStr("CONFIRM") : Utils::GetStr("CANCEL")));
@@ -63,6 +63,9 @@ bool PromptMessage::Handler(const std::string &Msg) {
 			hidTouchRead(&T);
 		} while(!Down);
 
+		if (Down & KEY_LEFT || Down & KEY_RIGHT) this->Confirmed = !this->Confirmed;
+		if (Down & KEY_A) return this->Confirmed;
+		
 		if (Down & KEY_TOUCH) {
 			for (uint8_t Idx = 0; Idx < 2; Idx++) {
 				if (Utils::Touching(T, this->Buttons[Idx])) return Idx;

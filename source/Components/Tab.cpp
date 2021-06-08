@@ -28,6 +28,8 @@
 #include "Tab.hpp"
 
 void Tab::Draw() {
+	if (TextEditor::Mode == TextEditor::SubMode::Keyboard) return; // Don't draw when keyboard is visible.
+
 	for (uint8_t Idx = 0; Idx < 5; Idx++) {
 		if (Idx == (uint8_t)UniversalEdit::UE->ActiveTab) Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->SidebarSelected());
 		else Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->SidebarColor());
@@ -43,6 +45,7 @@ void Tab::Draw() {
 };
 
 static void SwitchTab(const UniversalEdit::Tabs T) {
+	if (TextEditor::Mode == TextEditor::SubMode::Keyboard) return; // Don't do the logic, if keyboard is visible.
 	if (T == UniversalEdit::UE->ActiveTab) return;
 
 	switch(T) {

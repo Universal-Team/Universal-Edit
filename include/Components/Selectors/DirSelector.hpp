@@ -24,31 +24,31 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_SETTINGS_HPP
-#define _UNIVERSAL_EDIT_SETTINGS_HPP
+#ifndef _UNIVERSAL_EDIT_DIR_SELECTOR_HPP
+#define _UNIVERSAL_EDIT_DIR_SELECTOR_HPP
 
+#include "BrowseData.hpp"
 #include "structs.hpp"
-#include <functional>
+#include <memory> // unique_ptr.
 #include <string>
 #include <vector>
 
-class Settings {
+class DirSelector {
 public:
 	void Draw();
-	void Handler();
+	std::string Handler(const std::string &BasePath, const std::string &Text);
 private:
-	void LanguageHandler();
-	void ThemeHandler();
+	std::string BasePath, Text = "";
+	std::unique_ptr<BrowseData> Browser = nullptr;
+	int SPos = 0;
+	std::vector<std::string> CurrentFileData;
 
-	const std::vector<Structs::ButtonPos> Menu = {
-		{ 70, 40, 100, 30 }, // Language.
-		{ 200, 40, 100, 30 } // Themes.
-	};
-
-	const std::vector<std::string> MenuOptions = { "LANGUAGE", "THEMES" };
-	const std::vector<std::function<void()>> Funcs = {
-		{ [this]() { this->LanguageHandler(); } },
-		{ [this]() { this->ThemeHandler(); } }
+	const std::vector<Structs::ButtonPos> FBPos = {
+		{ 30, 35, 260, 30 },
+		{ 30, 70, 260, 30 },
+		{ 30, 105, 260, 30 },
+		{ 30, 140, 260, 30 },
+		{ 30, 175, 260, 30 }
 	};
 };
 

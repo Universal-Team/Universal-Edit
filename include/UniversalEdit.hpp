@@ -53,6 +53,7 @@ public:
 	std::unique_ptr<ThemeData> TData = nullptr; // Needs to be accessible for the other Components.
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<ConfigData> CData = nullptr;
+	std::vector<std::pair<std::string, std::string>> ThemeNames;
 	Tabs ActiveTab = Tabs::FileHandler;
 	void DrawTop();
 	void DrawBottom(const bool OnlyTab = false);

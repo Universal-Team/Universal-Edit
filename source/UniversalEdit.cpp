@@ -70,6 +70,8 @@ UniversalEdit::UniversalEdit() {
 	this->SE = std::make_unique<Settings>();
 	this->_Tab = std::make_unique<Tab>();
 	this->TE = std::make_unique<TextEditor>();
+
+	this->ThemeNames = this->TData->ThemeNames();
 };
 
 void UniversalEdit::DrawTop() {
@@ -138,17 +140,12 @@ int UniversalEdit::Handler() {
 		this->Repeat = hidKeysDownRepeat();
 
 		if (this->Down & KEY_START) {
-			if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->Changes()) {
+			if (FileHandler::Loaded && this->CurrentFile->Changes()) {
 				std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
-				const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_EXIT"));
+				const bool Res = PMessage->Handler(Utils::GetStr("EXIT_WARNING"));
 
-				if (Res) {
-					Utils::ProgressMessage(Utils::GetStr("SAVING_FILE"));
-					UniversalEdit::UE->CurrentFile->WriteBack(UniversalEdit::UE->CurrentFile->EditFile());
-				};
-			};
-
-			this->Exiting = true;
+				if (Res) this->Exiting = true;
+			} else this->Exiting = true;
 		};
 
 

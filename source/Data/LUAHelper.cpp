@@ -24,6 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "DirSelector.hpp"
 #include "FileBrowser.hpp"
 #include "JSONListSelector.hpp"
 #include "ListSelection.hpp"
@@ -475,6 +476,28 @@ static int ProgressMessage(lua_State *LState) {
 };
 
 
+/*
+	Select a Destination for a file or so.
+
+	Usage:
+	local SelectedPath = UniversalEdit.SelectDir("Select a destination for file x.", "sdmc:/3ds/Universal-Edit/");
+
+	First: Message to display of what should be selected or so.
+	Second: Default Path.
+*/
+static int SelectDir(lua_State *LState) {
+	if (lua_gettop(LState) != 2) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+
+	const std::string Msg = (std::string)(luaL_checkstring(LState, 1));
+	const std::string StartPath = (std::string)(luaL_checkstring(LState, 2));
+
+	std::unique_ptr<DirSelector> DS = std::make_unique<DirSelector>();
+	const std::string Res = DS->Handler(StartPath, Msg);
+
+	lua_pushstring(LState, Res.c_str());
+	return 1;
+};
+
 
 /* Register our Universal-Edit functions here. */
 static constexpr luaL_Reg UniversalEditFunctions[] = {
@@ -495,6 +518,7 @@ static constexpr luaL_Reg UniversalEditFunctions[] = {
 	{ "SelectFile", SelectFile },
 	{ "FileSize", FileSize },
 	{ "ProgressMessage", ProgressMessage },
+	{ "SelectDir", SelectDir },
 	{ 0, 0 }
 };
 

@@ -67,7 +67,7 @@ nlohmann::json ThemeData::InitWithDefaultColors(const std::string &ThemePath) {
 			{ "SidebarColor", "#193A64" },
 			{ "SidebarSelected", "#294A84" },
 			{ "BackArrowColor", "#ADCCEF" },
-			{ "Description", "Universal-Edit's default Theme.\n\nBy: Universal-Team" }
+			{ "Description", "Universal-Edit's default Theme.\nBy: Universal-Team" }
 		}}
 	};
 

@@ -37,6 +37,8 @@ public:
 	void Draw();
 	int Handler(const std::string &LabelJSON);
 private:
+	bool SelectionMode = true;
+	
 	struct Label {
 		std::string Title = "";
 		std::string Offset = "";

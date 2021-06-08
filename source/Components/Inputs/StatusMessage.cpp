@@ -43,7 +43,7 @@ void StatusMessage::Handler(const std::string &Msg, const int Res) {
 		UniversalEdit::UE->GData->DrawBottom();
 
 		Gui::Draw_Rect(0, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
-		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("STATUSCODE") + std::to_string(this->Res), 310);
+		Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("STATUSCODE") + std::to_string(this->Res), 310);
 		Gui::DrawStringCentered(0, 40, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("STATUS"), 310);
 		Gui::DrawStringCentered(0, 60, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Msg, 300, 120, nullptr, C2D_WordWrap);
 

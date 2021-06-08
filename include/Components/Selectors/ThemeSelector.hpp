@@ -24,31 +24,27 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_SETTINGS_HPP
-#define _UNIVERSAL_EDIT_SETTINGS_HPP
+#ifndef _UNIVERSAL_EDIT_THEME_SELECTOR_HPP
+#define _UNIVERSAL_EDIT_THEME_SELECTOR_HPP
 
 #include "structs.hpp"
-#include <functional>
 #include <string>
 #include <vector>
 
-class Settings {
+class ThemeSelector {
 public:
+	ThemeSelector() { };
 	void Draw();
 	void Handler();
 private:
-	void LanguageHandler();
-	void ThemeHandler();
-
-	const std::vector<Structs::ButtonPos> Menu = {
-		{ 70, 40, 100, 30 }, // Language.
-		{ 200, 40, 100, 30 } // Themes.
-	};
-
-	const std::vector<std::string> MenuOptions = { "LANGUAGE", "THEMES" };
-	const std::vector<std::function<void()>> Funcs = {
-		{ [this]() { this->LanguageHandler(); } },
-		{ [this]() { this->ThemeHandler(); } }
+	int SPos = 0, Selection = 0;
+	bool SelectMode = true;
+	
+	const std::vector<Structs::ButtonPos> TPos = {
+		{ 30, 30, 260, 45 },
+		{ 30, 83, 260, 45 },
+		{ 30, 136, 260, 45 },
+		{ 30, 189, 260, 45 }
 	};
 };
 
