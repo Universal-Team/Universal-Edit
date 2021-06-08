@@ -45,10 +45,12 @@
 
 	First: Type to read.
 	Second: Offset to read from.
+	Third (optional): If reading a big endian (true) or little endian (false, default).
 */
 static int Read(lua_State *LState) {
-	if (lua_gettop(LState) != 2) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+	if (lua_gettop(LState) != 2 && lua_gettop(LState) != 3) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
 
+	bool IsBigEndian = false;
 	const std::string Type = (std::string)(luaL_checkstring(LState, 1)); // Get the string of the type.
 	const uint32_t Offs = luaL_checkinteger(LState, 2);
 
@@ -59,11 +61,15 @@ static int Read(lua_State *LState) {
 
 	} else if (Type == "uint16_t" || Type == "u16") {
 		if (Offs + 1 >= UniversalEdit::UE->CurrentFile->GetSize()) return luaL_error(LState, Utils::GetStr("OUT_OF_BOUNDS").c_str());
-		lua_pushinteger(LState, UniversalEdit::UE->CurrentFile->Read<uint16_t>(Offs));
+		
+		if (lua_gettop(LState) == 3) IsBigEndian = lua_toboolean(LState, 3);
+		lua_pushinteger(LState, UniversalEdit::UE->CurrentFile->Read<uint16_t>(Offs, IsBigEndian));
 
 	} else if (Type == "uint32_t" || Type == "u32") {
 		if (Offs + 3 >= UniversalEdit::UE->CurrentFile->GetSize()) return luaL_error(LState, Utils::GetStr("OUT_OF_BOUNDS").c_str());
-		lua_pushinteger(LState, UniversalEdit::UE->CurrentFile->Read<uint32_t>(Offs));
+
+		if (lua_gettop(LState) == 3) IsBigEndian = lua_toboolean(LState, 3);
+		lua_pushinteger(LState, UniversalEdit::UE->CurrentFile->Read<uint32_t>(Offs, IsBigEndian));
 
 	} else return luaL_error(LState, Utils::GetStr("NOT_A_VALID_TYPE").c_str());
 
@@ -115,30 +121,36 @@ static int ReadBits(lua_State *LState) {
 	Write a value to the currently open file.
 
 	Usage:
-	UniversalEdit.Write("uint32_t", 0x40, 0xFFFFFFFF);
+	UniversalEdit.Write("uint32_t", 0x40, 0xFFFFFFFF, false);
 
 	First: Type to write.
 	Second: Offset to write to.
 	Third: Value to write.
+	Fourth (optional): If writing a big endian (true) or little endian (false, default).
 */
 static int Write(lua_State *LState) {
-	if (lua_gettop(LState) != 3) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
+	if (lua_gettop(LState) != 3 && lua_gettop(LState) != 4) return luaL_error(LState, Utils::GetStr("WRONG_NUMBER_OF_ARGUMENTS").c_str());
 
+	bool IsBigEndian = false;
 	const std::string Type = (std::string)(luaL_checkstring(LState, 1)); // Get the string of the type.
 	const uint32_t Offs = luaL_checkinteger(LState, 2);
 
 	/* The writes. */
 	if (Type == "uint8_t" || Type == "u8") {
 		if (Offs >= UniversalEdit::UE->CurrentFile->GetSize()) return luaL_error(LState, Utils::GetStr("OUT_OF_BOUNDS").c_str());
-		UniversalEdit::UE->CurrentFile->Write<uint8_t>(Offs, luaL_checkinteger(LState, 3));
+		UniversalEdit::UE->CurrentFile->Write<uint8_t>(Offs, luaL_checkinteger(LState, 3), IsBigEndian);
 
 	} else if (Type == "uint16_t" || Type == "u16") {
 		if (Offs + 1 >= UniversalEdit::UE->CurrentFile->GetSize()) return luaL_error(LState, Utils::GetStr("OUT_OF_BOUNDS").c_str());
-		UniversalEdit::UE->CurrentFile->Write<uint16_t>(Offs, luaL_checkinteger(LState, 3));
+
+		if (lua_gettop(LState) == 4) IsBigEndian = lua_toboolean(LState, 4);
+		UniversalEdit::UE->CurrentFile->Write<uint16_t>(Offs, luaL_checkinteger(LState, 3), IsBigEndian);
 
 	} else if (Type == "uint32_t" || Type == "u32") {
 		if (Offs + 3 >= UniversalEdit::UE->CurrentFile->GetSize()) return luaL_error(LState, Utils::GetStr("OUT_OF_BOUNDS").c_str());
-		UniversalEdit::UE->CurrentFile->Write<uint32_t>(Offs, luaL_checkinteger(LState, 3));
+
+		if (lua_gettop(LState) == 4) IsBigEndian = lua_toboolean(LState, 4);
+		UniversalEdit::UE->CurrentFile->Write<uint32_t>(Offs, luaL_checkinteger(LState, 3), IsBigEndian);
 
 	} else return luaL_error(LState, Utils::GetStr("NOT_A_VALID_TYPE").c_str());
 

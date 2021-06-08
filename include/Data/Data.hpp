@@ -52,22 +52,40 @@ public:
 		return this->Encoding[this->FileData[Offs]];
 	};
 
-	/* Read from uint8_t, uint16_t, uint32_t and so on, or better said: Any type that is memcpy able. */
-	template<class T> T Read(const uint32_t Offs) {
-		if (!this->IsGood() || !this->GetData() || (Offs + (sizeof(T)) - 1) >= this->GetSize()) return 0;
 
-		T Temp;
-		memcpy(&Temp, this->GetData() + Offs, sizeof(T));
-		return Temp;
+	template<class T> T Read(const uint32_t Offs, const bool BigEndian = false) {
+		if (!this->IsGood() || !this->GetData() || (Offs + (sizeof(T)) - 1) >= this->GetSize()) return 0;
+		T Val = 0;
+
+		if (BigEndian) { // Big Endian.
+			for (size_t Idx = 0; Idx < sizeof(T) && Offs + Idx < this->GetSize(); Idx++) {
+				Val |= *(this->GetData() + Offs + Idx) << (sizeof(T) - 1 - Idx) * 8;
+			};
+
+		} else { // Little Endian.
+			for (size_t Idx = 0; Idx < sizeof(T) && Offs + Idx < this->GetSize(); Idx++) {
+				Val |= *(this->GetData() + Offs + Idx) << Idx * 8;
+			};
+		};
+
+		return Val;
 	};
 
 	/* Write from uint8_t, uint16_t, uint32_t and so on, or better said: Any type that has the '>>=' operator. */
-	template<class T> void Write(const uint32_t Offs, T Data) {
+	template<class T> void Write(const uint32_t Offs, T Data, const bool BigEndian = false) {
 		if (!this->IsGood() || !this->GetData() || (Offs + (sizeof(T)) - 1) >= this->GetSize()) return; // Do nothing.
 
-		for (size_t Idx = 0; Idx < sizeof(T); Idx++) {
-			this->GetData()[Offs + Idx] = (uint8_t)Data;
-			Data >>= 8; // Go to the next byte.
+		if (BigEndian) { // Big Endian.
+			for (int Idx = (int)sizeof(T) - 1; Idx >= 0; Idx--) { // Write backwards.
+				this->GetData()[Offs + Idx] = (uint8_t)Data;
+				Data >>= 8; // Go to the last byte.
+			};
+
+		} else { // Little Endian.
+			for (size_t Idx = 0; Idx < sizeof(T); Idx++) { // Write forwards.
+				this->GetData()[Offs + Idx] = (uint8_t)Data;
+				Data >>= 8; // Go to the next byte.
+			};
 		};
 
 		if (!this->Changes()) this->ChangesMade = true;
