@@ -30,14 +30,123 @@
 #include <unistd.h>
 
 void Keyboard::Load(const std::string &KeyboardJSON) {
+	FILE *File = fopen(KeyboardJSON.c_str(), "rt");
+	if (File) {
+		nlohmann::json Json = nlohmann::json::parse(File, nullptr, false);
+		fclose(File);
 
+		/* Keyboard global X/Y offset */
+		if (Json.contains("info") && Json["info"].is_object()) {
+			if (Json["info"].contains("x") && Json["info"]["x"].is_number()) this->KbdX = Json["info"]["x"];
+			if (Json["info"].contains("y") && Json["info"]["y"].is_number()) this->KbdY = Json["info"]["y"];
+		};
+
+		if (Json.contains("layout") && Json["layout"].is_object()) {
+			/* Loop through each mode and parse a struct out of the JSON */
+			for (const auto &Mode : Json["layout"].items()) {
+				if (Mode.value().is_object() && Mode.value().contains("keys") && Mode.value()["keys"].is_object()) {
+					this->Kbd[Mode.key()] = {};
+
+					/* Add all the keys*/
+					for (const auto &Key : Mode.value()["keys"].items()) {
+						/* Check that the positions are good */
+						if (Key.value().is_array() && Key.value().size() >= 4) {
+							bool Good = true;
+							for (int i = 0; i < 4; i++) {
+								if (!Key.value()[i].is_number()) {
+									Good = false;
+									break;
+								};
+							};
+							if (Good) {
+								this->Kbd[Mode.key()].Keys.emplace_back(Structs::ButtonPos({this->KbdX + Key.value()[0].get<int>(), this->KbdY + Key.value()[1].get<int>(), Key.value()[2], Key.value()[3]}), Key.key());
+								/* Check for any special properties */
+								if (Key.value().size() >= 5 && Key.value()[4].is_object()) {
+									for (const auto &Property : Key.value()[4].items()) {
+										if (Property.value().is_string()) {
+												Key::Property Prop = Key::Property::Invalid;
+												if (Property.key() == "action") Prop = Key::Property::Action;
+												else if (Property.key() == "mode") Prop = Key::Property::Mode;
+												else if (Property.key() == "value") Prop = Key::Property::Value;
+
+												this->Kbd[Mode.key()].Keys.back().Properties[Prop] = Property.value();
+										} else if (Property.value().is_boolean()) {
+											if (Property.key() == "active") this->Kbd[Mode.key()].Keys.back().Active = Property.value();
+										}
+									};
+								};
+							};
+						};
+					};
+
+					/* Check if this should return on key press */
+					if (Mode.value().contains("return") && Mode.value()["return"].is_boolean()) {
+						this->Kbd[Mode.key()].Ret = Mode.value()["return"];
+					};
+				};
+			};
+		};
+	};
 };
 
 void Keyboard::Draw() {
+	if (this->Kbd.contains(this->CurrentMode.back())) {
+		for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
+			Gui::Draw_Rect(Key.Pos.x, Key.Pos.y, Key.Pos.w, Key.Pos.h, Key.Active ? UniversalEdit::UE->TData->BarColor() : UniversalEdit::UE->TData->BarOutline()); // TODO: Dedicated colors
+			Gui::DrawStringCentered(Key.Pos.x + (Key.Pos.w / 2) - 160, Key.Pos.y + (Key.Pos.h / 10), 0.5f, UniversalEdit::UE->TData->TextColor(), Key.Label);
+		};
+	} else {
+		// TODO: Invalid layout warning
+	};
 
+	Gui::DrawStringCentered(0, 0, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Out); // TODO: Proper output
 };
 
-
 void Keyboard::Handler() {
-
+	if (UniversalEdit::UE->Down & KEY_TOUCH) {
+		/* Check if any key is being touched */
+		for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
+			if (Utils::Touching(UniversalEdit::UE->T, Key.Pos)) {
+				/* Return to last non-returning layout */
+				while (this->Kbd[this->CurrentMode.back()].Ret) {
+					this->CurrentMode.pop_back();
+				};
+				
+				/* If the key has any special properties, then apply them */
+				if (Key.Properties.size() > 0) {
+					for (const auto &[Prop, Value] : Key.Properties) {
+						switch (Prop) {
+							/* Special action, such as modifying other characters */
+							case Key::Property::Action:
+								if (Value == "backspace") {
+									// TODO: Handle UTF-8
+									if (this->Out.size() > 0) this->Out.pop_back();
+								} else if (Value == "dakuten") {
+									// TODO: Modify kana
+									this->Out += "゛";
+								} else if (Value == "handakuten") {
+									// TODO: ^
+									this->Out += "゜";
+								}
+								break;
+							/* Changes mode, such as to Shift mode */
+							case Key::Property::Mode:
+								if (this->Kbd.contains(Value)) this->CurrentMode.push_back(Value);
+								else if (Value == "!return" && this->CurrentMode.size() > 1) this->CurrentMode.pop_back();
+								break;
+							/* Output a value that's not the label */
+							case Key::Property::Value:
+								this->Out += Value;
+								break;
+							case Key::Property::Invalid:
+								break;
+						}
+					}
+				} else {
+					/* Otherwise, just output the label */
+					this->Out += Key.Label;
+				};
+			};
+		};
+	};
 };

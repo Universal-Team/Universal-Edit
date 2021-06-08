@@ -37,6 +37,33 @@ public:
 	void Draw();
 	void Handler();
 private:
+	struct Key {
+		enum class Property {
+			Invalid = 0,
+			Action,
+			Mode,
+			Value
+		};
+
+		Structs::ButtonPos Pos;
+		std::string Label;
+		std::map<Property, std::string> Properties = {};
+		bool Active = false;
+
+		Key(Structs::ButtonPos Pos, const std::string &Label) : Pos(Pos), Label(Label) {}
+	};
+
+	struct Mode {
+		std::vector<Key> Keys = {};
+		bool Ret = false;
+	};
+
+	std::string Out = ""; // TODO: Proper output
+
+	std::vector<std::string> CurrentMode = {"!main"};
+	int KbdX = 0, KbdY = 0;
+	std::map<std::string, Mode> Kbd;
+
 };
 
 #endif

@@ -64,8 +64,8 @@ void TextEditor::Handler() {
 
 			if (UniversalEdit::UE->Down & KEY_Y) {
 				/* Test your keyboard code here. */
-				//this->Kbd->Load("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/KBD.json");
-				//TextEditor::Mode = TextEditor::SubMode::Keyboard;
+				this->Kbd->Load("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/KBD.json");
+				TextEditor::Mode = TextEditor::SubMode::Keyboard;
 			};
 			break;
 
