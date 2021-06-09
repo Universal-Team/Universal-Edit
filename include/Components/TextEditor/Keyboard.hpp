@@ -49,6 +49,7 @@ private:
 		std::string Label;
 		std::map<Property, std::string> Properties = {};
 		bool Active = false;
+		uint32_t Button = 0;
 
 		Key(Structs::ButtonPos Pos, const std::string &Label) : Pos(Pos), Label(Label) {}
 	};
@@ -63,6 +64,8 @@ private:
 	std::vector<std::string> CurrentMode = {"!main"};
 	int KbdX = 0, KbdY = 0;
 	std::map<std::string, Mode> Kbd;
+
+	void HandleKeyPress(const Key &Key);
 
 };
 

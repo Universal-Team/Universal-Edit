@@ -27,12 +27,57 @@
 #ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_TEXT_UTILS_HPP
 #define _UNIVERSAL_EDIT_TEXT_EDITOR_TEXT_UTILS_HPP
 
+#include <array>
 #include <string>
+#include <3ds.h>
 
 class TextUtils {
 public:
 	static char32_t GetLastCodepoint(const char *Str);
 	static void Dakutenify(std::string &Str, bool Handakuten);
+	static uint32_t StrToKey(const std::string &Str);
+
+private:
+	static constexpr std::array<char16_t, 20> Dakutenable = {
+		u'か', u'き', u'く', u'け', u'こ',
+		u'さ', u'し', u'す', u'せ', u'そ',
+		u'た', u'ち', u'つ', u'て', u'と',
+		u'は', u'ひ', u'ふ', u'へ', u'ほ'
+	};
+
+	static constexpr std::array<char16_t, 5> Handakutenable = {
+		u'は', u'ひ', u'ふ', u'へ', u'ほ'
+	};
+
+	static constexpr std::array<std::pair<const char *, uint32_t>, 27> KeyNames = {{
+		{"A", KEY_A},
+		{"B", KEY_B},
+		{"SELECT", KEY_SELECT},
+		{"START", KEY_START},
+		{"DRIGHT", KEY_DRIGHT},
+		{"DLEFT", KEY_DLEFT},
+		{"DUP", KEY_DUP},
+		{"DDOWN", KEY_DDOWN},
+		{"R", KEY_R},
+		{"L", KEY_L},
+		{"X", KEY_X},
+		{"Y", KEY_Y},
+		{"ZL", KEY_ZL},
+		{"ZR", KEY_ZR},
+		{"TOUCH", KEY_TOUCH},
+		{"CSTICK_RIGHT", KEY_CSTICK_RIGHT},
+		{"CSTICK_LEFT", KEY_CSTICK_LEFT},
+		{"CSTICK_UP", KEY_CSTICK_UP},
+		{"CSTICK_DOWN", KEY_CSTICK_DOWN},
+		{"CPAD_RIGHT", KEY_CPAD_RIGHT},
+		{"CPAD_LEFT", KEY_CPAD_LEFT},
+		{"CPAD_UP", KEY_CPAD_UP},
+		{"CPAD_DOWN", KEY_CPAD_DOWN},
+		{"UP", KEY_UP},
+		{"DOWN", KEY_DOWN},
+		{"LEFT", KEY_LEFT},
+		{"RIGHT", KEY_RIGHT}
+	}};
 };
 
 #endif

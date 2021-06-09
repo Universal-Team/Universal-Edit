@@ -25,7 +25,6 @@
 */
 
 #include "TextUtils.hpp"
-#include <array>
 #include <string.h>
 
 /* Get last codepoint from a UTF-8 string */
@@ -58,9 +57,6 @@ void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
 	int Change = 0;
 
 	if (Handakuten) {
-		constexpr std::array<char16_t, 20> Handakutenable = {
-			u'は', u'ひ', u'ふ', u'へ', u'ほ'
-		};
 		for (const char16_t Item : Handakutenable) {
 			if (Char == Item) {
 				Change = 2;
@@ -71,12 +67,6 @@ void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
 		if (Char == u'う') {
 			Change = 0x4E;
 		} else {
-			constexpr std::array<char16_t, 20> Dakutenable = {
-				u'か', u'き', u'く', u'け', u'こ',
-				u'さ', u'し', u'す', u'せ', u'そ',
-				u'た', u'ち', u'つ', u'て', u'と',
-				u'は', u'ひ', u'ふ', u'へ', u'ほ'
-			};
 			for (const char16_t Item : Dakutenable) {
 				if (Char == Item) {
 					Change = 1;
@@ -99,4 +89,14 @@ void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
 		/* If the char can't be (han)dakutenified, then just add the char */
 		Str += Handakuten ? "゜" : "゛";
 	}
+}
+
+uint32_t TextUtils::StrToKey(const std::string &Str) {
+	for (const auto &Key : KeyNames) {
+		if (strcmp(Str.c_str(), Key.first) == 0) {
+			return Key.second;
+		}
+	}
+
+	return 0;
 }
