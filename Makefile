@@ -57,16 +57,14 @@ TARGET		:=	Universal-Edit
 BUILD		:=	build
 UNIVCORE	:= 	Universal-Core
 SOURCES		:=	$(UNIVCORE) \
-				source source/Data source/Components source/Components/HexEditor source/Components/Inputs \
-				source/Components/Selectors source/Components/TextEditor \
-				lua
+				source source/Data source/Components source/Components/Inputs \
+				source/Components/Selectors source/Components/TextEditor
 
 
 DATA		:=	data
 INCLUDES	:=	$(UNIVCORE) \
-				include include/Data include/Components include/Components/HexEditor include/Components/Inputs \
-				include/Components/Selectors include/Components/TextEditor \
-				lua
+				include include/Data include/Components include/Components/Inputs \
+				include/Components/Selectors include/Components/TextEditor
 
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs

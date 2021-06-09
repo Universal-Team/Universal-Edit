@@ -69,14 +69,8 @@ void Phrases::Draw() {
 void Phrases::Insert(const size_t Idx) {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		if (Idx < this->PhraseList.size()) {
-			std::vector<uint8_t> ToInsert;
-			
-			for (size_t IPos = 0; IPos < this->PhraseList[Idx].size(); IPos++) {
-				ToInsert.push_back(this->PhraseList[Idx][IPos]);
-			};
-
-			UniversalEdit::UE->CurrentFile->InsertBytes(TextEditor::CursorPos, ToInsert); // Insert the bytes.
-			TextEditor::CursorPos += ToInsert.size(); // Is that right?
+			UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, this->PhraseList[Idx]); // Insert the string.
+			TextEditor::CursorPos += this->PhraseList[Idx].size(); // Is that right?
 		};
 	};
 };

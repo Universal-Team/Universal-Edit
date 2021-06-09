@@ -45,23 +45,15 @@ public:
 	uint32_t TextColor() const { return this->vTextColor; };
 	uint32_t ButtonColor() const { return this->vButtonColor; };
 	uint32_t ButtonSelected() const { return this->vButtonSelected; };
-	uint32_t SelectedByte() const { return this->vSelectedByte; };
-	uint32_t UnselectedByte() const { return this->vUnselectedByte; };
 	uint32_t SidebarColor() const { return this->vSidebarColor; };
 	uint32_t SidebarSelected() const { return this->vSidebarSelected; };
 	uint32_t SidebarIconColor() const { return this->vSideBarIconColor; };
-	uint32_t HexOffsetColor() const { return this->vHexOffsetColor; };
-	uint32_t HexOffsetHighlight() const { return this->vHexOffsetHighlight; };
 	uint32_t BackArrowColor() const { return this->vBackArrowColor; };
-
-	uint32_t HexRowColor(const size_t Idx) const { return this->vHexRowColors[Idx % this->vHexRowColors.size()]; };
-
 private:
-	uint32_t vBarColor, vBGColor, vTextColor, vButtonColor, vSelectedByte, vUnselectedByte, vButtonSelected,
-			 vBarOutline, vSideBarIconColor, vHexOffsetColor, vHexOffsetHighlight, vSidebarColor, vSidebarSelected,
+	uint32_t vBarColor, vBGColor, vTextColor, vButtonColor, vButtonSelected,
+			 vBarOutline, vSideBarIconColor, vSidebarColor, vSidebarSelected,
 			 vBackArrowColor;
 
-	std::vector<uint32_t> vHexRowColors = { 0 };
 	int SelectedTheme = 0;
 	bool Loaded = false;
 	nlohmann::json TJson = nullptr;

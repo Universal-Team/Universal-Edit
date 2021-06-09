@@ -27,93 +27,48 @@
 #ifndef _UNIVERSAL_EDIT_DATA_HPP
 #define _UNIVERSAL_EDIT_DATA_HPP
 
-#include <cstring> // memcpy.
 #include <string>
 #include <vector>
 
 class Data {
 public:
 	Data();
-	Data(const std::string &File) {
-		this->Load(File);
-		this->LoadEncoding("romfs:/encodings/ascii.json");
-	};
+	Data(const std::string &File) { this->Load(File); };
 
 	void SetNewPath(const std::string &P) { this->File = P; };
 	void Load(const std::string &File);
 	bool Changes() const { return this->ChangesMade; };
 	void SetChanges(const bool V) { this->ChangesMade = V; };
 	bool IsGood() const { return this->FileGood; };
-	uint32_t GetSize() const { return this->FileData.size(); };
-	uint8_t *GetData() { return this->FileData.data(); };
+
+	/* Return the amount of lines. */
+	uint32_t GetLines() const { return this->Lines.size(); };
+
+	/* Return the amount of characters. */
+	uint32_t GetSize() {
+		uint32_t Size = 0;
+		for (size_t Idx = 0; Idx < this->GetLines(); Idx++) Size += this->GetCharsFromLine(Idx);
+		return Size;
+	};
+
+	/* Return the amount of characters from a line. */
+	uint32_t GetCharsFromLine(const size_t Line) {
+		if (Line < this->GetLines()) return this->Lines[Line].size();
+		return 0;
+	};
 	
-	std::string GetChar(const uint32_t Offs) {
-		if (Offs >= this->GetSize()) return ".";
-		return this->Encoding[this->FileData[Offs]];
-	};
+	/* Likely rework them or so. */
+	void InsertContent(const size_t Line, const size_t Pos, const std::string &Text);
+	void EraseContent(const size_t Line, const size_t Pos, const size_t Length);
+	void InsertLine(const size_t Line);
+	void RemoveLine(const size_t Line);
 
-
-	template<class T> T Read(const uint32_t Offs, const bool BigEndian = false) {
-		if (!this->IsGood() || !this->GetData() || (Offs + (sizeof(T)) - 1) >= this->GetSize()) return 0;
-		T Val = 0;
-
-		if (BigEndian) { // Big Endian.
-			for (size_t Idx = 0; Idx < sizeof(T) && Offs + Idx < this->GetSize(); Idx++) {
-				Val |= *(this->GetData() + Offs + Idx) << (sizeof(T) - 1 - Idx) * 8;
-			};
-
-		} else { // Little Endian.
-			for (size_t Idx = 0; Idx < sizeof(T) && Offs + Idx < this->GetSize(); Idx++) {
-				Val |= *(this->GetData() + Offs + Idx) << Idx * 8;
-			};
-		};
-
-		return Val;
-	};
-
-	/* Write from uint8_t, uint16_t, uint32_t and so on, or better said: Any type that has the '>>=' operator. */
-	template<class T> void Write(const uint32_t Offs, T Data, const bool BigEndian = false) {
-		if (!this->IsGood() || !this->GetData() || (Offs + (sizeof(T)) - 1) >= this->GetSize()) return; // Do nothing.
-
-		if (BigEndian) { // Big Endian.
-			for (int Idx = (int)sizeof(T) - 1; Idx >= 0; Idx--) { // Write backwards.
-				this->GetData()[Offs + Idx] = (uint8_t)Data;
-				Data >>= 8; // Go to the last byte.
-			};
-
-		} else { // Little Endian.
-			for (size_t Idx = 0; Idx < sizeof(T); Idx++) { // Write forwards.
-				this->GetData()[Offs + Idx] = (uint8_t)Data;
-				Data >>= 8; // Go to the next byte.
-			};
-		};
-
-		if (!this->Changes()) this->ChangesMade = true;
-	};
-
-	/* Bit Operations. */
-	bool ReadBit(const uint32_t Offs, const uint8_t BitIndex);
-	void WriteBit(const uint32_t Offs, const uint8_t BitIndex, const bool IsSet);
-	
-	/* Bits Operations. */
-	uint8_t ReadBits(const uint32_t Offs, const bool First);
-	void WriteBits(const uint32_t Offs, const bool First, const uint8_t Data);
-
-	/* Insert bytes to the HexData. */
-	void InsertBytes(const uint32_t Offs, const std::vector<uint8_t> &ToInsert);
-	void EraseBytes(const uint32_t Offs, const uint32_t Size);
-
-	bool WriteBack(const std::string &File);
-
-	std::string ByteToString(const uint32_t Offs);
+	bool WriteBack(const std::string &File); // Write back to the file.
 	std::string EditFile() const { return this->File; };
-	void LoadEncoding(const std::string &ENCFile);
 private:
 	std::string File = "";
-	std::vector<uint8_t> FileData;
+	std::vector<std::string> Lines;
 	bool FileGood = false, ChangesMade = false;
-
-	std::string Encoding[256];
 };
 
 #endif

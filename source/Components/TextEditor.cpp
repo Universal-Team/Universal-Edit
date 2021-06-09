@@ -28,8 +28,12 @@
 #include "FileBrowser.hpp"
 #include "TextEditor.hpp"
 
-size_t TextEditor::CursorPos = 0; // Maybe handle that different? Dunno.
+size_t TextEditor::CursorPos = 0, TextEditor::RowOffs = 0, TextEditor::CurrentLine = 0; // Maybe handle that different? Dunno.
 TextEditor::SubMode TextEditor::Mode = TextEditor::SubMode::Sub;
+
+#define CHARS_PER_LINE 35 // Might need to be changed.
+#define ROWS 13
+#define CHARS_PER_LIST CHARS_PER_LINE * ROWS
 
 /* TODO: Display Text from the Data class. */
 void TextEditor::DrawTop() {
@@ -37,6 +41,7 @@ void TextEditor::DrawTop() {
 		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
 	};
 };
+
 
 void TextEditor::DrawBottom() {
 	switch(TextEditor::Mode) {
@@ -55,6 +60,7 @@ void TextEditor::DrawBottom() {
 			break;
 	};
 };
+
 
 void TextEditor::Handler() {
 	switch(TextEditor::Mode) {

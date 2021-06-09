@@ -35,8 +35,7 @@ void Credits::Draw() {
 	Gui::DrawString(60, 30, 0.5f, UniversalEdit::UE->TData->TextColor(), "- Universal-Team", 280, 0);
 	Gui::DrawString(60, 50, 0.5f, UniversalEdit::UE->TData->TextColor(), "- devkitPro", 280, 0);
 	Gui::DrawString(60, 70, 0.5f, UniversalEdit::UE->TData->TextColor(), "- https://icons8.com/", 280, 0);
-	Gui::DrawString(60, 90, 0.5f, UniversalEdit::UE->TData->TextColor(), "- https://www.lua.org/", 280, 0);
-	Gui::DrawString(60, 110, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("CONTRIBUTOR_TRANSLATORS"), 280, 0);
+	Gui::DrawString(60, 90, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("CONTRIBUTOR_TRANSLATORS"), 280, 0);
 
 	UniversalEdit::UE->GData->Sprite(sprites_icon_idx, 148, 135);
 	Gui::DrawStringCentered(24, 190, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("GITHUB"), 280, 0);

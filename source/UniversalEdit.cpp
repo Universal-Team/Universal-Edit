@@ -25,7 +25,6 @@
 */
 
 #include "Common.hpp"
-#include "LUAHelper.hpp"
 #include "PromptMessage.hpp"
 #include <3ds.h>
 #include <dirent.h> // mkdir.
@@ -41,12 +40,6 @@ UniversalEdit::UniversalEdit() {
 	/* Create base folders if missing. */
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Edit", 0777);
-
-	/* Hex Editor related. */
-	mkdir("sdmc:/3ds/Universal-Edit/Hex-Editor", 0777);
-	mkdir("sdmc:/3ds/Universal-Edit/Hex-Editor/Labels", 0777);
-	mkdir("sdmc:/3ds/Universal-Edit/Hex-Editor/Scripts", 0777);
-	mkdir("sdmc:/3ds/Universal-Edit/Hex-Editor/Encodings", 0777);
 
 	/* Text Editor related. */
 	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor", 0777);
@@ -66,7 +59,6 @@ UniversalEdit::UniversalEdit() {
 	/* Initialize all components. */
 	this->CR = std::make_unique<Credits>();
 	this->FH = std::make_unique<FileHandler>();
-	this->HE = std::make_unique<HexEditor>();
 	this->SE = std::make_unique<Settings>();
 	this->_Tab = std::make_unique<Tab>();
 	this->TE = std::make_unique<TextEditor>();
@@ -78,19 +70,11 @@ void UniversalEdit::DrawTop() {
 	UniversalEdit::GData->DrawTop();
 
 	if (FileHandler::Loaded) {
-		if (this->HexEditMode) { // Hex Edit mode.
-			if (this->CurrentFile && this->CurrentFile->IsGood()) {
-				this->HE->DrawTop();
-
-			};
-
-		} else { // Text Editor.
-			this->TE->DrawTop();
-		};
-
-	} else {
-		Gui::DrawStringCentered(0, 1, 0.55f, this->TData->TextColor(), "Universal-Edit");
+		this->TE->DrawTop();
+		return;
 	};
+
+	Gui::DrawStringCentered(0, 1, 0.55f, this->TData->TextColor(), "Universal-Edit");
 };
 
 void UniversalEdit::DrawBottom(const bool OnlyTab) {
@@ -101,10 +85,6 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 	switch(this->ActiveTab) {
 		case Tabs::FileHandler:
 			this->FH->Draw();
-			break;
-
-		case Tabs::HexEditor:
-			this->HE->DrawBottom();
 			break;
 
 		case Tabs::TextEditor:
@@ -153,10 +133,6 @@ int UniversalEdit::Handler() {
 		switch(this->ActiveTab) {
 			case Tabs::FileHandler:
 				this->FH->Handler();
-				break;
-
-			case Tabs::HexEditor:
-				this->HE->Handler();
 				break;
 
 			case Tabs::TextEditor:

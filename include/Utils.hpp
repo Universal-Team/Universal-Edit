@@ -34,19 +34,7 @@
 namespace Utils {
 	bool Touching(const touchPosition T, const Structs::ButtonPos P);
 
-	template <class T> std::string ToHex(T Value) {
-		char Buffer[sizeof(T) * 2 + 1] = { 0 };
-
-		for (int Idx = sizeof(T) * 2 - 1; Idx >= 0; Idx--) {
-			Buffer[Idx] = ((Value & 0xF) >= 0xA ? 'A' + (Value & 0xF) - 0xA : '0' + (Value & 0xF));
-			Value >>= 4;
-		};
-
-		return Buffer;
-	};
-
 	int Numpad(const std::string &Text, const int CurVal, const int MinVal, const int MaxVal, const int Length);
-	uint32_t HexPad(const std::string &Text, const uint32_t CurVal, const uint32_t MinVal, const uint32_t MaxVal, const int Length);
 	std::string Keyboard(const std::string &Text, const std::string &CurStr, const int Length);
 	void ProgressMessage(const std::string &Msg);
 	

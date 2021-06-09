@@ -25,156 +25,118 @@
 */
 
 #include "Data.hpp"
-#include "JSON.hpp"
-#include "Utils.hpp"
+#include <cstring>
 #include <unistd.h>
 
 Data::Data() {
-	this->FileData.resize(1);
-	this->FileData[0] = { 0x0 }; // Init with 0x0.
+	this->Lines.push_back(" ");
 	this->FileGood = true;
 	this->File = "sdmc:/3ds/Universal-Edit/Temp.txt";
-
-	this->LoadEncoding("romfs:/encodings/ascii.json");
 };
 
+/*
+	Load a file.
+
+	const std::string &File: The file to load.
+
+	Is that the way to go? I'm not sure.
+*/
 void Data::Load(const std::string &File) {
 	this->File = File;
+	this->Lines.clear();
 
-	if (access(this->File.c_str(), F_OK) == 0) {
-		FILE *In = fopen(this->File.c_str(), "r");
+	if (access(this->File.c_str(), F_OK) != 0) {
+		this->FileGood = false;
+		this->Lines.push_back("");
+		return;
+	};
 
-		if (In) {
-			fseek(In, 0, SEEK_END);
-			const uint32_t Size = ftell(In);
-			fseek(In, 0, SEEK_SET);
+	char *Line = nullptr;
+	size_t Length = 0;
 
-			this->FileData.resize(Size);
-			fread(this->FileData.data(), 1, Size, In);
-			fclose(In);
-			this->FileGood = true;
+	FILE *In = fopen(this->File.c_str(), "r");
+
+	if (In) {
+		while(__getline(&Line, &Length, In) != -1) {
+			if (Line) { // Ensure it's not a nullptr.
+				if (Line[strlen(Line) - 1] == '\n') Line[strlen(Line) - 1] = '\0';
+				this->Lines.push_back(Line);
+			};
 		};
 
-	} else {
-		this->FileGood = false;
+		fclose(In);
 	};
+
+	if (this->Lines.size() == 0) this->Lines.push_back("");
+	this->FileGood = true;
 };
 
+/*
+	Insert content to a line at a specific position.
 
-void Data::InsertBytes(const uint32_t Offs, const std::vector<uint8_t> &ToInsert) {
-	if (Offs > this->GetSize()) return; // Out of bounds.
+	const size_t Line: The line to insert something.
+	const size_t Pos: The index to insert something.
+	const std::string &Text: The text to insert.
+*/
+void Data::InsertContent(const size_t Line, const size_t Pos, const std::string &Text) {
+	if (Line > this->Lines.size() || Pos > this->Lines[Line].size()) return; // Nope.
 
-	this->FileData.insert(this->FileData.begin() + Offs, ToInsert.begin(), ToInsert.end());
+	this->Lines[Line].insert(Pos, Text);
 };
 
-void Data::EraseBytes(const uint32_t Offs, const uint32_t Size) {
-	if (Offs >= this->GetSize() || Offs + Size > this->GetSize()) return; // Out of bounds.
-	this->FileData.erase(this->FileData.begin() + Offs, this->FileData.begin() + Offs + Size);
+/*
+	Erase content of a line at a specific position.
+
+	const size_t Line: The line to erase something.
+	const size_t Pos: The index to erase something.
+	const size_t Length: The length in characters to remove.
+*/
+void Data::EraseContent(const size_t Line, const size_t Pos, const size_t Length) {
+	if (Line > this->Lines.size() || Pos + Length > this->Lines[Line].size()) return; // Nope.
+
+	this->Lines[Line].erase(Pos, Length);
 };
 
+/*
+	Insert a new line
 
+	const size_t Line: The line where to insert a new line.
+*/
+void Data::InsertLine(const size_t Line) {
+	if (Line > this->Lines.size()) return; // Nope.
+	this->Lines.insert(this->Lines.begin() + Line, 1, "");
+};
+
+/*
+	Remove a line
+
+	const size_t Line: The line to remove.
+*/
+void Data::RemoveLine(const size_t Line) {
+	if (Line > this->Lines.size()) return; // Nope.
+	this->Lines.erase(this->Lines.begin() + Line);
+};
+
+/*
+	Write back the changes to the file.
+
+	const std::string &File: The file where to write to.
+*/
 bool Data::WriteBack(const std::string &File) {
-	if (this->IsGood() && this->GetData()) {
+	if (this->IsGood() && !this->Lines.empty()) {
 		FILE *Out = fopen(File.c_str(), "w");
-		fwrite(this->GetData(), 1, this->GetSize(), Out);
+
+		std::vector<uint8_t> Data;
+		for (size_t Idx = 0; Idx < this->Lines.size(); Idx++) {
+			for (size_t Idx2 = 0; Idx2 < this->Lines[Idx].size(); Idx2++) {
+				Data.push_back(this->Lines[Idx][Idx2]);
+			};
+		};
+
+		fwrite(Data.data(), 1, this->GetSize(), Out);
 		fclose(Out);
 		return true;
 	};
 
 	return false;
-};
-
-std::string Data::ByteToString(const uint32_t Offs) {
-	if (this->IsGood() && this->GetData() && Offs < this->GetSize()) return Utils::ToHex<uint8_t>(this->GetData()[Offs]);
-	return "";
-};
-
-
-
-
-/*
-	Return a bit from the data.
-
-	const uint32_t Offs: The Offset to read from.
-	const uint8_t BitIndex: The Bit index ( 0 - 7 ).
-*/
-bool Data::ReadBit(const uint32_t Offs, const uint8_t BitIndex) {
-	if (!this->IsGood() || !this->GetData() || BitIndex > 7 || Offs >= this->GetSize()) return false;
-
-	return (this->GetData()[Offs] >> BitIndex & 1) != 0;
-};
-
-/*
-	Write a bit to the data.
-
-	const uint32_t Offs: The Offset to write to.
-	const uint8_t BitIndex: The Bit index ( 0 - 7 ).
-	const bool IsSet: If it's set (1) or not (0).
-*/
-void Data::WriteBit(const uint32_t Offs, const uint8_t BitIndex, const bool IsSet) {
-	if (!this->IsGood() || !this->GetData() || BitIndex > 7 || Offs >= this->GetSize()) return;
-
-	this->GetData()[Offs] &= ~(1 << BitIndex);
-	this->GetData()[Offs] |= (IsSet ? 1 : 0) << BitIndex;
-
-	if (!this->Changes()) this->ChangesMade = true;
-};
-
-
-
-/*
-	Read Lower / Upper Bits from the data.
-
-	const uint32_t Offs: The offset where to read from.
-	const bool First: If Reading from the first four bits, or second.
-*/
-uint8_t Data::ReadBits(const uint32_t Offs, const bool First) {
-	if (!this->IsGood() || !this->GetData() || Offs >= this->GetSize()) return 0x0;
-
-	if (First) return (this->GetData()[Offs] & 0xF); // Bit 0 - 3.
-	else return (this->GetData()[Offs] >> 4); // Bit 4 - 7.
-};
-
-/*
-	Write Lower / Upper Bits to the data.
-
-	const uint32_t Offs: The offset where to write to.
-	const bool First: If Writing on the first four bits, or second.
-	const uint8_t Data: The Data to write.
-*/
-void Data::WriteBits(const uint32_t Offs, const bool First, const uint8_t Data) {
-	if (!this->IsGood() || !this->GetData() || Data > 0xF || Offs >= this->GetSize()) return;
-
-	if (First) this->GetData()[Offs] = (this->GetData()[Offs] & 0xF0) | (Data & 0xF); // Bit 0 - 3.
-	else this->GetData()[Offs] = (this->GetData()[Offs] & 0x0F) | (Data << 4); // Bit 4 - 7.
-	if (!this->Changes()) this->ChangesMade = true;
-};
-
-/*
-	Load an Encoding.
-*/
-void Data::LoadEncoding(const std::string &ENCFile) {
-	if (access(ENCFile.c_str(), F_OK) != 0) return;
-
-	/* Open Handle. */
-	nlohmann::json ENC;
-	FILE *File = fopen(ENCFile.c_str(), "r");
-	if (File) {
-		ENC = nlohmann::json::parse(File, nullptr, false);
-		fclose(File);
-
-	} else {
-		return;
-	};
-
-	if (ENC.is_discarded()) return; // Bad Encoding data.
-	for (size_t Idx = 0; Idx < 256; Idx++) this->Encoding[Idx] = "."; // Reset all to ".".
-
-	if (ENC.contains("map") && ENC["map"].is_object()) {
-		for (size_t Idx = 0; Idx < 256; Idx++) {
-			const std::string Str = Utils::ToHex<uint8_t>(Idx);
-
-			if (ENC["map"].contains(Str) && ENC["map"][Str].is_string()) this->Encoding[Idx] = ENC["map"][Str].get<std::string>();
-		};
-	};
 };

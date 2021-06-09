@@ -28,7 +28,6 @@
 #include "DirSelector.hpp"
 #include "FileHandler.hpp"
 #include "FileBrowser.hpp"
-#include "HexEditor.hpp"
 #include "PromptMessage.hpp"
 #include "StatusMessage.hpp"
 
@@ -77,19 +76,15 @@ void FileHandler::LoadFile() {
 		else UniversalEdit::UE->CurrentFile->Load(EditFile); // Otherwise load.
 
 		if (UniversalEdit::UE->CurrentFile->IsGood()) {
-			HexEditor::CursorIdx = 0; // After sucessful loading, also reset the Hex Editor cursor.
-			HexEditor::OffsIdx = 0;
+			TextEditor::CursorPos = 0;
 			FileHandler::Loaded = true;
-			UniversalEdit::UE->HexEditMode = true;
-			UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::HexEditor;
+			UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::TextEditor;
 
 		} else {
 			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
 			Ovl->Handler(Utils::GetStr("FILE_NOT_EXIST_BAD"), -1);
 			FileHandler::Loaded = false;
 		};
-
-		HexEditor::Mode = HexEditor::SubMode::Sub;
 	};
 };
 
@@ -103,12 +98,9 @@ void FileHandler::NewFile() {
 
 	UniversalEdit::UE->CurrentFile = std::make_unique<Data>();
 	
-	HexEditor::CursorIdx = 0; // After sucessful loading, also reset the Hex Editor cursor.
-	HexEditor::OffsIdx = 0;
+	TextEditor::CursorPos = 0;
 	FileHandler::Loaded = true;
-	UniversalEdit::UE->HexEditMode = true;
-	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::HexEditor;
-	HexEditor::Mode = HexEditor::SubMode::Sub;
+	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::TextEditor;
 };
 
 void FileHandler::SaveFile() {
