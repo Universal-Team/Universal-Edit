@@ -31,14 +31,38 @@
 size_t TextEditor::CursorPos = 0, TextEditor::RowOffs = 0, TextEditor::CurrentLine = 0; // Maybe handle that different? Dunno.
 TextEditor::SubMode TextEditor::Mode = TextEditor::SubMode::Sub;
 
-#define CHARS_PER_LINE 35 // Might need to be changed.
-#define ROWS 13
-#define CHARS_PER_LIST CHARS_PER_LINE * ROWS
+#define LINES 13
+
+static std::string DispLine(const size_t L) {
+	char Buffer[11] = { 0x0 };
+	snprintf(Buffer, sizeof(Buffer), "%010zu", L);
+	return Buffer;
+};
+
 
 /* TODO: Display Text from the Data class. */
 void TextEditor::DrawTop() {
+	bool DidDrawCursor = false;
+
 	if (UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
+
+		for (size_t Idx = TextEditor::RowOffs, Idx2 = 0; Idx < (TextEditor::RowOffs + LINES) && Idx < UniversalEdit::UE->CurrentFile->GetLines(); Idx++, Idx2++) {
+			if (TextEditor::CurrentLine == Idx) {
+				/* Only draw it once. */
+				if (!DidDrawCursor) {
+					Gui::Draw_Rect(80 + Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(0, TextEditor::CursorPos), nullptr), this->YPositions[Idx2], Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(TextEditor::CursorPos, 1), nullptr), 12, C2D_Color32(0, 0, 0, 255));
+					DidDrawCursor = true;
+				};
+
+				Gui::DrawString(3, this->YPositions[Idx2], 0.4f, UniversalEdit::UE->TData->BarColor(), DispLine(Idx + 1));
+
+			} else {
+				Gui::DrawString(3, this->YPositions[Idx2], 0.4f, UniversalEdit::UE->TData->TextColor(), DispLine(Idx + 1));
+			};
+
+			Gui::DrawString(80, this->YPositions[Idx2], 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
+		};
 	};
 };
 
@@ -61,10 +85,53 @@ void TextEditor::DrawBottom() {
 	};
 };
 
+void TextEditor::HandleScroll() {
+	if (TextEditor::CurrentLine < LINES) TextEditor::RowOffs = 0;
+	else {
+		TextEditor::RowOffs = 1 + (TextEditor::CurrentLine - LINES);
+	};
+};
+
 
 void TextEditor::Handler() {
 	switch(TextEditor::Mode) {
 		case TextEditor::SubMode::Sub:
+			if (UniversalEdit::UE->Repeat & KEY_DOWN) {
+				if (TextEditor::CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
+					TextEditor::CurrentLine++;
+
+					/* Update cursor pos. */
+					if (TextEditor::CursorPos > UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1) {
+						TextEditor::CursorPos = UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1;
+					};
+
+					this->HandleScroll();
+				};
+			};
+
+			if (UniversalEdit::UE->Repeat & KEY_UP) {
+				if (TextEditor::CurrentLine > 0) {
+					TextEditor::CurrentLine--;
+
+					/* Update cursor pos. */
+					if (TextEditor::CursorPos > UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1) {
+						TextEditor::CursorPos = UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1;
+					};
+
+					this->HandleScroll();
+				};
+			};
+
+			if (UniversalEdit::UE->Repeat & KEY_LEFT) {
+				if (TextEditor::CursorPos > 0) TextEditor::CursorPos--;
+			};
+
+			if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
+				if (TextEditor::CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1) {
+					TextEditor::CursorPos++;
+				};
+			};
+
 			if (UniversalEdit::UE->Down & KEY_X) {
 				/* TODO: Implement proper selection. */
 				std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();

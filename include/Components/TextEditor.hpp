@@ -48,18 +48,13 @@ public:
 	void DrawTop();
 	void DrawBottom();
 	void Handler();
+	void HandleScroll();
 
 	static size_t CursorPos, RowOffs, CurrentLine;
 	static SubMode Mode;
 private:
-	static constexpr int XPositions[35] = {
-		40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190,
-		200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350,
-		360, 370, 380
-	};
-
 	static constexpr int YPositions[13] = {
-		42, 57, 72, 87, 102, 117, 132, 147, 162, 177, 192, 207, 222
+		37, 52, 67, 87, 97, 112, 127, 142, 157, 172, 187, 202, 217
 	};
 
 	/* The Text Editor components. */

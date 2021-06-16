@@ -43,6 +43,11 @@ public:
 
 	/* Return the amount of lines. */
 	uint32_t GetLines() const { return this->Lines.size(); };
+	
+	std::string GetLine(const size_t Idx) const {
+		if (Idx < this->GetLines()) return this->Lines[Idx];
+		return "";
+	};
 
 	/* Return the amount of characters. */
 	uint32_t GetSize() {
