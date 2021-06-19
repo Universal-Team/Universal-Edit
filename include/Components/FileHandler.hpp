@@ -46,10 +46,10 @@ private:
 	void SaveFileAs();
 
 	const std::vector<Structs::ButtonPos> Menu = {
-		{ 70, 40, 100, 30 },
-		{ 200, 40, 100, 30 },
-		{ 70, 90, 100, 30 },
-		{ 200, 90, 100, 30 }
+		{ 114, 40, 140, 30 },
+		{ 114, 90, 140, 30 },
+		{ 114, 140, 140, 30 },
+		{ 114, 190, 140, 30 }
 	};
 
 	const std::vector<std::string> MenuOptions = { "LOAD_FILE", "NEW_FILE", "SAVE_FILE", "SAVE_FILE_AS" };

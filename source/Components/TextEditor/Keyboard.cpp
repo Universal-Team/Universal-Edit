@@ -25,6 +25,7 @@
 */
 
 #include "Common.hpp"
+#include "FileBrowser.hpp"
 #include "JSON.hpp"
 #include "Keyboard.hpp"
 #include "TextUtils.hpp"
@@ -98,36 +99,55 @@ void Keyboard::Load(const std::string &KeyboardJSON) {
 				};
 			};
 		};
+
+		this->Loaded = true;
 	};
 };
 
 void Keyboard::Draw() {
-	if (this->Kbd.contains(this->CurrentMode.back())) {
-		for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
-			Gui::Draw_Rect(Key.Pos.x, Key.Pos.y, Key.Pos.w, Key.Pos.h, Key.Active ? UniversalEdit::UE->TData->BarColor() : UniversalEdit::UE->TData->BarOutline()); // TODO: Dedicated colors
-			Gui::DrawStringCentered(Key.Pos.x + (Key.Pos.w / 2) - 160, Key.Pos.y + (Key.Pos.h / 10), 0.5f, UniversalEdit::UE->TData->TextColor(), Key.Label);
-		};
-	} else {
-		// TODO: Invalid layout warning
-	};
+	/* A sub menu or so? */
+	if (!this->Loaded) {
+		Gui::Draw_Rect(48, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
+		Gui::Draw_Rect(48, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
+		Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("KEYBOARD_MENU"), 310);
 
-	Gui::DrawStringCentered(0, 0, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Out); // TODO: Proper output
+	} else {
+		if (this->Kbd.contains(this->CurrentMode.back())) {
+			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
+				Gui::Draw_Rect(Key.Pos.x, Key.Pos.y, Key.Pos.w, Key.Pos.h, Key.Active ? UniversalEdit::UE->TData->BarColor() : UniversalEdit::UE->TData->BarOutline()); // TODO: Dedicated colors
+				Gui::DrawStringCentered(Key.Pos.x + (Key.Pos.w / 2) - 160, Key.Pos.y + (Key.Pos.h / 10), 0.5f, UniversalEdit::UE->TData->TextColor(), Key.Label);
+			};
+		} else {
+			// TODO: Invalid layout warning
+		};
+
+		Gui::DrawStringCentered(0, 0, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Out); // TODO: Proper output
+	};
 };
 
 void Keyboard::Handler() {
-	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		/* Check if any key is being touched */
-		for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
-			if (Utils::Touching(UniversalEdit::UE->T, Key.Pos)) {
-				HandleKeyPress(Key);
-				break;
-			};
+	/* Handle Load. */
+	if (!this->Loaded) {
+		if (UniversalEdit::UE->Down & KEY_X) {
+			this->Load("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/KBD.json");
+			this->Full = true; // For now uses full, change this as needed for testing.
 		};
-	} else if(UniversalEdit::UE->Down) {
-		/* If not touching, then check all keys for button values */
-		for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
-			if (UniversalEdit::UE->Down & Key.Button) {
-				HandleKeyPress(Key);
+
+	} else {
+		if (UniversalEdit::UE->Down & KEY_TOUCH) {
+			/* Check if any key is being touched */
+			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
+				if (Utils::Touching(UniversalEdit::UE->T, Key.Pos)) {
+					HandleKeyPress(Key);
+					break;
+				};
+			};
+		} else if(UniversalEdit::UE->Down) {
+			/* If not touching, then check all keys for button values */
+			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
+				if (UniversalEdit::UE->Down & Key.Button) {
+					HandleKeyPress(Key);
+				};
 			};
 		};
 	};
@@ -153,7 +173,7 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 					} else if (Value == "handakuten") {
 						TextUtils::Dakutenify(Out, true);
 					} else if (Value == "exit") {
-						TextEditor::Mode = TextEditor::SubMode::Sub;
+						this->Full = false;
 					};
 					break;
 				/* Changes mode, such as to Shift mode */

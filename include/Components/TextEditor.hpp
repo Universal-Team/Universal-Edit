@@ -32,34 +32,18 @@
 #include <string>
 #include <vector>
 
-/* Include the Text Editor components here. */
-#include "Keyboard.hpp"
-#include "Phrases.hpp"
-
-
 class TextEditor {
 public:
-	enum class SubMode : uint8_t { Sub = 0, Keyboard = 1, Phrases = 2 };
-
-	TextEditor() {
-		this->Phrase = std::make_unique<Phrases>();
-		this->Kbd = std::make_unique<Keyboard>();
-	};
-	void DrawTop();
-	void DrawBottom();
+	TextEditor() { };
+	void Draw();
 	void Handler();
 	void HandleScroll();
 
 	static size_t CursorPos, RowOffs, CurrentLine;
-	static SubMode Mode;
 private:
 	static constexpr int YPositions[13] = {
 		37, 52, 67, 87, 97, 112, 127, 142, 157, 172, 187, 202, 217
 	};
-
-	/* The Text Editor components. */
-	std::unique_ptr<Keyboard> Kbd = nullptr;
-	std::unique_ptr<Phrases> Phrase = nullptr; 
 };
 
 #endif

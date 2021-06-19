@@ -37,6 +37,7 @@ public:
 	void Draw();
 	void Handler();
 private:
+	bool Loaded = false;
 	std::vector<std::string> PhraseList;
 	size_t PIdx = 0, PPos = 0;
 

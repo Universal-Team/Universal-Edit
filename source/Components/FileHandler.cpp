@@ -42,7 +42,7 @@ void FileHandler::Draw() {
 		Gui::Draw_Rect(this->Menu[Idx].x - 2, this->Menu[Idx].y - 2, this->Menu[Idx].w + 4, this->Menu[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->Menu[Idx].x, this->Menu[Idx].y, this->Menu[Idx].w, this->Menu[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		
-		Gui::DrawString(this->Menu[Idx].x + 5, this->Menu[Idx].y + 5, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
+		Gui::DrawStringCentered(24, this->Menu[Idx].y + 9, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
 	};
 };
 
@@ -78,7 +78,7 @@ void FileHandler::LoadFile() {
 		if (UniversalEdit::UE->CurrentFile->IsGood()) {
 			TextEditor::CursorPos = 0;
 			FileHandler::Loaded = true;
-			UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::TextEditor;
+			UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::Keyboard;
 
 		} else {
 			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
@@ -100,7 +100,7 @@ void FileHandler::NewFile() {
 	
 	TextEditor::CursorPos = 0;
 	FileHandler::Loaded = true;
-	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::TextEditor;
+	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::Keyboard;
 };
 
 void FileHandler::SaveFile() {

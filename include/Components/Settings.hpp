@@ -32,24 +32,35 @@
 #include <string>
 #include <vector>
 
+#include "Credits.hpp"
+
 class Settings {
 public:
+	enum class SubMode : uint8_t { Main = 0, Credits = 1 };
+	Settings() { this->CR = std::make_unique<Credits>(); };
 	void Draw();
 	void Handler();
+
+	static SubMode Mode;
 private:
 	void LanguageHandler();
 	void ThemeHandler();
+	void AccessCredits();
 
 	const std::vector<Structs::ButtonPos> Menu = {
-		{ 70, 40, 100, 30 }, // Language.
-		{ 200, 40, 100, 30 } // Themes.
+		{ 114, 40, 140, 30 }, // Language.
+		{ 114, 90, 140, 30 }, // Themes.
+		{ 114, 140, 140, 30 } // Credits.
 	};
 
-	const std::vector<std::string> MenuOptions = { "LANGUAGE", "THEMES" };
+	const std::vector<std::string> MenuOptions = { "LANGUAGE", "THEMES", "CREDITS" };
 	const std::vector<std::function<void()>> Funcs = {
 		{ [this]() { this->LanguageHandler(); } },
-		{ [this]() { this->ThemeHandler(); } }
+		{ [this]() { this->ThemeHandler(); } },
+		{ [this]() { this->AccessCredits(); } }
 	};
+
+	std::unique_ptr<Credits> CR = nullptr;
 };
 
 #endif

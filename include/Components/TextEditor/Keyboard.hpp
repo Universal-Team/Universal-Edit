@@ -36,6 +36,8 @@ public:
 	void Load(const std::string &KeyboardJSON);
 	void Draw();
 	void Handler();
+
+	bool IsFull() const { return this->Full; }; // Return if full screen.
 private:
 	struct Key {
 		enum class Property {
@@ -53,6 +55,8 @@ private:
 
 		Key(Structs::ButtonPos Pos, const std::string &Label) : Pos(Pos), Label(Label) {}
 	};
+
+	bool Loaded = false, Full = false;
 
 	struct Mode {
 		std::vector<Key> Keys = {};

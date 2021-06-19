@@ -34,15 +34,16 @@
 #include <string>
 
 /* Include all Components. */
-#include "Credits.hpp"
 #include "FileHandler.hpp"
+#include "Keyboard.hpp"
+#include "Phrases.hpp"
 #include "Settings.hpp"
 #include "Tab.hpp"
 #include "TextEditor.hpp"
 
 class UniversalEdit {
 public:
-	enum class Tabs : uint8_t { FileHandler = 0, TextEditor = 1, Settings = 2, Credits = 3 };
+	enum class Tabs : uint8_t { FileHandler = 0, Keyboard = 1, Phrases = 2, Utils = 3, Settings = 4 };
 	UniversalEdit();
 	int Handler();
 
@@ -52,6 +53,7 @@ public:
 	std::unique_ptr<ThemeData> TData = nullptr; // Needs to be accessible for the other Components.
 	std::unique_ptr<GFXData> GData = nullptr;
 	std::unique_ptr<ConfigData> CData = nullptr;
+	std::unique_ptr<Keyboard> KBD = nullptr; // Needs to be accessible for the Tab to handle full keyboard.
 	std::vector<std::pair<std::string, std::string>> ThemeNames;
 	Tabs ActiveTab = Tabs::FileHandler;
 	void DrawTop();
@@ -63,8 +65,8 @@ private:
 	bool Exiting = false;
 	
 	/* Include all Components. */
-	std::unique_ptr<Credits> CR = nullptr;
 	std::unique_ptr<FileHandler> FH = nullptr;
+	std::unique_ptr<Phrases> PHR = nullptr;
 	std::unique_ptr<Settings> SE = nullptr;
 	std::unique_ptr<Tab> _Tab = nullptr;
 	std::unique_ptr<TextEditor> TE = nullptr;

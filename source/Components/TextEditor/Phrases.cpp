@@ -25,6 +25,7 @@
 */
 
 #include "Common.hpp"
+#include "FileBrowser.hpp"
 #include "JSON.hpp"
 #include "Phrases.hpp"
 #include <unistd.h>
@@ -50,12 +51,15 @@ void Phrases::Load(const std::string &PhrasesJSON) {
 
 	if (JSON.is_array()) this->PhraseList = JSON.get<std::vector<std::string>>();
 	this->PIdx = 0, this->PIdx = 0;
+	this->Loaded = true;
 };
 
 void Phrases::Draw() {
 	Gui::Draw_Rect(48, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(48, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
 	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("PHRASE_LIST"), 310);
+
+	if (this->PhraseList.empty()) return;
 
 	/* Now begin to draw the contents. */
 	for (size_t Idx = 0; Idx < ENTRIES_ON_LIST && Idx < this->PhraseList.size(); Idx++) {
@@ -77,41 +81,53 @@ void Phrases::Insert(const size_t Idx) {
 
 
 void Phrases::Handler() {
-	if (UniversalEdit::UE->Repeat & KEY_DOWN) {
-		if (this->PIdx < this->PhraseList.size() - 1) this->PIdx++;
-		else this->PIdx = 0;
-	};
+	/* Handle before load. */
+	if (!this->Loaded) {
+		if (UniversalEdit::UE->Down & KEY_Y) {
+			std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
+			const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases/", true, Utils::GetStr("SELECT_PHRASE"), { "json" });
+				
+			if (PFile != "") {
+				this->Load(PFile);
+			};
+		};
 
-	if (UniversalEdit::UE->Repeat & KEY_UP) {
-		if (this->PIdx > 0) this->PIdx--;
-		else this->PIdx = this->PhraseList.size() - 1;
-	};
+	} else {
+		if (UniversalEdit::UE->Repeat & KEY_DOWN) {
+			if (this->PIdx < this->PhraseList.size() - 1) this->PIdx++;
+			else this->PIdx = 0;
+		};
 
-	if (UniversalEdit::UE->Repeat & KEY_LEFT) {
-		if ((int)this->PIdx - ENTRIES_ON_LIST >= 0) this->PIdx -= ENTRIES_ON_LIST;
-		else this->PIdx = 0;
-	};
+		if (UniversalEdit::UE->Repeat & KEY_UP) {
+			if (this->PIdx > 0) this->PIdx--;
+			else this->PIdx = this->PhraseList.size() - 1;
+		};
 
-	if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
-		if (this->PIdx + ENTRIES_ON_LIST < this->PhraseList.size()) this->PIdx += ENTRIES_ON_LIST;
-		else this->PIdx = this->PhraseList.size() - 1;
-	};
+		if (UniversalEdit::UE->Repeat & KEY_LEFT) {
+			if ((int)this->PIdx - ENTRIES_ON_LIST >= 0) this->PIdx -= ENTRIES_ON_LIST;
+			else this->PIdx = 0;
+		};
+
+		if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
+			if (this->PIdx + ENTRIES_ON_LIST < this->PhraseList.size()) this->PIdx += ENTRIES_ON_LIST;
+			else this->PIdx = this->PhraseList.size() - 1;
+		};
 
 
-	if (UniversalEdit::UE->Down & KEY_A) this->Insert(this->PIdx);
-	if (UniversalEdit::UE->Down & KEY_B) TextEditor::Mode = TextEditor::SubMode::Sub;
+		if (UniversalEdit::UE->Down & KEY_A) this->Insert(this->PIdx);
 
-	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
-			if (this->PPos + Idx < this->PhraseList.size()) {
-				if (Utils::Touching(UniversalEdit::UE->T, this->ListPos[Idx])) {
-					this->Insert(Idx);
-					break;
+		if (UniversalEdit::UE->Down & KEY_TOUCH) {
+			for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
+				if (this->PPos + Idx < this->PhraseList.size()) {
+					if (Utils::Touching(UniversalEdit::UE->T, this->ListPos[Idx])) {
+						this->Insert(Idx);
+						break;
+					};
 				};
 			};
 		};
-	};
 
-	if (this->PIdx < this->PPos) this->PPos = this->PIdx;
-	else if (this->PIdx > this->PPos + ENTRIES_ON_LIST - 1) this->PPos = this->PIdx - ENTRIES_ON_LIST + 1;
+		if (this->PIdx < this->PPos) this->PPos = this->PIdx;
+		else if (this->PIdx > this->PPos + ENTRIES_ON_LIST - 1) this->PPos = this->PIdx - ENTRIES_ON_LIST + 1;
+	};
 };

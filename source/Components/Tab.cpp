@@ -28,7 +28,7 @@
 #include "Tab.hpp"
 
 void Tab::Draw() {
-	if (TextEditor::Mode == TextEditor::SubMode::Keyboard) return; // Don't draw when keyboard is visible.
+	if (UniversalEdit::UE->KBD->IsFull()) return; // Don't draw when keyboard is fully visible.
 
 	for (uint8_t Idx = 0; Idx < 5; Idx++) {
 		if (Idx == (uint8_t)UniversalEdit::UE->ActiveTab) Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->SidebarSelected());
@@ -36,23 +36,18 @@ void Tab::Draw() {
 	};
 
 	UniversalEdit::UE->GData->SpriteBlend(sprites_filehandler_idx, this->Tabs[0].x, this->Tabs[0].y, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);
-	UniversalEdit::UE->GData->SpriteBlend(sprites_texteditor_idx, this->Tabs[1].x, this->Tabs[1].y, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);
-	UniversalEdit::UE->GData->SpriteBlend(sprites_settings_idx, this->Tabs[2].x, this->Tabs[2].y, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);
-	UniversalEdit::UE->GData->SpriteBlend(sprites_credits_idx, this->Tabs[3].x, this->Tabs[3].y, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);
+	UniversalEdit::UE->GData->SpriteBlend(sprites_settings_idx, this->Tabs[4].x, this->Tabs[4].y, UniversalEdit::UE->TData->SidebarIconColor(), 1.0f);
 
 	Gui::Draw_Rect(48, 0, 1, 240, UniversalEdit::UE->TData->BarOutline());
 };
 
-static void SwitchTab(const UniversalEdit::Tabs T) {
-	if (TextEditor::Mode == TextEditor::SubMode::Keyboard) return; // Don't do the logic, if keyboard is visible.
-	if (T == UniversalEdit::UE->ActiveTab) return;
-
-	UniversalEdit::UE->ActiveTab = T;
-};
+static void SwitchTab(const UniversalEdit::Tabs T) { UniversalEdit::UE->ActiveTab = T; };
 
 void Tab::Handler() {
+	if (UniversalEdit::UE->KBD->IsFull()) return; // Don't do any logic when keyboard is fully visible.
+
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		for (uint8_t Idx = 0; Idx < 4; Idx++) {
+		for (uint8_t Idx = 0; Idx < 5; Idx++) {
 			if (Utils::Touching(UniversalEdit::UE->T, this->Tabs[Idx])) {
 				SwitchTab((UniversalEdit::Tabs)Idx);
 				break;

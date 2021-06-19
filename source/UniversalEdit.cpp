@@ -57,8 +57,9 @@ UniversalEdit::UniversalEdit() {
 	
 
 	/* Initialize all components. */
-	this->CR = std::make_unique<Credits>();
 	this->FH = std::make_unique<FileHandler>();
+	this->KBD = std::make_unique<Keyboard>();
+	this->PHR = std::make_unique<Phrases>();
 	this->SE = std::make_unique<Settings>();
 	this->_Tab = std::make_unique<Tab>();
 	this->TE = std::make_unique<TextEditor>();
@@ -70,7 +71,7 @@ void UniversalEdit::DrawTop() {
 	UniversalEdit::GData->DrawTop();
 
 	if (FileHandler::Loaded) {
-		this->TE->DrawTop();
+		this->TE->Draw();
 		return;
 	};
 
@@ -87,16 +88,19 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 			this->FH->Draw();
 			break;
 
-		case Tabs::TextEditor:
-			this->TE->DrawBottom();
+		case Tabs::Keyboard:
+			this->KBD->Draw();
+			break;
+
+		case Tabs::Phrases:
+			this->PHR->Draw();
+			break;
+
+		case Tabs::Utils:
 			break;
 
 		case Tabs::Settings:
 			this->SE->Draw();
-			break;
-			
-		case Tabs::Credits:
-			this->CR->Draw();
 			break;
 	};
 };
@@ -130,20 +134,26 @@ int UniversalEdit::Handler() {
 
 
 		this->_Tab->Handler();
+		this->TE->Handler();
+		
 		switch(this->ActiveTab) {
 			case Tabs::FileHandler:
 				this->FH->Handler();
 				break;
 
-			case Tabs::TextEditor:
-				this->TE->Handler();
+			case Tabs::Keyboard:
+				this->KBD->Handler();
+				break;
+
+			case Tabs::Phrases:
+				this->PHR->Handler();
+				break;
+
+			case Tabs::Utils:
 				break;
 
 			case Tabs::Settings:
 				this->SE->Handler();
-				break;
-				
-			case Tabs::Credits:
 				break;
 		};
 	};

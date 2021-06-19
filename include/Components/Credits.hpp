@@ -33,6 +33,9 @@
 class Credits {
 public:
 	void Draw();
+	void Handler();
+private:
+	const Structs::ButtonPos BackArrow = { 50, 0, 20, 20 };
 };
 
 #endif
