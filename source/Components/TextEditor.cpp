@@ -49,7 +49,8 @@ void TextEditor::Draw() {
 			if (TextEditor::CurrentLine == Idx) {
 				/* Only draw it once. */
 				if (!DidDrawCursor) {
-					Gui::Draw_Rect(80 + Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(0, TextEditor::CursorPos), nullptr), this->YPositions[Idx2], Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(TextEditor::CursorPos, 1), nullptr), 12, C2D_Color32(0, 0, 0, 255));
+					float Width = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(TextEditor::CursorPos, 1), nullptr);
+					Gui::Draw_Rect(80 + Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(0, TextEditor::CursorPos), nullptr), this->YPositions[Idx2], Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
 					DidDrawCursor = true;
 				};
 
@@ -75,38 +76,54 @@ void TextEditor::HandleScroll() {
 
 void TextEditor::Handler() {
 	if (UniversalEdit::UE->Repeat & KEY_DOWN) {
-		if (TextEditor::CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
-			TextEditor::CurrentLine++;
-
-			/* Update cursor pos. */
-			if (TextEditor::CursorPos > UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1) {
-				TextEditor::CursorPos = UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1;
-			};
-
-			this->HandleScroll();
-		};
+		this->CursorDown();
 	};
 
 	if (UniversalEdit::UE->Repeat & KEY_UP) {
-		if (TextEditor::CurrentLine > 0) {
-			TextEditor::CurrentLine--;
-
-			/* Update cursor pos. */
-			if (TextEditor::CursorPos > UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1) {
-				TextEditor::CursorPos = UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1;
-			};
-
-			this->HandleScroll();
-		};
+		this->CursorUp();
 	};
 
 	if (UniversalEdit::UE->Repeat & KEY_LEFT) {
-		if (TextEditor::CursorPos > 0) TextEditor::CursorPos--;
+		this->CursorLeft();
 	};
 
 	if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
-		if (TextEditor::CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine) - 1) {
-			TextEditor::CursorPos++;
-		};
+		this->CursorRight();
+	};
+};
+
+void TextEditor::CursorUp() {
+	if(CurrentLine > 0) {
+		CurrentLine--;
+
+		uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
+		if(CursorPos > Length) CursorPos = Length;
+
+		HandleScroll();
+	};
+};
+
+void TextEditor::CursorDown() {
+	if(CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
+		CurrentLine++;
+
+		uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
+		if(CursorPos > Length) CursorPos = Length;
+
+		HandleScroll();
+	};
+};
+
+void TextEditor::CursorLeft() {
+	if(CursorPos > 0) {
+		std::string Line = UniversalEdit::UE->CurrentFile->GetLine(CurrentLine);
+		CursorPos--;
+		while(CursorPos > 0 && ((Line[CursorPos] & 0xC0) == 0x80)) CursorPos--;
+	};
+};
+
+void TextEditor::CursorRight() {
+	if(CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine)) {
+		CursorPos += UniversalEdit::UE->CurrentFile->GetCharacter(CurrentLine, CursorPos).size();
 	};
 };

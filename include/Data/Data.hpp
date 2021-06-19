@@ -43,9 +43,19 @@ public:
 
 	/* Return the amount of lines. */
 	uint32_t GetLines() const { return this->Lines.size(); };
-	
+
 	std::string GetLine(const size_t Idx) const {
 		if (Idx < this->GetLines()) return this->Lines[Idx];
+		return "";
+	};
+
+	/* Returns the full next character, with UTF-8 multi byte support */
+	std::string GetCharacter(const size_t Line, const size_t Pos) const {
+		if (Line < this->GetLines() && Pos < this->Lines[Line].size()) {
+			int Length = 1;
+			while((Pos + Length < this->Lines[Line].size()) && ((this->Lines[Line][Pos + Length] & 0xC0) == 0x80)) Length++;
+			return this->Lines[Line].substr(Pos, Length);
+		};
 		return "";
 	};
 
@@ -61,7 +71,7 @@ public:
 		if (Line < this->GetLines()) return this->Lines[Line].size();
 		return 0;
 	};
-	
+
 	/* Likely rework them or so. */
 	void InsertContent(const size_t Line, const size_t Pos, const std::string &Text);
 	void EraseContent(const size_t Line, const size_t Pos, const size_t Length);

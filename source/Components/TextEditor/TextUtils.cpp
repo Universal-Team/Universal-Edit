@@ -27,32 +27,37 @@
 #include "TextUtils.hpp"
 #include <string.h>
 
-/* Get last codepoint from a UTF-8 string */
-char32_t TextUtils::GetLastCodepoint(const char *Str) {
+/* Get first codepoint from a UTF-8 string */
+char32_t TextUtils::GetCodepoint(const char *Str) {
 	// Return 0 if nullptr or empty string
 	if (!Str || !*Str)
 		return 0;
 
-	char32_t Codepoint = 0;
-	Str += strlen(Str) - 1; // Move to end of string
-	for (int i = 0;; i++) {
-		if ((*(Str - i) & 0xC0) == 0x80) {
-			Codepoint |= (*(Str - i) & 0x3F) << (i * 6);
-		} else if (*(Str - i) & 0x80) {
-			int Bit = 7;
-			while (*(Str - i) & (1 << (Bit--)));
-			Codepoint |= (*(Str - i) & ((1 << ++Bit) - 1)) << (i * 6);
-			return Codepoint;
-		} else {
-			return *(Str - i); // Single byte char or invalid UTF-8
-		}
+	size_t Len = strlen(Str);
+	char32_t Codepoint = 0xFFFD;
+	if(!(*Str & 0x80)) {
+		Codepoint = *Str;
+	} else if((*Str & 0xE0) == 0xC0 && Len >= 2) {
+		Codepoint  = (*(Str++) & 0x1F) << 6;
+		Codepoint |=  *(Str++) & 0x3F;
+	} else if((*Str & 0xF0) == 0xE0 && Len >= 3) {
+		Codepoint  = (*(Str++) & 0x0F) << 12;
+		Codepoint |= (*(Str++) & 0x3F) << 6;
+		Codepoint |=  *(Str++) & 0x3F;
+	} else if((*Str & 0xF8) == 0xF0 && Len >= 4) {
+		Codepoint  = (*(Str++) & 0x07) << 18;
+		Codepoint |= (*(Str++) & 0x3F) << 12;
+		Codepoint |= (*(Str++) & 0x3F) << 6;
+		Codepoint |=  *(Str++) & 0x3F;
 	}
+
+	return Codepoint;
 }
 
-/* Try to make the last character in a string have a (han)dakuten */
-void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
-	char32_t Char = GetLastCodepoint(Str.c_str());
-	if (Char >= u'ァ' && Char <= u'ヶ') Char -= 96; // Katakana
+/* Try to make the first given character have a dakuten */
+std::string TextUtils::Dakutenify(std::string Str, bool Handakuten) {
+	char32_t Char = GetCodepoint(Str.c_str());
+	if (Char >= u'ァ' && Char <= u'ヶ') Char -= 0x60; // Katakana, convert to Hiragana
 
 	int Change = 0;
 
@@ -77,18 +82,19 @@ void TextUtils::Dakutenify(std::string &Str, bool Handakuten) {
 	}
 
 	if (Change) {
-		if ((Str.back() & 0x3F) + Change < 0x3F) {
-			Str.back() += Change;
+		if ((Str[2] & 0x3F) + Change < 0x3F) {
+			Str[2] += Change;
 		} else {
-			auto it = Str.end() - 1;
-			*it = 0x80 | ((*it + Change) & 0x3F);
-			it--;
-			(*it)++;
+			Str[2] = 0x80 | ((Str[2] + Change) & 0x3F);
+			Str[1]++;
 		}
 	} else {
-		/* If the char can't be (han)dakutenified, then just add the char */
-		Str += Handakuten ? "゜" : "゛";
+		int i = 1;
+		while((Str[i] & 0xC0) == 0x80) i++;
+		Str.insert(i, Handakuten ? "゜" : "゛");
 	}
+
+	return Str;
 }
 
 uint32_t TextUtils::StrToKey(const std::string &Str) {

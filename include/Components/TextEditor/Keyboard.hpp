@@ -63,8 +63,6 @@ private:
 		bool Ret = false;
 	};
 
-	std::string Out = ""; // TODO: Proper output
-
 	std::vector<std::string> CurrentMode = {"!main"};
 	int KbdX = 0, KbdY = 0;
 	std::map<std::string, Mode> Kbd;

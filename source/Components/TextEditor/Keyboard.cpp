@@ -37,10 +37,13 @@ void Keyboard::Load(const std::string &KeyboardJSON) {
 		nlohmann::json Json = nlohmann::json::parse(File, nullptr, false);
 		fclose(File);
 
-		/* Keyboard global X/Y offset */
 		if (Json.contains("info") && Json["info"].is_object()) {
+			/* Keyboard global X/Y offset */
 			if (Json["info"].contains("x") && Json["info"]["x"].is_number()) this->KbdX = Json["info"]["x"];
 			if (Json["info"].contains("y") && Json["info"]["y"].is_number()) this->KbdY = Json["info"]["y"];
+
+			/* If the keyboard should be fullscreen */
+			if (Json["info"].contains("fullscreen") && Json["info"]["fullscreen"].is_boolean()) this->Full = Json["info"]["fullscreen"];
 		};
 
 		if (Json.contains("layout") && Json["layout"].is_object()) {
@@ -77,12 +80,16 @@ void Keyboard::Load(const std::string &KeyboardJSON) {
 												}
 											}
 										} else if (Property.value().is_string()) {
-											Key::Property Prop = Key::Property::Invalid;
-											if (Property.key() == "action") Prop = Key::Property::Action;
-											else if (Property.key() == "mode") Prop = Key::Property::Mode;
-											else if (Property.key() == "value") Prop = Key::Property::Value;
+											if(Property.key() == "label") {
+												this->Kbd[Mode.key()].Keys.back().Label = Property.value();
+											} else {
+												Key::Property Prop = Key::Property::Invalid;
+												if (Property.key() == "action") Prop = Key::Property::Action;
+												else if (Property.key() == "mode") Prop = Key::Property::Mode;
+												else if (Property.key() == "value") Prop = Key::Property::Value;
 
-											this->Kbd[Mode.key()].Keys.back().Properties[Prop] = Property.value();
+												this->Kbd[Mode.key()].Keys.back().Properties[Prop] = Property.value();
+											};
 										} else if (Property.value().is_boolean()) {
 											if (Property.key() == "active") this->Kbd[Mode.key()].Keys.back().Active = Property.value();
 										};
@@ -120,8 +127,6 @@ void Keyboard::Draw() {
 		} else {
 			// TODO: Invalid layout warning
 		};
-
-		Gui::DrawStringCentered(0, 0, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Out); // TODO: Proper output
 	};
 };
 
@@ -129,12 +134,11 @@ void Keyboard::Handler() {
 	/* Handle Load. */
 	if (!this->Loaded) {
 		if (UniversalEdit::UE->Down & KEY_X) {
-			this->Load("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/KBD.json");
-			this->Full = true; // For now uses full, change this as needed for testing.
+			this->Load("romfs:/keyboards/english-us.json");
 		};
 
 	} else {
-		if (UniversalEdit::UE->Down & KEY_TOUCH) {
+		if (UniversalEdit::UE->Repeat & KEY_TOUCH) {
 			/* Check if any key is being touched */
 			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
 				if (Utils::Touching(UniversalEdit::UE->T, Key.Pos)) {
@@ -142,10 +146,10 @@ void Keyboard::Handler() {
 					break;
 				};
 			};
-		} else if(UniversalEdit::UE->Down) {
+		} else if(UniversalEdit::UE->Repeat) {
 			/* If not touching, then check all keys for button values */
 			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
-				if (UniversalEdit::UE->Down & Key.Button) {
+				if (UniversalEdit::UE->Repeat & Key.Button) {
 					HandleKeyPress(Key);
 				};
 			};
@@ -158,7 +162,7 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 	while (this->Kbd[this->CurrentMode.back()].Ret) {
 		this->CurrentMode.pop_back();
 	};
-	
+
 	/* If the key has any special properties, then apply them */
 	if (Key.Properties.size() > 0) {
 		for (const auto &[Prop, Value] : Key.Properties) {
@@ -166,12 +170,54 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 				/* Special action, such as modifying other characters */
 				case Key::Property::Action:
 					if (Value == "backspace") {
-						while ((this->Out.back() & 0xC0) == 0x80 && this->Out.size() > 0) this->Out.pop_back(); // UTF-8 multi byte
-						if (this->Out.size() > 0) this->Out.pop_back();
-					} else if (Value == "dakuten") {
-						TextUtils::Dakutenify(Out, false);
-					} else if (Value == "handakuten") {
-						TextUtils::Dakutenify(Out, true);
+						if(TextEditor::CursorPos > 0) {
+							TextEditor::CursorLeft();
+							int size = UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos).size();
+							UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, size);
+						} else if(TextEditor::CurrentLine > 0) {
+							int Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine - 1);
+							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine - 1, Length, UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine));
+							UniversalEdit::UE->CurrentFile->RemoveLine(TextEditor::CurrentLine);
+							TextEditor::CursorUp();
+							TextEditor::CursorPos = Length;
+						}
+					} else if (Value == "delete") {
+						if(TextEditor::CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine)) {
+							int size = UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos).size();
+							UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, size);
+						} else if(TextEditor::CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
+							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine), UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine + 1));
+							UniversalEdit::UE->CurrentFile->RemoveLine(TextEditor::CurrentLine + 1);
+						}
+					} else if (Value == "up") {
+						TextEditor::CursorUp();
+					} else if (Value == "down") {
+						TextEditor::CursorDown();
+					} else if (Value == "left") {
+						TextEditor::CursorLeft();
+					} else if (Value == "right") {
+						TextEditor::CursorRight();
+					} else if (Value == "dakuten" || Value == "handakuten") {
+						bool Handakuten = Value == "handakuten";
+						if(TextEditor::CursorPos > 0) {
+							TextEditor::CursorLeft();
+							std::string Char = UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos);
+							std::string Out = TextUtils::Dakutenify(Char, Handakuten);
+							UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, Char.size());
+							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Out);
+							TextEditor::CursorRight();
+							if(Out.size() > Char.size()) TextEditor::CursorRight();
+						} else {
+							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Handakuten ? "゜" : "゛");
+							TextEditor::CursorPos += 3;
+						}
+					} else if (Value == "newline") {
+						std::string End = UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine).substr(TextEditor::CursorPos);
+						UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, End.size());
+						UniversalEdit::UE->CurrentFile->InsertLine(TextEditor::CurrentLine + 1);
+						UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine + 1, 0, End);
+						TextEditor::CurrentLine++;
+						TextEditor::CursorPos = 0;
 					} else if (Value == "exit") {
 						this->Full = false;
 					};
@@ -183,7 +229,10 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 					break;
 				/* Output a value that's not the label */
 				case Key::Property::Value:
-					this->Out += Value;
+					if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
+						UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Value);
+						TextEditor::CursorPos += Value.size();
+					}
 					break;
 				case Key::Property::Invalid:
 					break;
@@ -191,6 +240,9 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 		};
 	} else {
 		/* Otherwise, just output the label */
-		this->Out += Key.Label;
+		if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
+			UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Key.Label);
+			TextEditor::CursorPos += Key.Label.size();
+		}
 	};
 };

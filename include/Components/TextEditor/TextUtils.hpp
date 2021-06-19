@@ -33,8 +33,8 @@
 
 class TextUtils {
 public:
-	static char32_t GetLastCodepoint(const char *Str);
-	static void Dakutenify(std::string &Str, bool Handakuten);
+	static char32_t GetCodepoint(const char *Str);
+	static std::string Dakutenify(std::string Str, bool Handakuten);
 	static uint32_t StrToKey(const std::string &Str);
 
 private:

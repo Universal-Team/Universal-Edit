@@ -37,7 +37,13 @@ public:
 	TextEditor() { };
 	void Draw();
 	void Handler();
-	void HandleScroll();
+
+	static void HandleScroll();
+
+	static void CursorUp();
+	static void CursorDown();
+	static void CursorLeft();
+	static void CursorRight();
 
 	static size_t CursorPos, RowOffs, CurrentLine;
 private:
