@@ -66,53 +66,42 @@ void TextEditor::Draw() {
 
 
 void TextEditor::HandleScroll() {
-	if(CurrentLine < RowOffs) RowOffs--;
-	else if(CurrentLine >= RowOffs + LINES) RowOffs++;
+	if (CurrentLine < RowOffs) RowOffs--;
+	else if (CurrentLine >= RowOffs + LINES) RowOffs++;
 };
 
 
 void TextEditor::Handler() {
-	if (UniversalEdit::UE->Repeat & KEY_DOWN) {
-		this->CursorDown();
-	};
-
-	if (UniversalEdit::UE->Repeat & KEY_UP) {
-		this->CursorUp();
-	};
-
-	if (UniversalEdit::UE->Repeat & KEY_LEFT) {
-		this->CursorLeft();
-	};
-
-	if (UniversalEdit::UE->Repeat & KEY_RIGHT) {
-		this->CursorRight();
-	};
+	if (UniversalEdit::UE->Repeat & KEY_DOWN) this->CursorDown();
+	if (UniversalEdit::UE->Repeat & KEY_UP) this->CursorUp();
+	if (UniversalEdit::UE->Repeat & KEY_LEFT) this->CursorLeft();
+	if (UniversalEdit::UE->Repeat & KEY_RIGHT) this->CursorRight();
 };
 
 void TextEditor::CursorUp() {
-	if(CurrentLine > 0) {
+	if (CurrentLine > 0) {
 		CurrentLine--;
 
 		uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
-		if(CursorPos > Length) CursorPos = Length;
+		if (CursorPos > Length) CursorPos = Length;
 
-		HandleScroll();
+		TextEditor::HandleScroll();
 	};
 };
 
 void TextEditor::CursorDown() {
-	if(CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
+	if (CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
 		CurrentLine++;
 
 		uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
 		if(CursorPos > Length) CursorPos = Length;
 
-		HandleScroll();
+		TextEditor::HandleScroll();
 	};
 };
 
 void TextEditor::CursorLeft() {
-	if(CursorPos > 0) {
+	if (CursorPos > 0) {
 		std::string Line = UniversalEdit::UE->CurrentFile->GetLine(CurrentLine);
 		CursorPos--;
 		while(CursorPos > 0 && ((Line[CursorPos] & 0xC0) == 0x80)) CursorPos--;
@@ -120,7 +109,30 @@ void TextEditor::CursorLeft() {
 };
 
 void TextEditor::CursorRight() {
-	if(CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine)) {
+	if (CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine)) {
 		CursorPos += UniversalEdit::UE->CurrentFile->GetCharacter(CurrentLine, CursorPos).size();
+	};
+};
+
+void TextEditor::InsertLine() {
+	const std::string End = UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine).substr(TextEditor::CursorPos);
+	UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, End.size());
+	UniversalEdit::UE->CurrentFile->InsertLine(TextEditor::CurrentLine + 1);
+	UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine + 1, 0, End);
+	TextEditor::CurrentLine++;
+	TextEditor::CursorPos = 0;
+
+	TextEditor::HandleScroll();
+};
+
+void TextEditor::Remove() {
+	if (TextEditor::CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine)) {
+		const int Size = UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos).size();
+		UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, Size);
+
+	} else if (TextEditor::CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
+		UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine), UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine + 1));
+		UniversalEdit::UE->CurrentFile->RemoveLine(TextEditor::CurrentLine + 1);
+		TextEditor::HandleScroll();
 	};
 };

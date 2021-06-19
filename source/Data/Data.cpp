@@ -29,7 +29,7 @@
 #include <unistd.h>
 
 Data::Data() {
-	this->Lines.push_back(" ");
+	this->Lines.push_back("");
 	this->FileGood = true;
 	this->File = "sdmc:/3ds/Universal-Edit/Temp.txt";
 };

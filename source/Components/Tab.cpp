@@ -28,7 +28,7 @@
 #include "Tab.hpp"
 
 void Tab::Draw() {
-	if (UniversalEdit::UE->KBD->IsFull()) return; // Don't draw when keyboard is fully visible.
+	if (UniversalEdit::UE->ActiveTab == UniversalEdit::Tabs::Keyboard && UniversalEdit::UE->KBD->IsFull()) return; // Don't draw when keyboard is fully visible.
 
 	for (uint8_t Idx = 0; Idx < 5; Idx++) {
 		if (Idx == (uint8_t)UniversalEdit::UE->ActiveTab) Gui::Draw_Rect(this->Tabs[Idx].x, this->Tabs[Idx].y, this->Tabs[Idx].w, this->Tabs[Idx].h, UniversalEdit::UE->TData->SidebarSelected());
@@ -44,7 +44,7 @@ void Tab::Draw() {
 static void SwitchTab(const UniversalEdit::Tabs T) { UniversalEdit::UE->ActiveTab = T; };
 
 void Tab::Handler() {
-	if (UniversalEdit::UE->KBD->IsFull()) return; // Don't do any logic when keyboard is fully visible.
+	if (UniversalEdit::UE->ActiveTab == UniversalEdit::Tabs::Keyboard && UniversalEdit::UE->KBD->IsFull()) return; // Don't do any logic when keyboard is fully visible.
 
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < 5; Idx++) {

@@ -64,6 +64,7 @@ UniversalEdit::UniversalEdit() {
 	this->_Tab = std::make_unique<Tab>();
 	this->TE = std::make_unique<TextEditor>();
 
+	this->KBD->Load("romfs:/keyboards/english-us.json"); // Load default keyboard.
 	this->ThemeNames = this->TData->ThemeNames();
 };
 
@@ -134,7 +135,7 @@ int UniversalEdit::Handler() {
 
 
 		this->_Tab->Handler();
-		this->TE->Handler();
+		if (this->ActiveTab != Tabs::Keyboard && this->ActiveTab != Tabs::Phrases) this->TE->Handler();
 		
 		switch(this->ActiveTab) {
 			case Tabs::FileHandler:

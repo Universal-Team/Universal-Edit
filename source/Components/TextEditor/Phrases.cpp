@@ -30,14 +30,14 @@
 #include "Phrases.hpp"
 #include <unistd.h>
 
-#define ENTRIES_ON_LIST 5
+#define ENTRIES_ON_LIST 6
 
 void Phrases::Load(const std::string &PhrasesJSON) {
 	if (access(PhrasesJSON.c_str(), F_OK) != 0) return;
 
 	/* Open Handle. */
 	nlohmann::ordered_json JSON = nullptr;
-	FILE *File = fopen(PhrasesJSON.c_str(), "r");
+	FILE *File = fopen(PhrasesJSON.c_str(), "rt");
 	if (File) {
 		JSON = nlohmann::ordered_json::parse(File, nullptr, false);
 		fclose(File);

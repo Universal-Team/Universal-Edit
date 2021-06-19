@@ -12,7 +12,7 @@
 	"FILE_HANDLER_MENU": "File Handler Menu",
 	"FILE_NOT_EXIST_BAD": "File does not exist or is bad.",
 	"GITHUB": "Full credits can be found on GitHub",
-	"INCORRECT_USAGE_OF_FUNCTION": "Incorrect usage of this function.",
+	"KEYBOARD_SWITCH": "Do you want to switch to a Layout from the RomFS (Cancel) or the SD Card (Confirm)?",
 	"KEYBOARD_MENU": "Keyboard Menu",
 	"LANGUAGE": "Language",
 	"LOAD_FILE": "Load File",
@@ -39,6 +39,5 @@
 	"STATUS": "Status",
 	"STATUSCODE": "Statuscode: ",
 	"TEXT_EDITOR_MENU": "Text Editor Menu",
-	"THEMES": "Themes",
-	"WRONG_NUMBER_OF_ARGUMENTS": "Wrong number of arguments."
+	"THEMES": "Themes"
 }

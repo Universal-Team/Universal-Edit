@@ -28,6 +28,7 @@
 #include "FileBrowser.hpp"
 #include "JSON.hpp"
 #include "Keyboard.hpp"
+#include "PromptMessage.hpp"
 #include "TextUtils.hpp"
 #include <unistd.h>
 
@@ -108,6 +109,9 @@ void Keyboard::Load(const std::string &KeyboardJSON) {
 		};
 
 		this->Loaded = true;
+
+	} else {
+		this->Loaded = false;
 	};
 };
 
@@ -130,12 +134,22 @@ void Keyboard::Draw() {
 	};
 };
 
+
+void Keyboard::SwitchLayout() {
+	std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
+	const bool Res = PMessage->Handler(Utils::GetStr("KEYBOARD_SWITCH")); // True: SD, False: RomFS.
+
+	std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
+	const std::string KFile = FB->Handler((Res ? "sdmc:/3ds/Universal-Edit/Keyboard/" : "romfs:/keyboards/"), true, Utils::GetStr("SELECT_KEYBOARD"), { "json" });
+				
+	if (KFile != "") this->Load(KFile); // Load, if not '""'.
+};
+
+
 void Keyboard::Handler() {
 	/* Handle Load. */
 	if (!this->Loaded) {
-		if (UniversalEdit::UE->Down & KEY_X) {
-			this->Load("romfs:/keyboards/english-us.json");
-		};
+		if (UniversalEdit::UE->Down & KEY_X) this->SwitchLayout();
 
 	} else {
 		if (UniversalEdit::UE->Repeat & KEY_TOUCH) {
@@ -182,13 +196,8 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 							TextEditor::CursorPos = Length;
 						}
 					} else if (Value == "delete") {
-						if(TextEditor::CursorPos < UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine)) {
-							int size = UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos).size();
-							UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, size);
-						} else if(TextEditor::CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
-							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, UniversalEdit::UE->CurrentFile->GetCharsFromLine(TextEditor::CurrentLine), UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine + 1));
-							UniversalEdit::UE->CurrentFile->RemoveLine(TextEditor::CurrentLine + 1);
-						}
+						TextEditor::Remove();
+						
 					} else if (Value == "up") {
 						TextEditor::CursorUp();
 					} else if (Value == "down") {
@@ -212,14 +221,16 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 							TextEditor::CursorPos += 3;
 						}
 					} else if (Value == "newline") {
-						std::string End = UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine).substr(TextEditor::CursorPos);
-						UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, End.size());
-						UniversalEdit::UE->CurrentFile->InsertLine(TextEditor::CurrentLine + 1);
-						UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine + 1, 0, End);
-						TextEditor::CurrentLine++;
-						TextEditor::CursorPos = 0;
+						TextEditor::InsertLine();
+
 					} else if (Value == "exit") {
-						this->Full = false;
+						UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::FileHandler; // Go back to FileHandler.
+
+					} else if (Value == "layout") {
+						this->SwitchLayout();
+						
+					} else if (Value == "phrases") {
+						UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::Phrases;
 					};
 					break;
 				/* Changes mode, such as to Shift mode */

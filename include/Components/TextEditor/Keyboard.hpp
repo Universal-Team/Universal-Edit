@@ -63,12 +63,12 @@ private:
 		bool Ret = false;
 	};
 
-	std::vector<std::string> CurrentMode = {"!main"};
+	std::vector<std::string> CurrentMode = { "!main" };
 	int KbdX = 0, KbdY = 0;
 	std::map<std::string, Mode> Kbd;
 
 	void HandleKeyPress(const Key &Key);
-
+	void SwitchLayout();
 };
 
 #endif

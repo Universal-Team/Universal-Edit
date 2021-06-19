@@ -77,6 +77,8 @@ void FileHandler::LoadFile() {
 
 		if (UniversalEdit::UE->CurrentFile->IsGood()) {
 			TextEditor::CursorPos = 0;
+			TextEditor::CurrentLine = 0;
+			TextEditor::RowOffs = 0;
 			FileHandler::Loaded = true;
 			UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::Keyboard;
 
@@ -99,6 +101,8 @@ void FileHandler::NewFile() {
 	UniversalEdit::UE->CurrentFile = std::make_unique<Data>();
 	
 	TextEditor::CursorPos = 0;
+	TextEditor::CurrentLine = 0;
+	TextEditor::RowOffs = 0;
 	FileHandler::Loaded = true;
 	UniversalEdit::UE->ActiveTab = UniversalEdit::Tabs::Keyboard;
 };

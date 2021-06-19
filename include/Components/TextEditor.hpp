@@ -27,14 +27,10 @@
 #ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
 #define _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
 
-#include "structs.hpp"
-#include <memory>
 #include <string>
-#include <vector>
 
 class TextEditor {
 public:
-	TextEditor() { };
 	void Draw();
 	void Handler();
 
@@ -44,10 +40,10 @@ public:
 	static void CursorDown();
 	static void CursorLeft();
 	static void CursorRight();
+	static void InsertLine();
+	static void Remove();
 
 	static size_t CursorPos, RowOffs, CurrentLine;
-private:
-
 };
 
 #endif
