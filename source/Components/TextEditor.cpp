@@ -29,48 +29,45 @@
 
 size_t TextEditor::CursorPos = 0, TextEditor::RowOffs = 0, TextEditor::CurrentLine = 0; // Maybe handle that different? Dunno.
 
-#define LINES 13
+#define LINES 14
 
-static std::string DispLine(const size_t L) {
+static std::string DispLine(const size_t L, const int Digits) {
 	char Buffer[11] = { 0x0 };
-	snprintf(Buffer, sizeof(Buffer), "%010zu", L);
+	snprintf(Buffer, sizeof(Buffer), "%0*zu", Digits, L);
 	return Buffer;
 };
 
 
 /* TODO: Display Text from the Data class. */
 void TextEditor::Draw() {
-	bool DidDrawCursor = false;
+	int Digits = 0;
+	while(UniversalEdit::UE->CurrentFile->GetLines() / (int)pow(10, Digits)) Digits++;
+
+	float lineStart = 3 + Gui::GetStringWidth(0.4f, DispLine(0, Digits), nullptr) + 10;
 
 	if (UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
 
 		for (size_t Idx = TextEditor::RowOffs, Idx2 = 0; Idx < (TextEditor::RowOffs + LINES) && Idx < UniversalEdit::UE->CurrentFile->GetLines(); Idx++, Idx2++) {
 			if (TextEditor::CurrentLine == Idx) {
-				/* Only draw it once. */
-				if (!DidDrawCursor) {
-					float Width = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(TextEditor::CursorPos, 1), nullptr);
-					Gui::Draw_Rect(80 + Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(0, TextEditor::CursorPos), nullptr), this->YPositions[Idx2], Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
-					DidDrawCursor = true;
-				};
+				float Width = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(TextEditor::CursorPos, 1), nullptr);
+				Gui::Draw_Rect(lineStart + Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(0, TextEditor::CursorPos), nullptr), 27 + Idx2 * 15, Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
 
-				Gui::DrawString(3, this->YPositions[Idx2], 0.4f, UniversalEdit::UE->TData->BarColor(), DispLine(Idx + 1));
+				Gui::DrawString(3, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->BarColor(), DispLine(Idx + 1, Digits));
 
 			} else {
-				Gui::DrawString(3, this->YPositions[Idx2], 0.4f, UniversalEdit::UE->TData->TextColor(), DispLine(Idx + 1));
+				Gui::DrawString(3, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), DispLine(Idx + 1, Digits));
 			};
 
-			Gui::DrawString(80, this->YPositions[Idx2], 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
+			Gui::DrawString(lineStart, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
 		};
 	};
 };
 
 
 void TextEditor::HandleScroll() {
-	if (TextEditor::CurrentLine < LINES) TextEditor::RowOffs = 0;
-	else {
-		TextEditor::RowOffs = 1 + (TextEditor::CurrentLine - LINES);
-	};
+	if(CurrentLine < RowOffs) RowOffs--;
+	else if(CurrentLine >= RowOffs + LINES) RowOffs++;
 };
 
 

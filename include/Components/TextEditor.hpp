@@ -47,9 +47,7 @@ public:
 
 	static size_t CursorPos, RowOffs, CurrentLine;
 private:
-	static constexpr int YPositions[13] = {
-		37, 52, 67, 87, 97, 112, 127, 142, 157, 172, 187, 202, 217
-	};
+
 };
 
 #endif
