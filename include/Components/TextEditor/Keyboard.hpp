@@ -40,26 +40,21 @@ public:
 	bool IsFull() const { return this->Full; }; // Return if full screen.
 private:
 	struct Key {
-		enum class Property {
-			Invalid = 0,
-			Action,
-			Mode,
-			Value
-		};
+		enum class Property : uint8_t { Invalid = 0, Action = 1, Mode = 2, Value = 3 };
 
 		Structs::ButtonPos Pos;
 		std::string Label;
-		std::map<Property, std::string> Properties = {};
+		std::map<Property, std::string> Properties = { };
 		bool Active = false;
 		uint32_t Button = 0;
 
-		Key(Structs::ButtonPos Pos, const std::string &Label) : Pos(Pos), Label(Label) {}
+		Key(Structs::ButtonPos Pos, const std::string &Label) : Pos(Pos), Label(Label) { };
 	};
 
 	bool Loaded = false, Full = false;
 
 	struct Mode {
-		std::vector<Key> Keys = {};
+		std::vector<Key> Keys = { };
 		bool Ret = false;
 	};
 

@@ -81,18 +81,15 @@ void Phrases::Insert(const size_t Idx) {
 
 
 void Phrases::Handler() {
-	/* Handle before load. */
-	if (!this->Loaded) {
-		if (UniversalEdit::UE->Down & KEY_Y) {
-			std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
-			const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases/", true, Utils::GetStr("SELECT_PHRASE"), { "json" });
+	if (UniversalEdit::UE->Down & KEY_Y) {
+		std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
+		const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases/", true, Utils::GetStr("SELECT_PHRASE"), { "json" });
 				
-			if (PFile != "") {
-				this->Load(PFile);
-			};
-		};
+		if (PFile != "") this->Load(PFile);
+	};
 
-	} else {
+	/* Handle before load. */
+	if (this->Loaded) {
 		if (UniversalEdit::UE->Repeat & KEY_DOWN) {
 			if (this->PIdx < this->PhraseList.size() - 1) this->PIdx++;
 			else this->PIdx = 0;

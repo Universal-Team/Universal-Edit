@@ -82,6 +82,7 @@ void Data::InsertContent(const size_t Line, const size_t Pos, const std::string 
 	if (Line > this->Lines.size() || Pos > this->Lines[Line].size()) return; // Nope.
 
 	this->Lines[Line].insert(Pos, Text);
+	if (!this->ChangesMade) this->ChangesMade = true;
 };
 
 /*
@@ -95,6 +96,7 @@ void Data::EraseContent(const size_t Line, const size_t Pos, const size_t Length
 	if (Line > this->Lines.size() || Pos + Length > this->Lines[Line].size()) return; // Nope.
 
 	this->Lines[Line].erase(Pos, Length);
+	if (!this->ChangesMade) this->ChangesMade = true;
 };
 
 /*
@@ -105,6 +107,8 @@ void Data::EraseContent(const size_t Line, const size_t Pos, const size_t Length
 void Data::InsertLine(const size_t Line) {
 	if (Line > this->Lines.size()) return; // Nope.
 	this->Lines.insert(this->Lines.begin() + Line, 1, "");
+	
+	if (!this->ChangesMade) this->ChangesMade = true;
 };
 
 /*
@@ -115,6 +119,8 @@ void Data::InsertLine(const size_t Line) {
 void Data::RemoveLine(const size_t Line) {
 	if (Line > this->Lines.size()) return; // Nope.
 	this->Lines.erase(this->Lines.begin() + Line);
+
+	if (!this->ChangesMade) this->ChangesMade = true;
 };
 
 /*

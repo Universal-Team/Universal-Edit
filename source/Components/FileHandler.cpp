@@ -150,5 +150,5 @@ void FileHandler::SaveFileAs() {
 	} else {
 		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
 		Ovl->Handler(Utils::GetStr("NO_SAVE_ON_NO_LOAD"), -1);
-	}
+	};
 };
