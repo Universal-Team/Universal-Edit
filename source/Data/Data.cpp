@@ -44,6 +44,7 @@ Data::Data() {
 void Data::Load(const std::string &File) {
 	this->File = File;
 	this->Lines.clear();
+	this->CRLF = false;
 
 	if (access(this->File.c_str(), F_OK) != 0) {
 		this->FileGood = false;
@@ -59,7 +60,12 @@ void Data::Load(const std::string &File) {
 	if (In) {
 		while(__getline(&Line, &Length, In) != -1) {
 			if (Line) { // Ensure it's not a nullptr.
-				if (Line[strlen(Line) - 1] == '\n') Line[strlen(Line) - 1] = '\0';
+				int Len = strlen(Line);
+				if (Line[Len - 1] == '\n') Line[Len - 1] = '\0';
+				if (Line[Len - 2] == '\r') {
+					this->CRLF = true;
+					Line[Len - 2] = '\0';
+				};
 				this->Lines.push_back(Line);
 			};
 		};
@@ -132,14 +138,12 @@ bool Data::WriteBack(const std::string &File) {
 	if (this->IsGood() && !this->Lines.empty()) {
 		FILE *Out = fopen(File.c_str(), "w");
 
-		std::vector<uint8_t> Data;
-		for (size_t Idx = 0; Idx < this->Lines.size(); Idx++) {
-			for (size_t Idx2 = 0; Idx2 < this->Lines[Idx].size(); Idx2++) {
-				Data.push_back(this->Lines[Idx][Idx2]);
-			};
+		for (const std::string &Line : this->Lines) {
+			fwrite(Line.c_str(), 1, Line.size(), Out);
+			if (this->CRLF) fputc('\r', Out);
+			fputc('\n', Out);
 		};
 
-		fwrite(Data.data(), 1, this->GetSize(), Out);
 		fclose(Out);
 		return true;
 	};

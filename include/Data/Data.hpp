@@ -83,7 +83,7 @@ public:
 private:
 	std::string File = "";
 	std::vector<std::string> Lines;
-	bool FileGood = false, ChangesMade = false;
+	bool FileGood = false, ChangesMade = false, CRLF = false;
 };
 
 #endif
