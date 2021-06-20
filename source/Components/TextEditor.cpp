@@ -37,8 +37,6 @@ static std::string DispLine(const size_t L, const int Digits) {
 	return Buffer;
 };
 
-float ScrollOfs = 0;
-
 void TextEditor::Draw() {
 	int Digits = 0;
 	while(UniversalEdit::UE->CurrentFile->GetLines() / (int)pow(10, Digits)) Digits++;
@@ -51,18 +49,18 @@ void TextEditor::Draw() {
 		/* Cursor */
 		float CursorStart = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine).substr(0, TextEditor::CursorPos), nullptr);
 		float Width = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos), nullptr);
-		if(ScrollOfs + LineStart + CursorStart > 360) {
-			ScrollOfs -= ((ScrollOfs + LineStart + CursorStart) - 360) / 5.0f;
-		} else if(ScrollOfs + CursorStart < 40 && ScrollOfs < 0) {
-			ScrollOfs += -(ScrollOfs + CursorStart - 40) / 5.0f;
-			if(ScrollOfs > 0)
-				ScrollOfs = 0;
+		if(this->ScrollOfs + LineStart + CursorStart > 360) {
+			this->ScrollOfs -= ((this->ScrollOfs + LineStart + CursorStart) - 360) / 5.0f;
+		} else if(this->ScrollOfs + CursorStart < 40 && this->ScrollOfs < 0) {
+			this->ScrollOfs += -(this->ScrollOfs + CursorStart) / 5.0f;
+			if(this->ScrollOfs > 0)
+				this->ScrollOfs = 0;
 		}
-		Gui::Draw_Rect(ScrollOfs + LineStart + CursorStart, 27 + (TextEditor::CurrentLine - TextEditor::RowOffs) * 15, Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
+		Gui::Draw_Rect(this->ScrollOfs + LineStart + CursorStart, 27 + (TextEditor::CurrentLine - TextEditor::RowOffs) * 15, Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
 
 		/* Text */
 		for (size_t Idx = TextEditor::RowOffs, Idx2 = 0; Idx < (TextEditor::RowOffs + LINES) && Idx < UniversalEdit::UE->CurrentFile->GetLines(); Idx++, Idx2++) {
-			Gui::DrawString(ScrollOfs + LineStart, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
+			Gui::DrawString(this->ScrollOfs + LineStart, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
 		};
 
 		/* Line numbers */

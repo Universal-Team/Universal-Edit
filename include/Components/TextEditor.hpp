@@ -30,6 +30,9 @@
 #include <string>
 
 class TextEditor {
+private:
+	float ScrollOfs = 0;
+
 public:
 	void Draw();
 	void Handler();
