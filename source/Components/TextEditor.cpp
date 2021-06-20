@@ -27,7 +27,7 @@
 #include "Common.hpp"
 #include "TextEditor.hpp"
 
-size_t TextEditor::CursorPos = 0, TextEditor::RowOffs = 0, TextEditor::CurrentLine = 0; // Maybe handle that different? Dunno.
+size_t TextEditor::CursorPos = 0, TextEditor::RowOffs = 0, TextEditor::CurrentLine = 0;
 
 #define LINES 14
 

@@ -91,7 +91,7 @@ int ListSelection::Handler(const std::string &Text, const std::vector<std::strin
 		if (Down & KEY_TOUCH) {
 			for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
 				if (this->SPos + Idx < (int)this->SelectData.size()) {
-					if (Utils::Touching(T, this->ListPos[Idx])) return this->SPos + Idx;
+					if (Common::Touching(T, this->ListPos[Idx])) return this->SPos + Idx;
 				};
 			};
 		};

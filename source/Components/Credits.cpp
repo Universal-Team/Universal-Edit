@@ -31,23 +31,23 @@ void Credits::Draw() {
 	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
 	UniversalEdit::UE->GData->SpriteBlend(sprites_arrow_idx, 50, 0, UniversalEdit::UE->TData->BackArrowColor(), 1.0f);
-	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("CREDITS"), 280);
+	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("CREDITS"), 280);
 
 	Gui::DrawString(60, 30, 0.5f, UniversalEdit::UE->TData->TextColor(), "- Universal-Team", 280, 0);
 	Gui::DrawString(60, 50, 0.5f, UniversalEdit::UE->TData->TextColor(), "- devkitPro", 280, 0);
 	Gui::DrawString(60, 70, 0.5f, UniversalEdit::UE->TData->TextColor(), "- https://icons8.com/", 280, 0);
-	Gui::DrawString(60, 90, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("CONTRIBUTOR_TRANSLATORS"), 280, 0);
+	Gui::DrawString(60, 90, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("CONTRIBUTOR_TRANSLATORS"), 280, 0);
 
 	UniversalEdit::UE->GData->Sprite(sprites_icon_idx, 148, 135);
-	Gui::DrawStringCentered(24, 190, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("GITHUB"), 280, 0);
+	Gui::DrawStringCentered(24, 190, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("GITHUB"), 280, 0);
 
 	Gui::Draw_Rect(49, 219, 320, 1, UniversalEdit::UE->TData->BarOutline());
 	Gui::Draw_Rect(49, 220, 320, 20, UniversalEdit::UE->TData->BarColor());
-	Gui::DrawStringCentered(24, 222, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("CURRENT_VERSION") + V_STRING, 280, 0);
+	Gui::DrawStringCentered(24, 222, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("CURRENT_VERSION") + V_STRING, 280, 0);
 };
 
 void Credits::Handler() {
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
-		if (Utils::Touching(UniversalEdit::UE->T, this->BackArrow)) Settings::Mode = Settings::SubMode::Main;
+		if (Common::Touching(UniversalEdit::UE->T, this->BackArrow)) Settings::Mode = Settings::SubMode::Main;
 	};
 };

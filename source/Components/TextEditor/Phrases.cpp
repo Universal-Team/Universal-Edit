@@ -57,7 +57,7 @@ void Phrases::Load(const std::string &PhrasesJSON) {
 void Phrases::Draw() {
 	Gui::Draw_Rect(48, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(48, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("PHRASE_LIST"), 310);
+	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("PHRASE_LIST"), 310);
 
 	if (this->PhraseList.empty()) return;
 
@@ -83,7 +83,7 @@ void Phrases::Insert(const size_t Idx) {
 void Phrases::Handler() {
 	if (UniversalEdit::UE->Down & KEY_Y) {
 		std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
-		const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases/", true, Utils::GetStr("SELECT_PHRASE"), { "json" });
+		const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases/", true, Common::GetStr("SELECT_PHRASE"), { "json" });
 				
 		if (PFile != "") this->Load(PFile);
 	};
@@ -116,7 +116,7 @@ void Phrases::Handler() {
 		if (UniversalEdit::UE->Down & KEY_TOUCH) {
 			for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
 				if (this->PPos + Idx < this->PhraseList.size()) {
-					if (Utils::Touching(UniversalEdit::UE->T, this->ListPos[Idx])) {
+					if (Common::Touching(UniversalEdit::UE->T, this->ListPos[Idx])) {
 						this->Insert(Idx);
 						break;
 					};

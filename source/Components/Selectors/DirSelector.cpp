@@ -26,7 +26,6 @@
 
 #include "Common.hpp"
 #include "DirSelector.hpp"
-#include "Utils.hpp"
 #include <dirent.h>
 #include <unistd.h>
 
@@ -99,7 +98,7 @@ std::string DirSelector::Handler(const std::string &BasePath, const std::string 
 		if (Down & KEY_SELECT) {
 			if (this->Browser->GetPath().size() >= 5) { // sdmc: is also 5, so should be fine.
 				if (this->Browser->GetPath().substr(0, 5) != "romfs") {
-					const std::string Res = Utils::Keyboard(Utils::GetStr("ENTER_DIR_NAME"), "", 100);
+					const std::string Res = Common::Keyboard(Common::GetStr("ENTER_DIR_NAME"), "", 100);
 
 					if (Res != "") { // Ensure it's not empty.
 						if (access((this->Browser->GetPath() + Res).c_str(), F_OK) != 0) { // Make sure it doesn't already exist.
@@ -138,7 +137,7 @@ std::string DirSelector::Handler(const std::string &BasePath, const std::string 
 		if (Down & KEY_TOUCH) {
 			for (uint8_t Idx = 0; Idx < ENTRIES_ON_LIST; Idx++) {
 				if (this->SPos + Idx < (int)this->CurrentFileData.size()) {
-					if (Utils::Touching(T, this->FBPos[Idx])) {
+					if (Common::Touching(T, this->FBPos[Idx])) {
 						this->Browser->SetSelection(this->SPos + Idx);
 
 						if (!this->Browser->OpenHandle()) { // It's not a directory.

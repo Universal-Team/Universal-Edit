@@ -31,6 +31,18 @@
 #include "ThemeData.hpp"
 #include "UniversalEdit.hpp"
 #include "screenCommon.hpp"
-#include "Utils.hpp"
+#include "structs.hpp"
+#include <3ds.h>
+
+namespace Common {
+	bool Touching(const touchPosition T, const Structs::ButtonPos P);
+
+	int Numpad(const std::string &Text, const int CurVal, const int MinVal, const int MaxVal, const int Length);
+	std::string Keyboard(const std::string &Text, const std::string &CurStr, const int Length);
+	void ProgressMessage(const std::string &Msg);
+	
+	const std::string &GetStr(const std::string &Key);
+	void LoadLanguage();
+};
 
 #endif

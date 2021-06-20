@@ -25,7 +25,7 @@
 */
 
 #include "Common.hpp"
-#include "FileBrowser.hpp"
+#include "KBDSelector.hpp"
 #include "JSON.hpp"
 #include "Keyboard.hpp"
 #include "PromptMessage.hpp"
@@ -132,7 +132,7 @@ void Keyboard::Draw() {
 	if (!this->Loaded) {
 		Gui::Draw_Rect(48, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
 		Gui::Draw_Rect(48, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
-		Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("KEYBOARD_MENU"), 310);
+		Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("KEYBOARD_MENU"), 310);
 
 	} else {
 		if (this->Kbd.contains(this->CurrentMode.back())) {
@@ -149,11 +149,8 @@ void Keyboard::Draw() {
 
 
 void Keyboard::SwitchLayout() {
-	std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
-	const bool Res = PMessage->Handler(Utils::GetStr("KEYBOARD_SWITCH")); // True: SD, False: RomFS.
-
-	std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
-	const std::string KFile = FB->Handler((Res ? "sdmc:/3ds/Universal-Edit/Keyboard/" : "romfs:/keyboards/"), true, Utils::GetStr("SELECT_KEYBOARD"), { "json" });
+	std::unique_ptr<KBDSelector> Selector = std::make_unique<KBDSelector>();
+	const std::string KFile = Selector->Handler();
 				
 	if (KFile != "") this->Load(KFile); // Load, if not '""'.
 };
@@ -168,7 +165,7 @@ void Keyboard::Handler() {
 		if (UniversalEdit::UE->Repeat & KEY_TOUCH) {
 			/* Check if any key is being touched. */
 			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
-				if (Utils::Touching(UniversalEdit::UE->T, Key.Pos)) {
+				if (Common::Touching(UniversalEdit::UE->T, Key.Pos)) {
 					this->HandleKeyPress(Key);
 					break;
 				};

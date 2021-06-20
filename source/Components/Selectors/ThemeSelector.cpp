@@ -40,7 +40,7 @@ void ThemeSelector::Draw() {
 	UniversalEdit::UE->GData->DrawBottom();
 	Gui::Draw_Rect(0, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(0, 20, 320, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("SELECT_THEME"), 310);
+	Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("SELECT_THEME"), 310);
 
 	/* Now begin to draw the Theme List. */
 	for (uint8_t Idx = 0; Idx < THEMES_ON_LIST && Idx < UniversalEdit::UE->ThemeNames.size(); Idx++) {
@@ -97,7 +97,7 @@ void ThemeSelector::Handler() {
 			if (Down & KEY_TOUCH) {
 				for (uint8_t Idx = 0; Idx < THEMES_ON_LIST; Idx++) {
 					if (this->SPos + Idx < (int)UniversalEdit::UE->ThemeNames.size()) {
-						if (Utils::Touching(T, this->TPos[Idx])) {
+						if (Common::Touching(T, this->TPos[Idx])) {
 							UniversalEdit::UE->CData->Theme(UniversalEdit::UE->ThemeNames[this->SPos + Idx].first);
 							UniversalEdit::UE->TData->LoadTheme(UniversalEdit::UE->CData->Theme());
 							this->SelectMode = false;

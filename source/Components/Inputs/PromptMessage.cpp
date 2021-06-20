@@ -26,7 +26,7 @@
 
 #include "Common.hpp"
 #include "PromptMessage.hpp"
-#include "Utils.hpp"
+
 
 bool PromptMessage::Handler(const std::string &Msg) {
 	this->Msg = Msg;
@@ -41,7 +41,7 @@ bool PromptMessage::Handler(const std::string &Msg) {
 		UniversalEdit::UE->GData->DrawBottom();
 
 		Gui::Draw_Rect(0, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
-		Gui::DrawStringCentered(0, 1, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("PROMPT"), 310);
+		Gui::DrawStringCentered(0, 1, 0.6f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("PROMPT"), 310);
 
 		Gui::DrawStringCentered(0, 60, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Msg, 300, 120, nullptr, C2D_WordWrap);
 
@@ -49,7 +49,7 @@ bool PromptMessage::Handler(const std::string &Msg) {
 			if (Idx == this->Confirmed) Gui::Draw_Rect(this->Buttons[Idx].x - 2, this->Buttons[Idx].y - 2, this->Buttons[Idx].w + 4, this->Buttons[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 			Gui::Draw_Rect(this->Buttons[Idx].x, this->Buttons[Idx].y, this->Buttons[Idx].w, this->Buttons[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 
-			Gui::DrawStringCentered((Idx ? 60 : -60), this->Buttons[Idx].y + 3, 0.6f, UniversalEdit::UE->TData->TextColor(), (Idx ? Utils::GetStr("CONFIRM") : Utils::GetStr("CANCEL")));
+			Gui::DrawStringCentered((Idx ? 60 : -60), this->Buttons[Idx].y + 3, 0.6f, UniversalEdit::UE->TData->TextColor(), (Idx ? Common::GetStr("CONFIRM") : Common::GetStr("CANCEL")));
 		};
 
 		C3D_FrameEnd(0);
@@ -68,7 +68,7 @@ bool PromptMessage::Handler(const std::string &Msg) {
 		
 		if (Down & KEY_TOUCH) {
 			for (uint8_t Idx = 0; Idx < 2; Idx++) {
-				if (Utils::Touching(T, this->Buttons[Idx])) return Idx;
+				if (Common::Touching(T, this->Buttons[Idx])) return Idx;
 			};
 		};
 	};

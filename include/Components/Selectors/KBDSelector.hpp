@@ -24,22 +24,32 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_UTILS_HPP
-#define _UNIVERSAL_EDIT_UTILS_HPP
+#ifndef _UNIVERSAL_EDIT_KBD_SELECTOR_HPP
+#define _UNIVERSAL_EDIT_KBD_SELECTOR_HPP
 
+#include "BrowseData.hpp"
 #include "structs.hpp"
-#include <3ds.h>
+#include <memory>
 #include <string>
+#include <vector>
 
-namespace Utils {
-	bool Touching(const touchPosition T, const Structs::ButtonPos P);
+class KBDSelector {
+public:
+	void Draw();
+	std::string Handler();
+private:
+	bool RootMode = true;
+	std::unique_ptr<BrowseData> Browser = nullptr;
+	int SPos = 0, RootSelect = 0;
+	std::vector<std::string> CurrentFileData;
 
-	int Numpad(const std::string &Text, const int CurVal, const int MinVal, const int MaxVal, const int Length);
-	std::string Keyboard(const std::string &Text, const std::string &CurStr, const int Length);
-	void ProgressMessage(const std::string &Msg);
-	
-	const std::string &GetStr(const std::string &Key);
-	void LoadLanguage();
+	const std::vector<Structs::ButtonPos> FBPos = {
+		{ 30, 35, 260, 30 },
+		{ 30, 70, 260, 30 },
+		{ 30, 105, 260, 30 },
+		{ 30, 140, 260, 30 },
+		{ 30, 175, 260, 30 }
+	};
 };
 
 #endif

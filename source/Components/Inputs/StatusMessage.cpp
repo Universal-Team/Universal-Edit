@@ -26,7 +26,7 @@
 
 #include "Common.hpp"
 #include "StatusMessage.hpp"
-#include "Utils.hpp"
+
 
 void StatusMessage::Handler(const std::string &Msg, const int Res) {
 	this->Msg = Msg;
@@ -43,13 +43,13 @@ void StatusMessage::Handler(const std::string &Msg, const int Res) {
 		UniversalEdit::UE->GData->DrawBottom();
 
 		Gui::Draw_Rect(0, 0, 320, 20, UniversalEdit::UE->TData->BarColor());
-		Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("STATUSCODE") + std::to_string(this->Res), 310);
-		Gui::DrawStringCentered(0, 40, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("STATUS"), 310);
+		Gui::DrawStringCentered(0, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("STATUSCODE") + std::to_string(this->Res), 310);
+		Gui::DrawStringCentered(0, 40, 0.6f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("STATUS"), 310);
 		Gui::DrawStringCentered(0, 60, 0.5f, UniversalEdit::UE->TData->TextColor(), this->Msg, 300, 120, nullptr, C2D_WordWrap);
 
 		Gui::Draw_Rect(this->OK.x - 2, this->OK.y - 2, this->OK.w + 4, this->OK.h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->OK.x, this->OK.y, this->OK.w, this->OK.h, UniversalEdit::UE->TData->ButtonColor());
-		Gui::DrawStringCentered(0, this->OK.y + 3, 0.6f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("OK"));
+		Gui::DrawStringCentered(0, this->OK.y + 3, 0.6f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("OK"));
 		C3D_FrameEnd(0);
 
 		uint32_t Down = 0;
@@ -62,7 +62,7 @@ void StatusMessage::Handler(const std::string &Msg, const int Res) {
 		} while(!Down);
 
 		if (Down & KEY_TOUCH) {
-			if (Utils::Touching(T, this->OK)) break;
+			if (Common::Touching(T, this->OK)) break;
 		};
 
 		if (Down & KEY_A) break;

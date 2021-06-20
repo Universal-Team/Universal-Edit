@@ -48,7 +48,7 @@ void Tab::Handler() {
 
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < 5; Idx++) {
-			if (Utils::Touching(UniversalEdit::UE->T, this->Tabs[Idx])) {
+			if (Common::Touching(UniversalEdit::UE->T, this->Tabs[Idx])) {
 				SwitchTab((UniversalEdit::Tabs)Idx);
 				break;
 			};

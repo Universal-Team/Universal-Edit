@@ -36,20 +36,20 @@ bool FileHandler::Loaded = false;
 void FileHandler::Draw() {
 	Gui::Draw_Rect(49, 0, 271, 20, UniversalEdit::UE->TData->BarColor());
 	Gui::Draw_Rect(49, 20, 271, 1, UniversalEdit::UE->TData->BarOutline());
-	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr("FILE_HANDLER_MENU"), 310);
+	Gui::DrawStringCentered(24, 2, 0.5f, UniversalEdit::UE->TData->TextColor(), Common::GetStr("FILE_HANDLER_MENU"), 310);
 
 	for (uint8_t Idx = 0; Idx < 4; Idx++) {
 		Gui::Draw_Rect(this->Menu[Idx].x - 2, this->Menu[Idx].y - 2, this->Menu[Idx].w + 4, this->Menu[Idx].h + 4, UniversalEdit::UE->TData->ButtonSelected());
 		Gui::Draw_Rect(this->Menu[Idx].x, this->Menu[Idx].y, this->Menu[Idx].w, this->Menu[Idx].h, UniversalEdit::UE->TData->ButtonColor());
 		
-		Gui::DrawStringCentered(24, this->Menu[Idx].y + 9, 0.4f, UniversalEdit::UE->TData->TextColor(), Utils::GetStr(this->MenuOptions[Idx]));
+		Gui::DrawStringCentered(24, this->Menu[Idx].y + 9, 0.4f, UniversalEdit::UE->TData->TextColor(), Common::GetStr(this->MenuOptions[Idx]));
 	};
 };
 
 void FileHandler::Handler() {
 	if (UniversalEdit::UE->Down & KEY_TOUCH) {
 		for (uint8_t Idx = 0; Idx < 4; Idx++) {
-			if (Utils::Touching(UniversalEdit::UE->T, this->Menu[Idx])) {
+			if (Common::Touching(UniversalEdit::UE->T, this->Menu[Idx])) {
 				this->Funcs[Idx]();
 				break;
 			};
@@ -61,16 +61,16 @@ void FileHandler::Handler() {
 void FileHandler::LoadFile() {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->Changes()) {
 		std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
-		const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_LOAD"));
+		const bool Res = PMessage->Handler(Common::GetStr("CHANGES_MADE_LOAD"));
 
 		if (!Res) return;
 	};
 
 	std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
-	const std::string EditFile = FB->Handler("sdmc:/", false, Utils::GetStr("SELECT_FILE"), { });
+	const std::string EditFile = FB->Handler("sdmc:/", false, Common::GetStr("SELECT_FILE"), { });
 
 	if (EditFile != "") {
-		Utils::ProgressMessage(Utils::GetStr("LOADING_FILE"));
+		Common::ProgressMessage(Common::GetStr("LOADING_FILE"));
 		/* If nullptr, initialize the unique_ptr. */
 		if (!UniversalEdit::UE->CurrentFile) UniversalEdit::UE->CurrentFile = std::make_unique<Data>(EditFile);
 		else UniversalEdit::UE->CurrentFile->Load(EditFile); // Otherwise load.
@@ -84,7 +84,7 @@ void FileHandler::LoadFile() {
 
 		} else {
 			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-			Ovl->Handler(Utils::GetStr("FILE_NOT_EXIST_BAD"), -1);
+			Ovl->Handler(Common::GetStr("FILE_NOT_EXIST_BAD"), -1);
 			FileHandler::Loaded = false;
 		};
 	};
@@ -93,7 +93,7 @@ void FileHandler::LoadFile() {
 void FileHandler::NewFile() {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile->Changes()) {
 		std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
-		const bool Res = PMessage->Handler(Utils::GetStr("CHANGES_MADE_LOAD"));
+		const bool Res = PMessage->Handler(Common::GetStr("CHANGES_MADE_LOAD"));
 
 		if (!Res) return;
 	};
@@ -110,38 +110,38 @@ void FileHandler::NewFile() {
 void FileHandler::SaveFile() {
 	if (FileHandler::Loaded) {
 		if (UniversalEdit::UE->CurrentFile->Changes()) { // Only write if changes have been made.
-			Utils::ProgressMessage(Utils::GetStr("SAVING_FILE"));
+			Common::ProgressMessage(Common::GetStr("SAVING_FILE"));
 			const bool Success = UniversalEdit::UE->CurrentFile->WriteBack(UniversalEdit::UE->CurrentFile->EditFile());
 
 			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-			Ovl->Handler((Success ? Utils::GetStr("PROPERLY_SAVED_TO_FILE") : Utils::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
+			Ovl->Handler((Success ? Common::GetStr("PROPERLY_SAVED_TO_FILE") : Common::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
 			UniversalEdit::UE->CurrentFile->SetChanges(false); // Since we saved, no changes have been made.
 
 		} else {
 			std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-			Ovl->Handler(Utils::GetStr("NO_CHANGES_MADE"), -1);
+			Ovl->Handler(Common::GetStr("NO_CHANGES_MADE"), -1);
 		};
 
 	} else {
 		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-		Ovl->Handler(Utils::GetStr("NO_SAVE_ON_NO_LOAD"), -1);
+		Ovl->Handler(Common::GetStr("NO_SAVE_ON_NO_LOAD"), -1);
 	};
 };
 
 void FileHandler::SaveFileAs() {
 	if (FileHandler::Loaded) {
 		std::unique_ptr<DirSelector> DS = std::make_unique<DirSelector>();
-		const std::string Dest = DS->Handler("sdmc:/", Utils::GetStr("SELECT_DEST"));
+		const std::string Dest = DS->Handler("sdmc:/", Common::GetStr("SELECT_DEST"));
 
 		if (Dest != "") {
-			const std::string FName = Utils::Keyboard(Utils::GetStr("ENTER_FILE_NAME"), "", 100);
+			const std::string FName = Common::Keyboard(Common::GetStr("ENTER_FILE_NAME"), "", 100);
 
 			if (FName != "") {
-				Utils::ProgressMessage(Utils::GetStr("SAVING_FILE"));
+				Common::ProgressMessage(Common::GetStr("SAVING_FILE"));
 				const bool Success = UniversalEdit::UE->CurrentFile->WriteBack(Dest + FName);
 
 				std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-				Ovl->Handler((Success ? Utils::GetStr("PROPERLY_SAVED_TO_FILE") : Utils::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
+				Ovl->Handler((Success ? Common::GetStr("PROPERLY_SAVED_TO_FILE") : Common::GetStr("SAVED_FILE_ERROR")), (Success ? 0 : -1));
 				UniversalEdit::UE->CurrentFile->SetChanges(false); // Since we saved, no changes have been made.
 				UniversalEdit::UE->CurrentFile->SetNewPath(Dest + FName); // Set new default file path.
 			};
@@ -149,6 +149,6 @@ void FileHandler::SaveFileAs() {
 
 	} else {
 		std::unique_ptr<StatusMessage> Ovl = std::make_unique<StatusMessage>();
-		Ovl->Handler(Utils::GetStr("NO_SAVE_ON_NO_LOAD"), -1);
+		Ovl->Handler(Common::GetStr("NO_SAVE_ON_NO_LOAD"), -1);
 	};
 };

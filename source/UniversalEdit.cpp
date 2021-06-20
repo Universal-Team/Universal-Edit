@@ -108,7 +108,7 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 
 
 int UniversalEdit::Handler() {
-	Utils::LoadLanguage();
+	Common::LoadLanguage();
 	
 	while(aptMainLoop() && !this->Exiting) {
 		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
@@ -127,7 +127,7 @@ int UniversalEdit::Handler() {
 		if (this->Down & KEY_START) {
 			if (FileHandler::Loaded && this->CurrentFile->Changes()) {
 				std::unique_ptr<PromptMessage> PMessage = std::make_unique<PromptMessage>();
-				const bool Res = PMessage->Handler(Utils::GetStr("EXIT_WARNING"));
+				const bool Res = PMessage->Handler(Common::GetStr("EXIT_WARNING"));
 
 				if (Res) this->Exiting = true;
 			} else this->Exiting = true;
