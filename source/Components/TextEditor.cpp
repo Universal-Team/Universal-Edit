@@ -37,28 +37,38 @@ static std::string DispLine(const size_t L, const int Digits) {
 	return Buffer;
 };
 
+float ScrollOfs = 0;
 
 void TextEditor::Draw() {
 	int Digits = 0;
 	while(UniversalEdit::UE->CurrentFile->GetLines() / (int)pow(10, Digits)) Digits++;
 
-	const float lineStart = 3 + Gui::GetStringWidth(0.4f, DispLine(0, Digits), nullptr) + 10;
+	float LineStart = 3 + Gui::GetStringWidth(0.4f, DispLine(0, Digits), nullptr) + 10;
 
 	if (UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		Gui::DrawStringCentered(0, 1, 0.5f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->EditFile(), 390);
 
+		/* Cursor */
+		float CursorStart = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine).substr(0, TextEditor::CursorPos), nullptr);
+		float Width = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetCharacter(TextEditor::CurrentLine, TextEditor::CursorPos), nullptr);
+		if(ScrollOfs + LineStart + CursorStart > 360) {
+			ScrollOfs -= ((ScrollOfs + LineStart + CursorStart) - 360) / 5.0f;
+		} else if(ScrollOfs + CursorStart < 40 && ScrollOfs < 0) {
+			ScrollOfs += -(ScrollOfs + CursorStart - 40) / 5.0f;
+			if(ScrollOfs > 0)
+				ScrollOfs = 0;
+		}
+		Gui::Draw_Rect(ScrollOfs + LineStart + CursorStart, 27 + (TextEditor::CurrentLine - TextEditor::RowOffs) * 15, Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
+
+		/* Text */
 		for (size_t Idx = TextEditor::RowOffs, Idx2 = 0; Idx < (TextEditor::RowOffs + LINES) && Idx < UniversalEdit::UE->CurrentFile->GetLines(); Idx++, Idx2++) {
-			if (TextEditor::CurrentLine == Idx) {
-				const float Width = Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(TextEditor::CursorPos, 1), nullptr);
-				Gui::Draw_Rect(lineStart + Gui::GetStringWidth(0.4f, UniversalEdit::UE->CurrentFile->GetLine(Idx).substr(0, TextEditor::CursorPos), nullptr), 27 + Idx2 * 15, Width ? Width : 6.0f, 12, C2D_Color32(0, 0, 0, 255));
+			Gui::DrawString(ScrollOfs + LineStart, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
+		};
 
-				Gui::DrawString(3, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->BarColor(), DispLine(Idx + 1, Digits));
-
-			} else {
-				Gui::DrawString(3, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), DispLine(Idx + 1, Digits));
-			};
-
-			Gui::DrawString(lineStart, 27 + Idx2 * 15, 0.4f, UniversalEdit::UE->TData->TextColor(), UniversalEdit::UE->CurrentFile->GetLine(Idx));
+		/* Line numbers */
+		Gui::Draw_Rect(0, 27, LineStart, 240, UniversalEdit::UE->TData->BGColor());
+		for (size_t Idx = TextEditor::RowOffs, Idx2 = 0; Idx < (TextEditor::RowOffs + LINES) && Idx < UniversalEdit::UE->CurrentFile->GetLines(); Idx++, Idx2++) {
+			Gui::DrawString(3, 27 + Idx2 * 15, 0.4f, TextEditor::CurrentLine == Idx ? UniversalEdit::UE->TData->BarColor() : UniversalEdit::UE->TData->TextColor(), DispLine(Idx + 1, Digits));
 		};
 	};
 };
