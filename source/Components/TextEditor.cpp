@@ -52,7 +52,7 @@ void TextEditor::Draw() {
 		if(this->ScrollOfs + LineStart + CursorStart > 360) {
 			this->ScrollOfs -= ((this->ScrollOfs + LineStart + CursorStart) - 360) / 5.0f;
 		} else if(this->ScrollOfs + CursorStart < 40 && this->ScrollOfs < 0) {
-			this->ScrollOfs += -(this->ScrollOfs + CursorStart) / 5.0f;
+			this->ScrollOfs += -(this->ScrollOfs + CursorStart > 0 ? (this->ScrollOfs + CursorStart - 40) : (this->ScrollOfs + CursorStart)) / 5.0f;
 			if(this->ScrollOfs > 0)
 				this->ScrollOfs = 0;
 		}
