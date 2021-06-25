@@ -137,7 +137,7 @@ void Keyboard::Draw() {
 	} else {
 		if (this->Kbd.contains(this->CurrentMode.back())) {
 			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
-				Gui::Draw_Rect(Key.Pos.x, Key.Pos.y, Key.Pos.w, Key.Pos.h, Key.Active ? UniversalEdit::UE->TData->BarColor() : UniversalEdit::UE->TData->BarOutline()); // TODO: Dedicated colors
+				Gui::Draw_Rect(Key.Pos.x, Key.Pos.y, Key.Pos.w, Key.Pos.h, (Key.Active || Common::Touching(UniversalEdit::UE->T, Key.Pos) || UniversalEdit::UE->Held & Key.Button) ? UniversalEdit::UE->TData->BarColor() : UniversalEdit::UE->TData->BarOutline()); // TODO: Dedicated colors
 				Gui::DrawStringCentered(Key.Pos.x + (Key.Pos.w / 2) - 160, Key.Pos.y + (Key.Pos.h / 10), 0.5f, UniversalEdit::UE->TData->TextColor(), Key.Label);
 			};
 
@@ -176,7 +176,6 @@ void Keyboard::Handler() {
 			for (const auto &Key : this->Kbd[this->CurrentMode.back()].Keys) {
 				if (UniversalEdit::UE->Repeat & Key.Button) {
 					this->HandleKeyPress(Key);
-					break;
 				};
 			};
 		};

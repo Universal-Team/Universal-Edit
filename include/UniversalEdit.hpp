@@ -59,7 +59,7 @@ public:
 	void DrawTop();
 	void DrawBottom(const bool OnlyTab = false);
 
-	uint32_t Down = 0, Repeat = 0;
+	uint32_t Down = 0, Repeat = 0, Held = 0;
 	touchPosition T;
 private:
 	bool Exiting = false;

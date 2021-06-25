@@ -123,6 +123,7 @@ int UniversalEdit::Handler() {
 		hidTouchRead(&this->T);
 		this->Down = hidKeysDown();
 		this->Repeat = hidKeysDownRepeat();
+		this->Held = hidKeysHeld();
 
 		if (this->Down & KEY_START) {
 			if (FileHandler::Loaded && this->CurrentFile->Changes()) {
