@@ -62,6 +62,8 @@ nlohmann::json ThemeData::InitWithDefaultColors(const std::string &ThemePath) {
 			{ "SidebarColor", "#193A64" },
 			{ "SidebarSelected", "#294A84" },
 			{ "BackArrowColor", "#ADCCEF" },
+			{ "KBDPressed", "#294A7A" },
+			{ "KBDUnpressed", "#191E35" },
 			{ "Description", "Universal-Edit's default Theme.\nBy: Universal-Team" }
 		}}
 	};
@@ -86,6 +88,8 @@ void ThemeData::LoadTheme(const std::string &ThemeName) {
 	this->vSidebarColor			= this->GetThemeColor(ThemeName, "SidebarColor", RGBA8(25, 58, 100, 255));
 	this->vSidebarSelected		= this->GetThemeColor(ThemeName, "SidebarSelected", RGBA8(41, 74, 132, 255));
 	this->vBackArrowColor		= this->GetThemeColor(ThemeName, "BackArrowColor", RGBA8(173, 204, 239, 255));
+	this->vKBDPressed			= this->GetThemeColor(ThemeName, "KBDPressed", RGBA8(41, 74, 122, 255));
+	this->vKBDUnpressed			= this->GetThemeColor(ThemeName, "KBDUnpressed", RGBA8(25, 30, 53, 255));
 };
 
 std::vector<std::pair<std::string, std::string>> ThemeData::ThemeNames() {

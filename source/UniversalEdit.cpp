@@ -40,12 +40,9 @@ UniversalEdit::UniversalEdit() {
 	/* Create base folders if missing. */
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/Universal-Edit", 0777);
-
-	/* Text Editor related. */
-	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor", 0777);
-	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard", 0777);
-	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases", 0777);
-	mkdir("sdmc:/3ds/Universal-Edit/Text-Editor/Syntax", 0777);
+	mkdir("sdmc:/3ds/Universal-Edit/Keyboard", 0777);
+	mkdir("sdmc:/3ds/Universal-Edit/Phrases", 0777);
+	mkdir("sdmc:/3ds/Universal-Edit/Syntax", 0777);
 
 	this->CData = std::make_unique<ConfigData>();
 	this->GData = std::make_unique<GFXData>();

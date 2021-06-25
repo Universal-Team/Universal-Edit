@@ -49,10 +49,12 @@ public:
 	uint32_t SidebarSelected() const { return this->vSidebarSelected; };
 	uint32_t SidebarIconColor() const { return this->vSideBarIconColor; };
 	uint32_t BackArrowColor() const { return this->vBackArrowColor; };
+	uint32_t KBDPressed() const { return this->vKBDPressed; };
+	uint32_t KBDUnpressed() const { return this->vKBDUnpressed; };
 private:
 	uint32_t vBarColor, vBGColor, vTextColor, vButtonColor, vButtonSelected,
 			 vBarOutline, vSideBarIconColor, vSidebarColor, vSidebarSelected,
-			 vBackArrowColor;
+			 vBackArrowColor, vKBDPressed, vKBDUnpressed;
 
 	int SelectedTheme = 0;
 	bool Loaded = false;

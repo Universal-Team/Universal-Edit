@@ -83,7 +83,7 @@ void Phrases::Insert(const size_t Idx) {
 void Phrases::Handler() {
 	if (UniversalEdit::UE->Down & KEY_Y) {
 		std::unique_ptr<FileBrowser> FB = std::make_unique<FileBrowser>();
-		const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Text-Editor/Phrases/", true, Common::GetStr("SELECT_PHRASE"), { "json" });
+		const std::string PFile = FB->Handler("sdmc:/3ds/Universal-Edit/Phrases/", true, Common::GetStr("SELECT_PHRASE"), { "json" });
 				
 		if (PFile != "") this->Load(PFile);
 	};

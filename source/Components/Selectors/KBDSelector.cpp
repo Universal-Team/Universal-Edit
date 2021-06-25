@@ -102,7 +102,7 @@ std::string KBDSelector::Handler() {
 		if (Down & KEY_B) {
 			if (this->RootMode) return "";
 
-			if (this->Browser->GetPath() == "sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/" || this->Browser->GetPath() == "romfs:/keyboards/") {
+			if (this->Browser->GetPath() == "sdmc:/3ds/Universal-Edit/Keyboard/" || this->Browser->GetPath() == "romfs:/keyboards/") {
 				this->SPos = 0;
 				this->RootMode = true;
 				this->CurrentFileData = { "..", "RomFS", "SD" };
@@ -127,7 +127,7 @@ std::string KBDSelector::Handler() {
 						break;
 
 					case 2:
-						this->Browser = std::make_unique<BrowseData>("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/", std::vector<std::string>({ "json" }));
+						this->Browser = std::make_unique<BrowseData>("sdmc:/3ds/Universal-Edit/Keyboard/", std::vector<std::string>({ "json" }));
 						this->CurrentFileData = this->Browser->GetList();
 						this->RootMode = false;
 						break;
@@ -139,7 +139,7 @@ std::string KBDSelector::Handler() {
 						return this->Browser->GetPath() + this->Browser->GetSelectedName();
 
 					} else { // Go back.
-						if (this->Browser->GetPath() == "sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/" || this->Browser->GetPath() == "romfs:/keyboards/") {
+						if (this->Browser->GetPath() == "sdmc:/3ds/Universal-Edit/Keyboard/" || this->Browser->GetPath() == "romfs:/keyboards/") {
 							this->RootMode = true;
 							this->CurrentFileData = { "..", "RomFS", "SD" };
 							this->SPos = 0;
@@ -175,7 +175,7 @@ std::string KBDSelector::Handler() {
 								break;
 
 							case 2:
-								this->Browser = std::make_unique<BrowseData>("sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/", std::vector<std::string>({ "json" }));
+								this->Browser = std::make_unique<BrowseData>("sdmc:/3ds/Universal-Edit/Keyboard/", std::vector<std::string>({ "json" }));
 								this->CurrentFileData = this->Browser->GetList();
 								this->RootMode = false;
 								break;
@@ -196,7 +196,7 @@ std::string KBDSelector::Handler() {
 									return this->Browser->GetPath() + this->Browser->GetSelectedName();
 
 								} else { // Go back.
-									if (this->Browser->GetPath() == "sdmc:/3ds/Universal-Edit/Text-Editor/Keyboard/" || this->Browser->GetPath() == "romfs:/keyboards/") {
+									if (this->Browser->GetPath() == "sdmc:/3ds/Universal-Edit/Keyboard/" || this->Browser->GetPath() == "romfs:/keyboards/") {
 										this->RootMode = true;
 										this->CurrentFileData = { "..", "RomFS", "SD" };
 										this->SPos = 0;
