@@ -40,6 +40,7 @@
 #include "Settings.hpp"
 #include "Tab.hpp"
 #include "TextEditor.hpp"
+#include "Utils.hpp"
 
 class UniversalEdit {
 public:
@@ -70,6 +71,7 @@ private:
 	std::unique_ptr<Settings> SE = nullptr;
 	std::unique_ptr<Tab> _Tab = nullptr;
 	std::unique_ptr<TextEditor> TE = nullptr;
+	std::unique_ptr<Utils> UT = nullptr;
 };
 
 #endif

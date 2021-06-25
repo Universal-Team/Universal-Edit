@@ -73,9 +73,9 @@ public:
 	};
 
 	/* Likely rework them or so. */
-	void InsertContent(const size_t Line, const size_t Pos, const std::string &Text);
+	bool InsertContent(const size_t Line, const size_t Pos, const std::string &Text);
 	void EraseContent(const size_t Line, const size_t Pos, const size_t Length);
-	void InsertLine(const size_t Line);
+	bool InsertLine(const size_t Line);
 	void RemoveLine(const size_t Line);
 
 	bool WriteBack(const std::string &File); // Write back to the file.

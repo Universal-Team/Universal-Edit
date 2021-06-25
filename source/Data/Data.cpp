@@ -60,13 +60,19 @@ void Data::Load(const std::string &File) {
 	if (In) {
 		while(__getline(&Line, &Length, In) != -1) {
 			if (Line) { // Ensure it's not a nullptr.
-				int Len = strlen(Line);
+				const int Len = strlen(Line);
 				if (Line[Len - 1] == '\n') Line[Len - 1] = '\0';
 				if (Line[Len - 2] == '\r') {
 					this->CRLF = true;
 					Line[Len - 2] = '\0';
 				};
-				this->Lines.push_back(Line);
+
+				try {
+					this->Lines.push_back(Line);
+
+				} catch(...) {
+					break;
+				};
 			};
 		};
 
@@ -84,11 +90,19 @@ void Data::Load(const std::string &File) {
 	const size_t Pos: The index to insert something.
 	const std::string &Text: The text to insert.
 */
-void Data::InsertContent(const size_t Line, const size_t Pos, const std::string &Text) {
-	if (Line > this->Lines.size() || Pos > this->Lines[Line].size()) return; // Nope.
+bool Data::InsertContent(const size_t Line, const size_t Pos, const std::string &Text) {
+	if (Line > this->Lines.size() || Pos > this->Lines[Line].size()) return false; // Nope.
 
-	this->Lines[Line].insert(Pos, Text);
+	try {
+		this->Lines[Line].insert(Pos, Text);
+
+	} catch(...) {
+		return false;
+	};
+
+
 	if (!this->ChangesMade) this->ChangesMade = true;
+	return true;
 };
 
 /*
@@ -110,11 +124,18 @@ void Data::EraseContent(const size_t Line, const size_t Pos, const size_t Length
 
 	const size_t Line: The line where to insert a new line.
 */
-void Data::InsertLine(const size_t Line) {
-	if (Line > this->Lines.size()) return; // Nope.
-	this->Lines.insert(this->Lines.begin() + Line, 1, "");
+bool Data::InsertLine(const size_t Line) {
+	if (Line > this->Lines.size()) return false; // Nope.
+
+	try {
+		this->Lines.insert(this->Lines.begin() + Line, 1, "");
+
+	} catch(...) {
+		return false;
+	};
 	
 	if (!this->ChangesMade) this->ChangesMade = true;
+	return true;
 };
 
 /*

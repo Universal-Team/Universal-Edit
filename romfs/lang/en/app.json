@@ -8,10 +8,12 @@
 	"DOES_NOT_EXIST": "%s does not exist.",
 	"ENTER_DIR_NAME": "Enter the directory name you want to create.",
 	"ENTER_FILE_NAME": "Enter the file name you want to save it as.",
+	"ENTER_LINE_TO_JUMP": "Enter the line you want to jump to.",
 	"EXIT_WARNING": "Do you want to exit? Every change you did will be gone if you decide to do so.",
 	"FILE_HANDLER_MENU": "File Handler Menu",
 	"FILE_NOT_EXIST_BAD": "File does not exist or is bad.",
 	"GITHUB": "Full credits can be found on GitHub",
+	"JUMP_TO": "Jump to",
 	"KEYBOARD_MENU": "Keyboard Menu",
 	"LANGUAGE": "Language",
 	"LOAD_FILE": "Load File",
@@ -38,5 +40,6 @@
 	"STATUS": "Status",
 	"STATUSCODE": "Statuscode: ",
 	"TEXT_EDITOR_MENU": "Text Editor Menu",
-	"THEMES": "Themes"
+	"THEMES": "Themes",
+	"UTILS_MENU": "Utils Menu"
 }

@@ -60,6 +60,7 @@ UniversalEdit::UniversalEdit() {
 	this->SE = std::make_unique<Settings>();
 	this->_Tab = std::make_unique<Tab>();
 	this->TE = std::make_unique<TextEditor>();
+	this->UT = std::make_unique<Utils>();
 
 	this->KBD->Load("romfs:/keyboards/english-us.json"); // Load default keyboard.
 	this->ThemeNames = this->TData->ThemeNames();
@@ -95,6 +96,7 @@ void UniversalEdit::DrawBottom(const bool OnlyTab) {
 			break;
 
 		case Tabs::Utils:
+			this->UT->Draw();
 			break;
 
 		case Tabs::Settings:
@@ -149,6 +151,7 @@ int UniversalEdit::Handler() {
 				break;
 
 			case Tabs::Utils:
+				this->UT->Handler();
 				break;
 
 			case Tabs::Settings:

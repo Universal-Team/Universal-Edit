@@ -58,13 +58,13 @@ BUILD		:=	build
 UNIVCORE	:= 	Universal-Core
 SOURCES		:=	$(UNIVCORE) \
 				source source/Data source/Components source/Components/Inputs \
-				source/Components/Selectors source/Components/TextEditor
+				source/Components/Selectors source/Components/Settings source/Components/TextEditor source/Components/Utils
 
 
 DATA		:=	data
 INCLUDES	:=	$(UNIVCORE) \
 				include include/Data include/Components include/Components/Inputs \
-				include/Components/Selectors include/Components/TextEditor
+				include/Components/Selectors include/Components/Settings include/Components/TextEditor include/Components/Utils
 
 GRAPHICS	:=	assets/gfx
 ROMFS		:=	romfs
@@ -88,7 +88,7 @@ CFLAGS	:=	-g -Wall -Wno-psabi -O2 -mword-relocations \
 
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -D_GNU_SOURCE=1
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++20
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)

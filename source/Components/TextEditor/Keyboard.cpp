@@ -230,14 +230,16 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 							const std::string Out = TextUtils::Dakutenify(Char, Handakuten);
 
 							UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, Char.size());
-							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Out);
-							TextEditor::CursorRight();
+							if (UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Out)) {
+								TextEditor::CursorRight();
 
-							if (Out.size() > Char.size()) TextEditor::CursorRight();
+								if (Out.size() > Char.size()) TextEditor::CursorRight();
+							};
 
 						} else {
-							UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Handakuten ? "゜" : "゛");
-							TextEditor::CursorPos += 3;
+							if (UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Handakuten ? "゜" : "゛")) {
+								TextEditor::CursorPos += 3;
+							};
 						};
 
 					} else if (Value == "newline") {
@@ -265,8 +267,9 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 				/* Output a value that's not the label. */
 				case Key::Property::Value:
 					if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
-						UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Value);
-						TextEditor::CursorPos += Value.size();
+						if (UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Value)) {
+							TextEditor::CursorPos += Value.size();
+						};
 					};
 					break;
 
@@ -278,8 +281,9 @@ void Keyboard::HandleKeyPress(const Key &Key) {
 	} else {
 		/* Otherwise, just output the label */
 		if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
-			UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Key.Label);
-			TextEditor::CursorPos += Key.Label.size();
+			if (UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, Key.Label)) {
+				TextEditor::CursorPos += Key.Label.size();
+			};
 		};
 	};
 };

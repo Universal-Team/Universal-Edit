@@ -77,6 +77,14 @@ void TextEditor::HandleScroll() {
 	else if (CurrentLine >= RowOffs + LINES) RowOffs++;
 };
 
+void TextEditor::JumpScroll() {
+	if (CurrentLine < LINES) RowOffs = CurrentLine;
+	else RowOffs = CurrentLine - LINES + 1;
+
+	const uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
+	if (CursorPos > Length) CursorPos = Length;
+};
+
 
 void TextEditor::Handler() {
 	if (UniversalEdit::UE->Repeat & KEY_DOWN) this->CursorDown();
@@ -90,7 +98,7 @@ void TextEditor::CursorUp() {
 		if (CurrentLine > 0) {
 			CurrentLine--;
 
-			uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
+			const uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
 			if (CursorPos > Length) CursorPos = Length;
 
 			TextEditor::HandleScroll();
@@ -103,7 +111,7 @@ void TextEditor::CursorDown() {
 		if (CurrentLine < UniversalEdit::UE->CurrentFile->GetLines() - 1) {
 			CurrentLine++;
 
-			uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
+			const uint32_t Length = UniversalEdit::UE->CurrentFile->GetCharsFromLine(CurrentLine);
 			if (CursorPos > Length) CursorPos = Length;
 
 			TextEditor::HandleScroll();
@@ -114,7 +122,7 @@ void TextEditor::CursorDown() {
 void TextEditor::CursorLeft() {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
 		if (CursorPos > 0) {
-			std::string Line = UniversalEdit::UE->CurrentFile->GetLine(CurrentLine);
+			const std::string Line = UniversalEdit::UE->CurrentFile->GetLine(CurrentLine);
 			CursorPos--;
 			while(CursorPos > 0 && ((Line[CursorPos] & 0xC0) == 0x80)) CursorPos--;
 		};
@@ -133,12 +141,15 @@ void TextEditor::InsertLine() {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
 		const std::string End = UniversalEdit::UE->CurrentFile->GetLine(TextEditor::CurrentLine).substr(TextEditor::CursorPos);
 		UniversalEdit::UE->CurrentFile->EraseContent(TextEditor::CurrentLine, TextEditor::CursorPos, End.size());
-		UniversalEdit::UE->CurrentFile->InsertLine(TextEditor::CurrentLine + 1);
-		UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine + 1, 0, End);
-		TextEditor::CurrentLine++;
-		TextEditor::CursorPos = 0;
 
-		TextEditor::HandleScroll();
+		if (UniversalEdit::UE->CurrentFile->InsertLine(TextEditor::CurrentLine + 1)) {
+			if (UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine + 1, 0, End)) {
+				TextEditor::CurrentLine++;
+				TextEditor::CursorPos = 0;
+
+				TextEditor::HandleScroll();
+			};
+		};
 	};
 };
 

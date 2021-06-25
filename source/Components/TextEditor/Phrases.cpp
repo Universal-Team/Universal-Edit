@@ -73,8 +73,9 @@ void Phrases::Draw() {
 void Phrases::Insert(const size_t Idx) {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile && UniversalEdit::UE->CurrentFile->IsGood()) {
 		if (Idx < this->PhraseList.size()) {
-			UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, this->PhraseList[Idx]); // Insert the string.
-			TextEditor::CursorPos += this->PhraseList[Idx].size(); // Is that right?
+			if (UniversalEdit::UE->CurrentFile->InsertContent(TextEditor::CurrentLine, TextEditor::CursorPos, this->PhraseList[Idx])) {
+				TextEditor::CursorPos += this->PhraseList[Idx].size();
+			};
 		};
 	};
 };

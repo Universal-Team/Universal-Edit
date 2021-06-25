@@ -24,30 +24,30 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
-#define _UNIVERSAL_EDIT_TEXT_EDITOR_HPP
+#ifndef _UNIVERSAL_EDIT_UTILS_HPP
+#define _UNIVERSAL_EDIT_UTILS_HPP
 
+#include "structs.hpp"
+#include <functional>
 #include <string>
+#include <vector>
 
-class TextEditor {
-private:
-	float ScrollOfs = 0;
-
+class Utils {
 public:
 	void Draw();
 	void Handler();
+private:
+	/* Actions. */
+	void JumpTo();
 
-	static void HandleScroll();
-	static void JumpScroll();
+	const std::vector<Structs::ButtonPos> Menu = {
+		{ 114, 40, 140, 30 }
+	};
 
-	static void CursorUp();
-	static void CursorDown();
-	static void CursorLeft();
-	static void CursorRight();
-	static void InsertLine();
-	static void Remove();
-
-	static size_t CursorPos, RowOffs, CurrentLine;
+	const std::vector<std::string> MenuOptions = { "JUMP_TO" };
+	const std::vector<std::function<void()>> Funcs = {
+		{ [this]() { this->JumpTo(); } }
+	};
 };
 
 #endif
