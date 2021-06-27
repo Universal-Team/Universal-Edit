@@ -60,7 +60,7 @@ void Utils::JumpTo() {
 
 		const size_t Line = Common::Numpad(Common::GetStr("ENTER_LINE_TO_JUMP"), TextEditor::CurrentLine, 1, UniversalEdit::UE->CurrentFile->GetLines(), Digits);
 
-		if (Line <= UniversalEdit::UE->CurrentFile->GetLines()) {
+		if (Line <= UniversalEdit::UE->CurrentFile->GetLines() && Line > 0) {
 			TextEditor::CursorPos = 0;
 			TextEditor::CurrentLine = Line - 1;
 			TextEditor::JumpScroll();

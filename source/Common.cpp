@@ -54,11 +54,13 @@ size_t Common::Numpad(const std::string &Text, const size_t CurVal, const size_t
 	SwkbdButton Ret = swkbdInputText(&State, Input, sizeof(Input));
 	Input[Length] = '\0';
 
+	if (Ret != SWKBD_BUTTON_CONFIRM) return CurVal;
+
 	if (Input[0] < '0' || Input[0] > '9') return CurVal; // Because citra allows you to enter actual characters for dumb reasons.
 	size_t Num = std::min<size_t>(std::stoi(Input), MaxVal);
 
 	if (Num < MinVal) Num = MinVal; // If smaller than MinVal, set to MinVal.
-	return (Ret == SWKBD_BUTTON_CONFIRM ? Num : CurVal);
+	return Num;
 };
 
 std::string Common::Keyboard(const std::string &Text, const std::string &CurStr, const int Length) {
