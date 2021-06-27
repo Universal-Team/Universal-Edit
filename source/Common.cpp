@@ -32,7 +32,7 @@ bool Common::Touching(const touchPosition T, const Structs::ButtonPos P) {
 	return (T.px >= P.x && T.px <= (P.x + P.w) && T.py >= P.y && T.py <= (P.y + P.h));
 };
 
-int Common::Numpad(const std::string &Text, const int CurVal, const int MinVal, const int MaxVal, const int Length) {
+size_t Common::Numpad(const std::string &Text, const size_t CurVal, const size_t MinVal, const size_t MaxVal, const size_t Length) {
 	/* Display one frame on top of what should be entered. */
 	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
@@ -55,7 +55,7 @@ int Common::Numpad(const std::string &Text, const int CurVal, const int MinVal, 
 	Input[Length] = '\0';
 
 	if (Input[0] < '0' || Input[0] > '9') return CurVal; // Because citra allows you to enter actual characters for dumb reasons.
-	int Num = (int)std::min(std::stoi(Input), MaxVal);
+	size_t Num = std::min<size_t>(std::stoi(Input), MaxVal);
 
 	if (Num < MinVal) Num = MinVal; // If smaller than MinVal, set to MinVal.
 	return (Ret == SWKBD_BUTTON_CONFIRM ? Num : CurVal);

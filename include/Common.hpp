@@ -37,7 +37,7 @@
 namespace Common {
 	bool Touching(const touchPosition T, const Structs::ButtonPos P);
 
-	int Numpad(const std::string &Text, const int CurVal, const int MinVal, const int MaxVal, const int Length);
+	size_t Numpad(const std::string &Text, const size_t CurVal, const size_t MinVal, const size_t MaxVal, const size_t Length);
 	std::string Keyboard(const std::string &Text, const std::string &CurStr, const int Length);
 	void ProgressMessage(const std::string &Msg);
 	

@@ -55,7 +55,10 @@ void Utils::Handler() {
 
 void Utils::JumpTo() {
 	if (FileHandler::Loaded && UniversalEdit::UE->CurrentFile) {
-		const size_t Line = Common::Numpad(Common::GetStr("ENTER_LINE_TO_JUMP"), TextEditor::CurrentLine, 1, UniversalEdit::UE->CurrentFile->GetLines(), 8);
+		size_t Digits = 0;
+		while(UniversalEdit::UE->CurrentFile->GetLines() / (int)pow(10, Digits)) Digits++;
+
+		const size_t Line = Common::Numpad(Common::GetStr("ENTER_LINE_TO_JUMP"), TextEditor::CurrentLine, 1, UniversalEdit::UE->CurrentFile->GetLines(), Digits);
 
 		if (Line <= UniversalEdit::UE->CurrentFile->GetLines()) {
 			TextEditor::CursorPos = 0;
